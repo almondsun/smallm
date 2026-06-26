@@ -91,10 +91,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 ## Current Technical Status
 
 The project infrastructure is stronger than the current generation quality. The
-latest optimizer study showed that GPTiny benefits from a higher learning rate:
-the 5k `lr=0.001` run beat the 5k control on validation loss, while greedy
-generation still collapsed. Future technical work should study capacity or
-tokenization before adding unrelated infrastructure.
+latest capacity study showed that wider/deeper GPTiny variants improve
+validation loss and generation diversity diagnostics, but larger models still
+produce phrase-level repetition and incoherent prose. Future technical work
+should study tokenization before adding unrelated infrastructure.
 
 ## Safety And Security
 

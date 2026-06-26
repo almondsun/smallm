@@ -21,6 +21,7 @@ not a replacement for the original reports.
 | [012 Documentation and Portfolio Narrative](../experiments/012-documentation-and-portfolio-narrative.md) | Documentation | Reframed the project docs around the current reproducible language-model lab. |
 | [013 GPTiny Training Budget and Optimization](../experiments/013-gptiny-training-budget-and-optimization.md) | Training budget | Renamed the model family to GPTiny and found 2k/5k-step runs beat the larger-corpus bigram baseline. |
 | [014 Optimizer and Sampling Diagnostics](../experiments/014-optimizer-and-sampling-diagnostics.md) | Optimizer diagnostics | A 5k `lr=0.001` run beat the 5k control, but greedy generation still collapsed. |
+| [015 GPTiny Capacity and Generation Diagnostics](../experiments/015-gptiny-capacity-and-generation-diagnostics.md) | Capacity diagnostics | Wider/deeper GPTiny improved validation and generation diversity metrics, but prose remained incoherent. |
 
 ## Topic Shortcuts
 
@@ -38,7 +39,8 @@ not a replacement for the original reports.
 - Generation: [010](../experiments/010-sampling-controls.md),
   [011](../experiments/011-larger-corpus-tiny-gpt.md),
   [013](../experiments/013-gptiny-training-budget-and-optimization.md),
-  [014](../experiments/014-optimizer-and-sampling-diagnostics.md).
+  [014](../experiments/014-optimizer-and-sampling-diagnostics.md),
+  [015](../experiments/015-gptiny-capacity-and-generation-diagnostics.md).
 
 ## Current Status
 
@@ -46,7 +48,7 @@ The infrastructure milestones are mostly complete for a small local lab:
 prepared corpora, manifests, baselines, run artifacts, run discovery, controlled
 generation, and experiment reports.
 
-The latest model-quality milestone shows GPTiny benefits from optimizer tuning:
-the 5k `lr=0.001` run beat the 5k control on validation loss. Greedy decoding
-still collapsed, so the next technical work should study capacity or
-tokenization.
+The latest model-quality milestone shows GPTiny benefits from added capacity:
+wide and deep variants improved validation loss and generation diversity
+diagnostics. Generated text still has phrase-level repetition and weak
+coherence, so the next technical work should study tokenization.

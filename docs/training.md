@@ -120,10 +120,11 @@ The settings are stored in `summary.json` under `generation`.
 
 ## Current Reading Of Results
 
-The current GPTiny model trains and longer budgets materially improve
-validation loss. On the larger public-domain corpus, experiment 014 found that
-the 5k `lr=0.001` run beat the 5k control on validation loss. Greedy generation
-still collapsed into repeated high-probability words.
+The current GPTiny model trains, and longer budgets, higher learning rate, and
+larger capacity all improve validation loss on the larger public-domain corpus.
+Experiment 015 found that wider/deeper variants also improved simple generation
+diversity diagnostics, but generated prose still showed phrase-level repetition
+and incoherence.
 
 ## Artifact Policy
 

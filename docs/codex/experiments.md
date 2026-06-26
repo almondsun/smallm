@@ -115,5 +115,14 @@ As of experiment 014:
   rate run.
 - Greedy generation still collapsed in every optimizer variant.
 
-The next technical experiment should test capacity or tokenization before
-adding unrelated infrastructure.
+As of experiment 015:
+
+- Wide and deep GPTiny variants improved validation over the high-LR control.
+- The deep variant reached the best validation point at `1.4950`, but final
+  validation rose after that while train loss kept falling.
+- Generation diversity diagnostics improved with capacity, especially
+  distinct-2, but generated prose still showed phrase-level repetition and weak
+  coherence.
+
+The next technical experiment should test tokenization before adding unrelated
+infrastructure.
