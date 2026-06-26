@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import asdict
+from math import log
 from pathlib import Path
 from time import perf_counter
 
@@ -8,7 +9,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from smallm.config import ExperimentConfig
-from smallm.data import CharTokenizer, TokenBlockDataset, load_prepared_corpus, split_tokens
+from smallm.data import TokenBlockDataset, load_prepared_corpus, train_tokenizer
 from smallm.generation import generate
 from smallm.model import GPT, GPTConfig
 from smallm.training.artifacts import (
@@ -98,6 +99,12 @@ def _metrics_record(
     }
 
 
+def _bits_per_character(loss: float | None, token_count: int, character_count: int) -> float | None:
+    if loss is None or character_count <= 0:
+        return None
+    return loss * token_count / (character_count * log(2))
+
+
 def train(config: ExperimentConfig) -> Path:
     set_seed(config.train.seed)
     device = default_device()
@@ -105,9 +112,15 @@ def train(config: ExperimentConfig) -> Path:
     run_manifest_path, dataset_manifest = copy_dataset_manifest(config.data.manifest_path, run_dir)
     write_config_snapshot(run_dir / "config.yaml", config)
     text = load_prepared_corpus(config.data.prepared_path)
-    tokenizer = CharTokenizer.train(text)
+    tokenizer = train_tokenizer(config.data, text)
     tokenizer.save(config.data.tokenizer_path)
-    train_tokens, val_tokens = split_tokens(tokenizer.encode(text), config.data.train_split)
+    character_split_index = int(len(text) * config.data.train_split)
+    train_text = text[:character_split_index]
+    val_text = text[character_split_index:]
+    train_tokens = torch.tensor(tokenizer.encode(train_text), dtype=torch.long)
+    val_tokens = torch.tensor(tokenizer.encode(val_text), dtype=torch.long)
+    train_characters = len(train_text)
+    val_characters = len(val_text)
     train_dataset = TokenBlockDataset(train_tokens, config.data.block_size)
     train_loader = DataLoader(train_dataset, batch_size=config.train.batch_size, shuffle=True)
     val_loader = None
@@ -250,7 +263,7 @@ def train(config: ExperimentConfig) -> Path:
         {
             "model_state": model.state_dict(),
             "model_config": asdict(model_config),
-            "tokenizer": {"stoi": tokenizer.stoi},
+            "tokenizer": tokenizer.to_state(),
             "tokenizer_path": config.data.tokenizer_path,
             "run_dir": str(run_dir),
         },
@@ -292,6 +305,22 @@ def train(config: ExperimentConfig) -> Path:
             "duration_seconds": elapsed_seconds,
             "parameter_count": parameter_count,
             "vocab_size": tokenizer.vocab_size,
+            "tokenizer_type": tokenizer.tokenizer_type,
+            "tokenizer_vocab_size": tokenizer.vocab_size,
+            "train_tokens": int(train_tokens.numel()),
+            "val_tokens": int(val_tokens.numel()),
+            "train_characters": train_characters,
+            "val_characters": val_characters,
+            "final_val_bits_per_char": _bits_per_character(
+                final_val_loss,
+                int(val_tokens.numel()),
+                val_characters,
+            ),
+            "best_val_bits_per_char": _bits_per_character(
+                best_val_loss,
+                int(val_tokens.numel()),
+                val_characters,
+            ),
             "max_steps": config.train.max_steps,
             "device": str(device),
             "generation": generation_settings,

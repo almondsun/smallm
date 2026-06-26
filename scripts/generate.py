@@ -4,7 +4,7 @@ import argparse
 
 import torch
 
-from smallm.data import CharTokenizer
+from smallm.data import load_tokenizer, tokenizer_from_state
 from smallm.generation import generate, generation_diagnostics
 from smallm.model import GPT, GPTConfig
 from smallm.training import load_checkpoint
@@ -35,9 +35,9 @@ def main() -> None:
 
     checkpoint = load_checkpoint(checkpoint_path)
     if "tokenizer" in checkpoint:
-        tokenizer = CharTokenizer(checkpoint["tokenizer"]["stoi"])
+        tokenizer = tokenizer_from_state(checkpoint["tokenizer"])
     else:
-        tokenizer = CharTokenizer.load(checkpoint["tokenizer_path"])
+        tokenizer = load_tokenizer(checkpoint["tokenizer_path"])
     device = default_device()
     model = GPT(GPTConfig(**checkpoint["model_config"])).to(device)
     model.load_state_dict(checkpoint["model_state"])

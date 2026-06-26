@@ -16,8 +16,20 @@ class DataConfig:
     prepared_path: str = "data/processed/corpus.txt"
     manifest_path: str = "data/processed/corpus_manifest.json"
     tokenizer_path: str = "data/processed/tokenizer.json"
+    tokenizer_type: str = "char"
+    bpe_vocab_size: int | None = None
+    bpe_min_frequency: int = 2
     block_size: int = 128
     train_split: float = 0.9
+
+    def __post_init__(self) -> None:
+        if self.tokenizer_type not in {"char", "bpe"}:
+            raise ValueError("data.tokenizer_type must be 'char' or 'bpe'")
+        if self.tokenizer_type == "bpe":
+            if self.bpe_vocab_size is None or self.bpe_vocab_size <= 0:
+                raise ValueError("data.bpe_vocab_size must be positive for BPE tokenizers")
+            if self.bpe_min_frequency <= 0:
+                raise ValueError("data.bpe_min_frequency must be positive")
 
 
 @dataclass(frozen=True)

@@ -22,6 +22,7 @@ not a replacement for the original reports.
 | [013 GPTiny Training Budget and Optimization](../experiments/013-gptiny-training-budget-and-optimization.md) | Training budget | Renamed the model family to GPTiny and found 2k/5k-step runs beat the larger-corpus bigram baseline. |
 | [014 Optimizer and Sampling Diagnostics](../experiments/014-optimizer-and-sampling-diagnostics.md) | Optimizer diagnostics | A 5k `lr=0.001` run beat the 5k control, but greedy generation still collapsed. |
 | [015 GPTiny Capacity and Generation Diagnostics](../experiments/015-gptiny-capacity-and-generation-diagnostics.md) | Capacity diagnostics | Wider/deeper GPTiny improved validation and generation diversity metrics, but prose remained incoherent. |
+| [016 Tokenization Study](../experiments/016-tokenization-study.md) | Tokenization | Simple BPE128 shortened sequences and made some greedy text more word-like, but underperformed the character control on estimated bits per character. |
 
 ## Topic Shortcuts
 
@@ -35,12 +36,15 @@ not a replacement for the original reports.
   [008](../experiments/008-dataset-manifest-and-checksums.md),
   [009](../experiments/009-run-dataset-provenance.md).
 - Evaluation: [006](../experiments/006-baseline-evaluation.md),
-  [011](../experiments/011-larger-corpus-tiny-gpt.md).
+  [011](../experiments/011-larger-corpus-tiny-gpt.md),
+  [016](../experiments/016-tokenization-study.md).
 - Generation: [010](../experiments/010-sampling-controls.md),
   [011](../experiments/011-larger-corpus-tiny-gpt.md),
   [013](../experiments/013-gptiny-training-budget-and-optimization.md),
   [014](../experiments/014-optimizer-and-sampling-diagnostics.md),
-  [015](../experiments/015-gptiny-capacity-and-generation-diagnostics.md).
+  [015](../experiments/015-gptiny-capacity-and-generation-diagnostics.md),
+  [016](../experiments/016-tokenization-study.md).
+- Tokenization: [016](../experiments/016-tokenization-study.md).
 
 ## Current Status
 
@@ -48,7 +52,9 @@ The infrastructure milestones are mostly complete for a small local lab:
 prepared corpora, manifests, baselines, run artifacts, run discovery, controlled
 generation, and experiment reports.
 
-The latest model-quality milestone shows GPTiny benefits from added capacity:
-wide and deep variants improved validation loss and generation diversity
-diagnostics. Generated text still has phrase-level repetition and weak
-coherence, so the next technical work should study tokenization.
+The latest model-quality milestone tested simple BPE against the character
+tokenizer. BPE128 reduced validation sequence length and made some greedy text
+more word-like, but it underperformed the character control on estimated bits
+per character and did not solve phrase-level repetition. The next technical
+work should tune tokenization and training together before adding unrelated
+infrastructure.

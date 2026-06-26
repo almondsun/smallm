@@ -21,6 +21,8 @@ metrics, checkpoint, summary, generated sample, and dataset provenance.
 | --- | --- |
 | `configs/smoke.yaml` | Fast full-pipeline check. |
 | `configs/gptiny.yaml` | Lightweight GPTiny experiment config used by current milestone reports. |
+| `configs/gptiny_5k_lr1e-3_deep.yaml` | Current best character-level capacity control. |
+| `configs/gptiny_bpe128_5k_lr1e-3_deep.yaml` | First simple BPE128 tokenization comparison. |
 
 ## Corpus Preparation
 
@@ -124,7 +126,10 @@ The current GPTiny model trains, and longer budgets, higher learning rate, and
 larger capacity all improve validation loss on the larger public-domain corpus.
 Experiment 015 found that wider/deeper variants also improved simple generation
 diversity diagnostics, but generated prose still showed phrase-level repetition
-and incoherence.
+and incoherence. Experiment 016 found that simple BPE128 shortened the token
+sequence and made some greedy text more word-like, but it underperformed the
+character control on estimated bits per character and did not solve phrase-level
+repetition.
 
 ## Artifact Policy
 

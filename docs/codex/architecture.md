@@ -12,7 +12,7 @@ text to trained checkpoint inspectable:
 ```text
 raw text
   -> prepared corpus, stats, manifest
-  -> character tokenizer
+  -> selected character or simple BPE tokenizer
   -> token blocks
   -> GPT logits and next-token loss
   -> checkpoint, metrics, summary, sample, copied manifest
@@ -29,7 +29,10 @@ contracts explicit.
 Core logic is deterministic or tensor-oriented package code:
 
 - `smallm.data.corpus`: text normalization, stats, checksums, manifests.
-- `smallm.data.tokenizer`: character vocabulary, encode, decode, JSON state.
+- `smallm.data.tokenizer`: tokenizer selection, artifact loading, and
+  character-tokenizer state.
+- `smallm.data.bpe_tokenizer`: educational BPE training, encode/decode, and
+  inspectable JSON state.
 - `smallm.data.dataset`: train/validation split and shifted token blocks.
 - `smallm.model`: causal attention, Transformer blocks, GPT forward/loss.
 - `smallm.evaluation`: baseline losses and perplexity.
@@ -62,7 +65,7 @@ domain logic in scripts when it belongs under `src/smallm/`.
 - conservative corpus normalization
 - source and split metadata
 - raw/prepared checksums
-- character tokenizer state
+- character or simple BPE tokenizer state
 - token block dataset construction
 
 `model/` owns:
@@ -128,7 +131,7 @@ Do not remove or rename these artifacts without an explicit migration decision.
 
 The project intentionally does not yet include:
 
-- BPE or subword tokenization
+- production tokenizer libraries or a broad tokenizer framework
 - larger model families
 - distributed training
 - checkpoint resume

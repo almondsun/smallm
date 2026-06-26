@@ -9,7 +9,7 @@ scripts parse arguments and call package code.
 ```text
 raw text
   -> prepared corpus, stats, manifest
-  -> character tokenizer
+  -> selected character or simple BPE tokenizer
   -> token block dataset
   -> GPT forward pass
   -> next-token loss
@@ -115,7 +115,7 @@ data, training, artifact, and script layers rather than leaking into model code.
 
 ## Deferred Work
 
-The project intentionally does not yet include BPE, larger model scaling,
-distributed training, checkpoint resume, dashboards, or hosted tracking. The
-next technical work should first test training budget, optimizer settings,
-capacity, and tokenization limits.
+The project intentionally does not yet include production tokenizer libraries,
+larger model families, distributed training, checkpoint resume, dashboards, or
+hosted tracking. The next technical work should refine tokenizer/training
+comparisons before adding unrelated infrastructure.

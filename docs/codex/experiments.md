@@ -124,5 +124,14 @@ As of experiment 015:
   distinct-2, but generated prose still showed phrase-level repetition and weak
   coherence.
 
-The next technical experiment should test tokenization before adding unrelated
-infrastructure.
+As of experiment 016:
+
+- Simple BPE128 reduced validation sequence length from 14,453 character tokens
+  to 9,522 BPE tokens.
+- BPE128 underperformed the character control on estimated best bits per
+  character (`2.4453` versus `2.1569`).
+- BPE128 made some greedy text more word-like, but phrase-level repetition and
+  incoherent prose remained.
+
+The next technical experiment should tune tokenization and training together
+before adding unrelated infrastructure.

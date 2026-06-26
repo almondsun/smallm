@@ -33,7 +33,7 @@ also include PyYAML and pytest.
 python -m pytest
 ```
 
-Current expected result after milestone 015+: 41 tests passing.
+Current expected result after milestone 016+: 54 tests passing.
 
 ### Compile Check
 

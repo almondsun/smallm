@@ -91,10 +91,11 @@ If a relevant check cannot be run, state why and what remains unverified.
 ## Current Technical Status
 
 The project infrastructure is stronger than the current generation quality. The
-latest capacity study showed that wider/deeper GPTiny variants improve
-validation loss and generation diversity diagnostics, but larger models still
-produce phrase-level repetition and incoherent prose. Future technical work
-should study tokenization before adding unrelated infrastructure.
+latest tokenization study showed that simple BPE128 shortens sequences and can
+make greedy output more word-like, but it underperformed the character control
+on estimated bits per character and did not solve phrase-level repetition.
+Future technical work should tune tokenization and training together before
+adding unrelated infrastructure.
 
 ## Safety And Security
 

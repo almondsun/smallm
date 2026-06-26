@@ -20,7 +20,7 @@ blocks, next-token training, baselines, generation, and experiment records.
 | Area | What exists |
 | --- | --- |
 | Corpus preparation | Normalized corpus output, stats, checksums, source metadata, and manifest files. |
-| Tokenization | Character-level tokenizer trained from the prepared corpus. |
+| Tokenization | Character-level tokenizer plus a small educational BPE tokenizer for controlled experiments. |
 | Model | Decoder-only GPT-style Transformer with causal self-attention. |
 | Evaluation | Uniform, unigram, and add-one smoothed bigram baselines. |
 | Training | Config-driven training with validation loss, progress logging, checkpoints, metrics, summaries, and samples. |
@@ -83,7 +83,7 @@ python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temp
 The infrastructure is ahead of the model quality. The pipeline is reproducible
 and the run records are useful, but the current tiny model remains weak.
 
-Experiment 015 is the clearest status check:
+Experiment 016 is the clearest status check:
 
 - Corpus grew from 4,838 to 144,530 prepared characters.
 - The larger-corpus bigram baseline reached validation loss `2.4340`.
@@ -94,13 +94,18 @@ Experiment 015 is the clearest status check:
   and best validation loss `1.6501`.
 - Wider/deeper GPTiny variants improved validation and generation diversity
   diagnostics; the deep variant reached best validation loss `1.4950`.
-- Greedy generation improved by simple diversity metrics but still shows
-  phrase-level repetition and incoherent prose.
+- Simple BPE128 reduced validation sequence length from 14,453 character tokens
+  to 9,522 BPE tokens, but underperformed the character control on estimated
+  best bits per character (`2.4453` versus `2.1569`).
+- BPE128 produced somewhat more word-like greedy text, but generation still
+  showed phrase-level repetition and incoherent prose.
 
 The budget and optimizer studies show that the current model was materially
 undertrained and benefited from a higher learning rate. The capacity study
-shows model size still helps, but generation quality remains limited enough
-that tokenization is the next likely bottleneck to study.
+shows model size still helps. The first tokenization study shows that simple
+BPE is a useful direction, but this BPE128 setup did not beat the character
+control; the next technical direction should tune tokenization and training
+together before adding unrelated infrastructure.
 
 ## Material Status
 
@@ -111,7 +116,7 @@ outputs are not tracked.
 
 ## Not Implemented Yet
 
-- BPE or subword tokenization.
-- BPE or tokenization studies beyond the current character tokenizer.
+- Production-grade tokenizers or external tokenizer libraries.
+- Broader tokenization sweeps beyond the first BPE128 comparison.
 - Checkpoint resume, mixed precision, distributed training, or dashboards.
 - Remote dataset registry or hosted experiment tracking.

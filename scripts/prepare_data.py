@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 
 from smallm.config import load_config
-from smallm.data import CharTokenizer, load_prepared_corpus
+from smallm.data import load_prepared_corpus, train_tokenizer
 
 
 def main() -> None:
@@ -13,9 +13,10 @@ def main() -> None:
 
     config = load_config(args.config)
     text = load_prepared_corpus(config.data.prepared_path)
-    tokenizer = CharTokenizer.train(text)
+    tokenizer = train_tokenizer(config.data, text)
     tokenizer.save(config.data.tokenizer_path)
-    print(f"saved tokenizer with {tokenizer.vocab_size} tokens to {config.data.tokenizer_path}")
+    label = "BPE" if config.data.tokenizer_type == "bpe" else "char"
+    print(f"saved {label} tokenizer with {tokenizer.vocab_size} tokens to {config.data.tokenizer_path}")
 
 
 if __name__ == "__main__":

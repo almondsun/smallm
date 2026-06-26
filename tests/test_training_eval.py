@@ -110,3 +110,59 @@ def test_train_records_final_validation_when_max_steps_misses_eval_interval(tmp_
     assert summary["best_val_step"] in {2, 3}
     assert metrics[-1]["step"] == 3
     assert metrics[-1]["val_loss"] == summary["final_val_loss"]
+
+
+def test_train_can_use_bpe_tokenizer(tmp_path):
+    prepared_path = tmp_path / "corpus.txt"
+    manifest_path = tmp_path / "corpus_manifest.json"
+    tokenizer_path = tmp_path / "tokenizer_bpe.json"
+    runs_dir = tmp_path / "runs"
+    text = ("abcdefghijklmnopqrstuvwxyz\n" * 8) + "Once more tokens\n"
+    prepared_path.write_text(text, encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "source_name": "test corpus",
+                "prepared_characters": len(text),
+                "unique_characters": len(set(text)),
+                "train_split": 0.8,
+            }
+        ),
+        encoding="utf-8",
+    )
+    config = ExperimentConfig(
+        data=DataConfig(
+            prepared_path=str(prepared_path),
+            manifest_path=str(manifest_path),
+            tokenizer_path=str(tokenizer_path),
+            tokenizer_type="bpe",
+            bpe_vocab_size=32,
+            block_size=4,
+            train_split=0.8,
+        ),
+        model=ModelConfig(vocab_size=256, block_size=4, n_layer=1, n_head=1, n_embd=8),
+        train=TrainConfig(
+            run_name="bpe_train",
+            runs_dir=str(runs_dir),
+            batch_size=2,
+            max_steps=2,
+            log_interval=1,
+            eval_interval=1,
+            eval_batches=1,
+            sample_prompt="Once",
+            sample_max_new_tokens=2,
+            seed=1337,
+            sample_seed=1337,
+        ),
+    )
+
+    checkpoint_path = train(config)
+    summary = json.loads((checkpoint_path.parent / "summary.json").read_text(encoding="utf-8"))
+
+    assert summary["tokenizer_type"] == "bpe"
+    assert summary["tokenizer_vocab_size"] <= 32
+    assert summary["train_tokens"] > 0
+    assert summary["val_tokens"] > 0
+    assert summary["train_characters"] == int(len(text) * 0.8)
+    assert summary["val_characters"] == len(text) - int(len(text) * 0.8)
+    assert summary["final_val_bits_per_char"] is not None
