@@ -1,6 +1,7 @@
 data:
   input_path: data/raw/input.txt
   prepared_path: data/processed/corpus.txt
+  manifest_path: data/processed/corpus_manifest.json
   tokenizer_path: data/processed/tokenizer.json
   block_size: 64
   train_split: 0.9

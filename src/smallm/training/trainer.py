@@ -13,7 +13,9 @@ from smallm.generation import generate
 from smallm.model import GPT, GPTConfig
 from smallm.training.artifacts import (
     MetricsWriter,
+    copy_dataset_manifest,
     create_run_dir,
+    dataset_summary_from_manifest,
     write_config_snapshot,
     write_json,
 )
@@ -56,6 +58,7 @@ def train(config: ExperimentConfig) -> Path:
     set_seed(config.train.seed)
     device = default_device()
     run_dir = create_run_dir(config.train.runs_dir, config.train.run_name)
+    run_manifest_path, dataset_manifest = copy_dataset_manifest(config.data.manifest_path, run_dir)
     write_config_snapshot(run_dir / "config.yaml", config)
     text = load_prepared_corpus(config.data.prepared_path)
     tokenizer = CharTokenizer.train(text)
@@ -189,6 +192,10 @@ def train(config: ExperimentConfig) -> Path:
             "vocab_size": tokenizer.vocab_size,
             "max_steps": config.train.max_steps,
             "device": str(device),
+            "dataset": dataset_summary_from_manifest(
+                dataset_manifest,
+                run_manifest_path=run_manifest_path,
+            ),
         },
     )
     logger.summary(

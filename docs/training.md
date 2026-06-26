@@ -36,6 +36,7 @@ Every run writes reproducibility artifacts under `runs/<run-name>/<run-id>/`:
 - `summary.json`: final losses, duration, parameter count, vocab size, and paths.
 - `checkpoint.pt`: model weights and embedded tokenizer state.
 - `sample.txt`: generated text from the configured prompt.
+- `dataset_manifest.json`: copied corpus manifest with source, checksum, and normalization metadata.
 
 Run discovery:
 
@@ -47,5 +48,7 @@ python scripts/show_run.py --run latest --run-name tiny_gpt
 python scripts/generate.py --run runs/smoke/<run-id> --prompt "Once"
 python scripts/generate.py --run latest --run-name smoke --prompt "Once"
 ```
+
+`show_run.py` prints a compact dataset section when the run summary includes manifest metadata.
 
 Runtime artifacts under `data/raw/`, `data/processed/`, `checkpoints/`, and `runs/` are local by default.

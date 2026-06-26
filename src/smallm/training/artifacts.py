@@ -4,9 +4,24 @@ import json
 from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
+import shutil
 from typing import Any
 
 from smallm.config import ExperimentConfig
+
+DATASET_SUMMARY_FIELDS = [
+    "source_name",
+    "source_note",
+    "raw_sha256",
+    "prepared_sha256",
+    "raw_characters",
+    "prepared_characters",
+    "unique_characters",
+    "train_split",
+    "train_characters",
+    "validation_characters",
+    "normalization_rules",
+]
 
 
 def create_run_dir(runs_dir: str | Path, run_name: str) -> Path:
@@ -59,3 +74,30 @@ def write_json(path: str | Path, payload: dict[str, Any]) -> None:
     output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
     output.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def load_dataset_manifest(path: str | Path) -> dict[str, Any]:
+    manifest_path = Path(path)
+    if not manifest_path.exists():
+        raise FileNotFoundError(
+            f"dataset manifest not found at {manifest_path}. "
+            "Run scripts/prepare_corpus.py with --manifest before training."
+        )
+    return json.loads(manifest_path.read_text(encoding="utf-8"))
+
+
+def copy_dataset_manifest(manifest_path: str | Path, run_dir: str | Path) -> tuple[Path, dict[str, Any]]:
+    manifest = load_dataset_manifest(manifest_path)
+    destination = Path(run_dir) / "dataset_manifest.json"
+    shutil.copyfile(manifest_path, destination)
+    return destination, manifest
+
+
+def dataset_summary_from_manifest(
+    manifest: dict[str, Any],
+    *,
+    run_manifest_path: str | Path,
+) -> dict[str, Any]:
+    summary = {field: manifest.get(field) for field in DATASET_SUMMARY_FIELDS}
+    summary["manifest_path"] = str(run_manifest_path)
+    return summary

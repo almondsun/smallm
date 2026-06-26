@@ -24,6 +24,19 @@ def main() -> None:
     print(f"metrics: {summary.get('metrics_path', run_dir / 'metrics.jsonl')}")
     print(f"summary: {run_dir / 'summary.json'}")
     print(f"checkpoint: {summary.get('checkpoint_path', run_dir / 'checkpoint.pt')}")
+    dataset = summary.get("dataset")
+    if dataset:
+        prepared_sha = dataset.get("prepared_sha256") or ""
+        print("dataset:")
+        print(f"  source: {dataset.get('source_name')}")
+        print(f"  prepared_sha256: {prepared_sha[:12]}")
+        print(f"  prepared_characters: {dataset.get('prepared_characters')}")
+        print(f"  unique_characters: {dataset.get('unique_characters')}")
+        print(
+            "  split_characters: "
+            f"train={dataset.get('train_characters')} "
+            f"val={dataset.get('validation_characters')}"
+        )
     if last_metric is not None:
         print(
             "last metric: "
