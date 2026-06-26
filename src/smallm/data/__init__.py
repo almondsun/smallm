@@ -1,6 +1,14 @@
+from smallm.data.corpus import clean_corpus_text, corpus_stats, load_prepared_corpus
 from smallm.data.tokenizer import CharTokenizer
 
-__all__ = ["CharTokenizer", "TokenBlockDataset", "split_tokens"]
+__all__ = [
+    "CharTokenizer",
+    "TokenBlockDataset",
+    "clean_corpus_text",
+    "corpus_stats",
+    "load_prepared_corpus",
+    "split_tokens",
+]
 
 
 def __getattr__(name: str):

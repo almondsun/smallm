@@ -8,7 +8,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from smallm.config import ExperimentConfig
-from smallm.data import CharTokenizer, TokenBlockDataset, split_tokens
+from smallm.data import CharTokenizer, TokenBlockDataset, load_prepared_corpus, split_tokens
 from smallm.generation import generate
 from smallm.model import GPT, GPTConfig
 from smallm.training.artifacts import (
@@ -57,7 +57,7 @@ def train(config: ExperimentConfig) -> Path:
     device = default_device()
     run_dir = create_run_dir(config.train.runs_dir, config.train.run_name)
     write_config_snapshot(run_dir / "config.yaml", config)
-    text = Path(config.data.input_path).read_text(encoding="utf-8")
+    text = load_prepared_corpus(config.data.prepared_path)
     tokenizer = CharTokenizer.train(text)
     tokenizer.save(config.data.tokenizer_path)
     train_tokens, val_tokens = split_tokens(tokenizer.encode(text), config.data.train_split)

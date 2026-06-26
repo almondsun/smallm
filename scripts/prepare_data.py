@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 from smallm.config import load_config
-from smallm.data import CharTokenizer
+from smallm.data import CharTokenizer, load_prepared_corpus
 
 
 def main() -> None:
@@ -13,7 +12,7 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_config(args.config)
-    text = Path(config.data.input_path).read_text(encoding="utf-8")
+    text = load_prepared_corpus(config.data.prepared_path)
     tokenizer = CharTokenizer.train(text)
     tokenizer.save(config.data.tokenizer_path)
     print(f"saved tokenizer with {tokenizer.vocab_size} tokens to {config.data.tokenizer_path}")

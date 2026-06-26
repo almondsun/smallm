@@ -13,6 +13,7 @@ except ModuleNotFoundError:  # pragma: no cover - exercised when PyYAML is absen
 @dataclass(frozen=True)
 class DataConfig:
     input_path: str = "data/raw/input.txt"
+    prepared_path: str = "data/processed/corpus.txt"
     tokenizer_path: str = "data/processed/tokenizer.json"
     block_size: int = 128
     train_split: float = 0.9

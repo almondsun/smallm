@@ -1,10 +1,9 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 from smallm.config import load_config
-from smallm.data import CharTokenizer, split_tokens
+from smallm.data import CharTokenizer, load_prepared_corpus, split_tokens
 from smallm.evaluation import evaluate_baselines
 
 
@@ -14,7 +13,7 @@ def main() -> None:
     args = parser.parse_args()
 
     config = load_config(args.config)
-    text = Path(config.data.input_path).read_text(encoding="utf-8")
+    text = load_prepared_corpus(config.data.prepared_path)
     tokenizer = CharTokenizer.train(text)
     train_tokens, val_tokens = split_tokens(tokenizer.encode(text), config.data.train_split)
     results = evaluate_baselines(
