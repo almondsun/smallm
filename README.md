@@ -18,9 +18,16 @@ The goal of this project is not to train a frontier-scale model, but to understa
 
 ```bash
 python -m pip install -e ".[dev]"
+python scripts/prepare_data.py --config configs/smoke.yaml
+python scripts/train.py --config configs/smoke.yaml
+python scripts/generate.py --checkpoint checkpoints/latest.pt --prompt "Once"
+```
+
+For a longer lightweight run with visible training progress:
+
+```bash
 python scripts/prepare_data.py --config configs/tiny_gpt.yaml
 python scripts/train.py --config configs/tiny_gpt.yaml
-python scripts/generate.py --checkpoint checkpoints/latest.pt --prompt "Once"
 ```
 
 Put a plain text corpus at `data/raw/input.txt` before running the data and training scripts.

@@ -11,8 +11,7 @@ def main() -> None:
     parser.add_argument("--config", required=True)
     args = parser.parse_args()
 
-    checkpoint_path = train(load_config(args.config))
-    print(f"saved checkpoint to {checkpoint_path}")
+    train(load_config(args.config))
 
 
 if __name__ == "__main__":
