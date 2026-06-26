@@ -30,13 +30,16 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainConfig:
+    run_name: str = "tiny_gpt"
+    runs_dir: str = "runs"
     batch_size: int = 32
     max_steps: int = 1000
     learning_rate: float = 3e-4
     log_interval: int = 10
     eval_interval: int = 100
     eval_batches: int = 5
-    checkpoint_dir: str = "checkpoints"
+    sample_prompt: str = "Once"
+    sample_max_new_tokens: int = 100
     seed: int = 1337
 
 

@@ -19,7 +19,10 @@ def main() -> None:
     args = parser.parse_args()
 
     checkpoint = load_checkpoint(args.checkpoint)
-    tokenizer = CharTokenizer.load(checkpoint["tokenizer_path"])
+    if "tokenizer" in checkpoint:
+        tokenizer = CharTokenizer(checkpoint["tokenizer"]["stoi"])
+    else:
+        tokenizer = CharTokenizer.load(checkpoint["tokenizer_path"])
     device = default_device()
     model = GPT(GPTConfig(**checkpoint["model_config"])).to(device)
     model.load_state_dict(checkpoint["model_state"])

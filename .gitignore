@@ -224,6 +224,8 @@ data/processed/*
 !data/processed/.gitkeep
 checkpoints/*
 !checkpoints/.gitkeep
+runs/*
+!runs/.gitkeep
 
 # Local-only cloned reference repositories
 research/references/

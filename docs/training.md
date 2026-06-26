@@ -10,7 +10,7 @@ Smoke test:
 1. Put a plain text corpus at `data/raw/input.txt`.
 2. Run `python scripts/prepare_data.py --config configs/smoke.yaml`.
 3. Run `python scripts/train.py --config configs/smoke.yaml`.
-4. Generate text with `python scripts/generate.py --checkpoint checkpoints/latest.pt --prompt "Once"`.
+4. Generate text with `python scripts/generate.py --checkpoint runs/smoke/<run-id>/checkpoint.pt --prompt "Once"`.
 
 Tiny training:
 
@@ -21,4 +21,12 @@ python scripts/train.py --config configs/tiny_gpt.yaml
 
 The training progress logger prints run settings, aligned progress rows, validation loss at evaluation intervals, throughput, ETA, and a final checkpoint summary.
 
-Runtime artifacts under `data/` and `checkpoints/` are local by default.
+Every run writes reproducibility artifacts under `runs/<run-name>/<run-id>/`:
+
+- `config.yaml`: exact config used for the run.
+- `metrics.jsonl`: logged training and validation metrics.
+- `summary.json`: final losses, duration, parameter count, vocab size, and paths.
+- `checkpoint.pt`: model weights and embedded tokenizer state.
+- `sample.txt`: generated text from the configured prompt.
+
+Runtime artifacts under `data/`, `checkpoints/`, and `runs/` are local by default.

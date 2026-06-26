@@ -20,7 +20,7 @@ The goal of this project is not to train a frontier-scale model, but to understa
 python -m pip install -e ".[dev]"
 python scripts/prepare_data.py --config configs/smoke.yaml
 python scripts/train.py --config configs/smoke.yaml
-python scripts/generate.py --checkpoint checkpoints/latest.pt --prompt "Once"
+python scripts/generate.py --checkpoint runs/smoke/<run-id>/checkpoint.pt --prompt "Once"
 ```
 
 For a longer lightweight run with visible training progress:
@@ -29,5 +29,7 @@ For a longer lightweight run with visible training progress:
 python scripts/prepare_data.py --config configs/tiny_gpt.yaml
 python scripts/train.py --config configs/tiny_gpt.yaml
 ```
+
+Each training run writes `config.yaml`, `metrics.jsonl`, `summary.json`, `checkpoint.pt`, and `sample.txt` under `runs/<run-name>/<run-id>/`.
 
 Put a plain text corpus at `data/raw/input.txt` before running the data and training scripts.
