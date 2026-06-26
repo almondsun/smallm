@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import asdict
 from pathlib import Path
 
 import torch
@@ -53,7 +54,7 @@ def train(config: ExperimentConfig) -> Path:
         checkpoint_path,
         {
             "model_state": model.state_dict(),
-            "model_config": model_config,
+            "model_config": asdict(model_config),
             "tokenizer_path": config.data.tokenizer_path,
         },
     )
