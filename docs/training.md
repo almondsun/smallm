@@ -10,7 +10,9 @@ Smoke test:
 1. Put a plain text corpus at `data/raw/input.txt`.
 2. Run `python scripts/prepare_data.py --config configs/smoke.yaml`.
 3. Run `python scripts/train.py --config configs/smoke.yaml`.
-4. Generate text with `python scripts/generate.py --checkpoint runs/smoke/<run-id>/checkpoint.pt --prompt "Once"`.
+4. List runs with `python scripts/list_runs.py`.
+5. Inspect the latest smoke run with `python scripts/show_run.py --run latest --run-name smoke`.
+6. Generate text with `python scripts/generate.py --run latest --run-name smoke --prompt "Once"`.
 
 Tiny training:
 
@@ -28,5 +30,16 @@ Every run writes reproducibility artifacts under `runs/<run-name>/<run-id>/`:
 - `summary.json`: final losses, duration, parameter count, vocab size, and paths.
 - `checkpoint.pt`: model weights and embedded tokenizer state.
 - `sample.txt`: generated text from the configured prompt.
+
+Run discovery:
+
+```bash
+python scripts/list_runs.py
+python scripts/list_runs.py --run-name smoke
+python scripts/show_run.py --run runs/smoke/<run-id>
+python scripts/show_run.py --run latest --run-name tiny_gpt
+python scripts/generate.py --run runs/smoke/<run-id> --prompt "Once"
+python scripts/generate.py --run latest --run-name smoke --prompt "Once"
+```
 
 Runtime artifacts under `data/`, `checkpoints/`, and `runs/` are local by default.

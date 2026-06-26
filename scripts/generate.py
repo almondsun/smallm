@@ -8,17 +8,27 @@ from smallm.data import CharTokenizer
 from smallm.generation import generate
 from smallm.model import GPT, GPTConfig
 from smallm.training import load_checkpoint
+from smallm.training.runs import checkpoint_path_for_run, resolve_run_path
 from smallm.utils.device import default_device
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoint", required=True)
+    source = parser.add_mutually_exclusive_group(required=True)
+    source.add_argument("--checkpoint")
+    source.add_argument("--run")
+    parser.add_argument("--run-name")
+    parser.add_argument("--runs-dir", default="runs")
     parser.add_argument("--prompt", required=True)
     parser.add_argument("--max-new-tokens", type=int, default=100)
     args = parser.parse_args()
 
-    checkpoint = load_checkpoint(args.checkpoint)
+    checkpoint_path = args.checkpoint
+    if args.run is not None:
+        run_dir = resolve_run_path(args.run, run_name=args.run_name, runs_dir=args.runs_dir)
+        checkpoint_path = checkpoint_path_for_run(run_dir)
+
+    checkpoint = load_checkpoint(checkpoint_path)
     if "tokenizer" in checkpoint:
         tokenizer = CharTokenizer(checkpoint["tokenizer"]["stoi"])
     else:
