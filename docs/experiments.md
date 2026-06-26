@@ -7,17 +7,19 @@ not a replacement for the original reports.
 
 | Experiment | Area | Result |
 | --- | --- | --- |
-| [001 Tiny GPT Smoke Test](../experiments/001-tiny-gpt-smoke-test.md) | First model path | Initial tokenizer, dataset, model, train script, generate script, and tests passed. |
+| [001 Tiny GPT Smoke Test](../experiments/001-tiny-gpt-smoke-test.md) | First model path | Initial tokenizer, dataset, model, train script, generate script, and tests passed under the original name. |
 | [002 Training Logger and Tiny Config](../experiments/002-training-logger-and-tiny-config.md) | Training visibility | Tiny config and progress logger produced readable loss/throughput output. |
 | [003 Run Artifacts and Metrics](../experiments/003-run-artifacts-and-metrics.md) | Run records | Training began preserving config, metrics, summary, checkpoint, and sample files. |
 | [004 Run Discovery](../experiments/004-run-discovery.md) | Run navigation | Added run listing, latest-run resolution, and run inspection. |
-| [005 Real Corpus Tiny GPT](../experiments/005-real-corpus-tiny-gpt.md) | Real text | Tiny GPT trained on a 4,838-character prose corpus with vocab size 53. |
-| [006 Baseline Evaluation](../experiments/006-baseline-evaluation.md) | Baselines | Tiny GPT validation loss `2.4505` beat add-one bigram `2.5562` on the small corpus. |
+| [005 Real Corpus Tiny GPT](../experiments/005-real-corpus-tiny-gpt.md) | Real text | GPTiny, then named Tiny GPT, trained on a 4,838-character prose corpus with vocab size 53. |
+| [006 Baseline Evaluation](../experiments/006-baseline-evaluation.md) | Baselines | GPTiny validation loss `2.4505` beat add-one bigram `2.5562` on the small corpus. |
 | [007 Reproducible Corpus Preparation](../experiments/007-reproducible-corpus-preparation.md) | Corpus prep | Baselines and training moved to a normalized prepared corpus path. |
 | [008 Dataset Manifest and Checksums](../experiments/008-dataset-manifest-and-checksums.md) | Dataset identity | Corpus manifests began recording source metadata, checksums, counts, and normalization rules. |
 | [009 Run Dataset Provenance](../experiments/009-run-dataset-provenance.md) | Run provenance | Runs copied `dataset_manifest.json` and stored dataset fields in `summary.json`. |
 | [010 Sampling Controls](../experiments/010-sampling-controls.md) | Generation | Added `max_new_tokens`, `temperature`, `top_k`, `seed`, and greedy decoding. |
-| [011 Larger Public-Domain Corpus Experiment](../experiments/011-larger-corpus-tiny-gpt.md) | Model quality | Larger corpus reached 144,530 prepared characters, but tiny GPT loss `2.5914` trailed bigram `2.4340`. |
+| [011 Larger Public-Domain Corpus Experiment](../experiments/011-larger-corpus-tiny-gpt.md) | Model quality | Larger corpus reached 144,530 prepared characters, but GPTiny loss `2.5914` trailed bigram `2.4340`. |
+| [012 Documentation and Portfolio Narrative](../experiments/012-documentation-and-portfolio-narrative.md) | Documentation | Reframed the project docs around the current reproducible language-model lab. |
+| [013 GPTiny Training Budget and Optimization](../experiments/013-gptiny-training-budget-and-optimization.md) | Training budget | Renamed the model family to GPTiny and found 2k/5k-step runs beat the larger-corpus bigram baseline. |
 
 ## Topic Shortcuts
 
@@ -33,7 +35,8 @@ not a replacement for the original reports.
 - Evaluation: [006](../experiments/006-baseline-evaluation.md),
   [011](../experiments/011-larger-corpus-tiny-gpt.md).
 - Generation: [010](../experiments/010-sampling-controls.md),
-  [011](../experiments/011-larger-corpus-tiny-gpt.md).
+  [011](../experiments/011-larger-corpus-tiny-gpt.md),
+  [013](../experiments/013-gptiny-training-budget-and-optimization.md).
 
 ## Current Status
 
@@ -41,6 +44,7 @@ The infrastructure milestones are mostly complete for a small local lab:
 prepared corpora, manifests, baselines, run artifacts, run discovery, controlled
 generation, and experiment reports.
 
-The latest model-quality milestone is negative but useful. More text alone did
-not improve the unchanged 500-step tiny GPT. The next technical work should
-study training budget, optimization, capacity, or tokenization.
+The latest model-quality milestone shows the 500-step GPTiny was materially
+undertrained on the larger corpus. A 2k-step run beat bigram, and a 5k-step run
+improved further, but greedy decoding still collapsed. The next technical work
+should study optimizer settings, capacity, or tokenization.

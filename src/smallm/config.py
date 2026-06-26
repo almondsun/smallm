@@ -22,6 +22,7 @@ class DataConfig:
 
 @dataclass(frozen=True)
 class ModelConfig:
+    # Default for incomplete configs; training uses the tokenizer-derived vocab size.
     vocab_size: int = 256
     block_size: int = 128
     n_layer: int = 4
@@ -32,7 +33,7 @@ class ModelConfig:
 
 @dataclass(frozen=True)
 class TrainConfig:
-    run_name: str = "tiny_gpt"
+    run_name: str = "gptiny"
     runs_dir: str = "runs"
     batch_size: int = 32
     max_steps: int = 1000

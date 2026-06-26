@@ -7,6 +7,7 @@ data:
   train_split: 0.9
 
 model:
+  # Placeholder default; training replaces this with the tokenizer-derived vocab size.
   vocab_size: 256
   block_size: 64
   n_layer: 2
@@ -15,13 +16,13 @@ model:
   dropout: 0.1
 
 train:
-  run_name: tiny_gpt
+  run_name: gptiny_2k
   runs_dir: runs
   batch_size: 16
-  max_steps: 500
+  max_steps: 2000
   learning_rate: 0.0003
-  log_interval: 10
-  eval_interval: 50
+  log_interval: 50
+  eval_interval: 100
   eval_batches: 5
   sample_prompt: Once
   sample_max_new_tokens: 100

@@ -43,7 +43,7 @@ def test_list_and_find_latest_run(tmp_path):
 
 
 def test_load_summary_last_metric_and_checkpoint_path(tmp_path):
-    run_dir = _write_run(tmp_path, "tiny_gpt", "run-0001", {"step": 5, "train_loss": 1.2, "val_loss": 1.1})
+    run_dir = _write_run(tmp_path, "gptiny", "run-0001", {"step": 5, "train_loss": 1.2, "val_loss": 1.1})
 
     assert load_summary(run_dir)["final_train_loss"] == 1.2
     assert load_last_metric(run_dir) == {"step": 5, "train_loss": 1.2, "val_loss": 1.1}

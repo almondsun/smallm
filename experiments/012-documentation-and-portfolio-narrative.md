@@ -10,7 +10,7 @@ Make `smaLLM` read like a serious small-scale language-model engineering project
 - Expanded `docs/architecture.md` into a boundary-oriented system overview for data, model, evaluation, training, generation, and artifacts.
 - Reworked `docs/training.md` into a concise workflow guide with command maps and artifact contracts.
 - Added `docs/experiments.md` as a clean index and topic guide for experiments 001-011.
-- Preserved the candid result from experiment 011: the larger corpus helped the bigram baseline more than the unchanged tiny GPT.
+- Preserved the candid result from experiment 011: the larger corpus helped the bigram baseline more than the unchanged GPTiny model.
 
 ## Current Public Story
 

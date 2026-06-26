@@ -33,7 +33,7 @@ also include PyYAML and pytest.
 python -m pytest
 ```
 
-Current expected result after milestone 010+: 31 tests passing.
+Current expected result after milestone 013+: 32 tests passing.
 
 ### Compile Check
 
@@ -94,7 +94,7 @@ Use `--source-note` for fetch URLs, extraction rules, or curation notes.
 ### Prepare Tokenizer
 
 ```bash
-python scripts/prepare_data.py --config configs/tiny_gpt.yaml
+python scripts/prepare_data.py --config configs/gptiny.yaml
 ```
 
 For fast smoke validation, use `configs/smoke.yaml`.
@@ -102,13 +102,13 @@ For fast smoke validation, use `configs/smoke.yaml`.
 ### Baselines
 
 ```bash
-python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
+python scripts/evaluate_baselines.py --config configs/gptiny.yaml
 ```
 
 ### Training
 
 ```bash
-python scripts/train.py --config configs/tiny_gpt.yaml
+python scripts/train.py --config configs/gptiny.yaml
 ```
 
 For quick end-to-end checks:
@@ -122,14 +122,14 @@ Training writes ignored artifacts under `runs/<run-name>/<run-id>/`.
 ### Run Inspection
 
 ```bash
-python scripts/show_run.py --run latest --run-name tiny_gpt
+python scripts/show_run.py --run latest --run-name gptiny
 ```
 
 ### Generation
 
 ```bash
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --greedy --max-new-tokens 100
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --greedy --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
 ## Validation Matrix

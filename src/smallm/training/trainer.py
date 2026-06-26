@@ -54,6 +54,28 @@ def _parameter_count(model: torch.nn.Module) -> int:
     return sum(parameter.numel() for parameter in model.parameters())
 
 
+def _metrics_record(
+    *,
+    step: int,
+    config: ExperimentConfig,
+    start_time: float,
+    optimizer: torch.optim.Optimizer,
+    train_loss: float,
+    val_loss: float | None,
+) -> dict[str, float | int | None]:
+    elapsed = perf_counter() - start_time
+    tokens_seen = step * config.train.batch_size * config.data.block_size
+    tokens_per_second = tokens_seen / elapsed if elapsed > 0 else 0.0
+    return {
+        "step": step,
+        "train_loss": train_loss,
+        "val_loss": val_loss,
+        "learning_rate": optimizer.param_groups[0]["lr"],
+        "elapsed_seconds": elapsed,
+        "tokens_per_second": tokens_per_second,
+    }
+
+
 def train(config: ExperimentConfig) -> Path:
     set_seed(config.train.seed)
     device = default_device()
@@ -88,7 +110,7 @@ def train(config: ExperimentConfig) -> Path:
     logger = TrainingProgressLogger()
     logger.header(
         TrainingRunInfo(
-            project="smaLLM tiny GPT",
+            project="smaLLM GPTiny",
             device=str(device),
             vocab_size=tokenizer.vocab_size,
             block_size=model_config.block_size,
@@ -135,31 +157,57 @@ def train(config: ExperimentConfig) -> Path:
                             config.train.eval_batches,
                         )
                         final_val_loss = val_loss
-                    elapsed = perf_counter() - start_time
-                    tokens_seen = step * config.train.batch_size * config.data.block_size
-                    tokens_per_second = tokens_seen / elapsed if elapsed > 0 else 0.0
-                    learning_rate = optimizer.param_groups[0]["lr"]
+                    record = _metrics_record(
+                        step=step,
+                        config=config,
+                        start_time=start_time,
+                        optimizer=optimizer,
+                        train_loss=final_loss,
+                        val_loss=val_loss,
+                    )
                     logger.progress(
                         step=step,
                         max_steps=config.train.max_steps,
                         train_loss=final_loss,
                         val_loss=val_loss,
-                        learning_rate=learning_rate,
-                        elapsed_seconds=elapsed,
-                        tokens_per_second=tokens_per_second,
+                        learning_rate=record["learning_rate"],
+                        elapsed_seconds=record["elapsed_seconds"],
+                        tokens_per_second=record["tokens_per_second"],
                     )
-                    metrics.write(
-                        {
-                            "step": step,
-                            "train_loss": final_loss,
-                            "val_loss": val_loss,
-                            "learning_rate": learning_rate,
-                            "elapsed_seconds": elapsed,
-                            "tokens_per_second": tokens_per_second,
-                        }
-                    )
+                    metrics.write(record)
                 if step >= config.train.max_steps:
                     break
+        needs_final_eval = (
+            val_loader is not None
+            and config.train.eval_interval > 0
+            and step > 0
+            and step % config.train.eval_interval != 0
+        )
+        if needs_final_eval:
+            final_val_loss = estimate_loss(
+                model,
+                val_loader,
+                device,
+                config.train.eval_batches,
+            )
+            record = _metrics_record(
+                step=step,
+                config=config,
+                start_time=start_time,
+                optimizer=optimizer,
+                train_loss=final_loss,
+                val_loss=final_val_loss,
+            )
+            logger.progress(
+                step=step,
+                max_steps=config.train.max_steps,
+                train_loss=final_loss,
+                val_loss=final_val_loss,
+                learning_rate=record["learning_rate"],
+                elapsed_seconds=record["elapsed_seconds"],
+                tokens_per_second=record["tokens_per_second"],
+            )
+            metrics.write(record)
 
     save_checkpoint(
         checkpoint_path,

@@ -3,27 +3,27 @@ data:
   prepared_path: data/processed/corpus.txt
   manifest_path: data/processed/corpus_manifest.json
   tokenizer_path: data/processed/tokenizer.json
-  block_size: 32
+  block_size: 64
   train_split: 0.9
 
 model:
   # Placeholder default; training replaces this with the tokenizer-derived vocab size.
   vocab_size: 256
-  block_size: 32
-  n_layer: 1
-  n_head: 1
-  n_embd: 32
+  block_size: 64
+  n_layer: 2
+  n_head: 2
+  n_embd: 64
   dropout: 0.1
 
 train:
-  run_name: smoke
+  run_name: gptiny_1k
   runs_dir: runs
-  batch_size: 4
-  max_steps: 5
+  batch_size: 16
+  max_steps: 1000
   learning_rate: 0.0003
-  log_interval: 1
-  eval_interval: 5
-  eval_batches: 2
+  log_interval: 20
+  eval_interval: 100
+  eval_batches: 5
   sample_prompt: Once
   sample_max_new_tokens: 100
   sample_temperature: 1.0

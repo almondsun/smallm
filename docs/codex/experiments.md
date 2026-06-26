@@ -41,7 +41,7 @@ For model-quality experiments, also include:
 
 - corpus size and vocabulary size
 - baseline losses and perplexities
-- tiny GPT validation loss and perplexity
+- GPTiny validation loss and perplexity
 - run path
 - controlled generation examples when generation quality is discussed
 - comparison against the relevant prior milestone
@@ -85,7 +85,7 @@ Valid conclusions include:
 - the validation distribution changed
 - greedy decoding collapsed
 - top-k sampling improved local texture but not coherence
-- a larger corpus helped baselines more than the tiny GPT
+- a larger corpus helped baselines more than GPTiny
 
 Negative results are useful when the setup and validation are clear.
 
@@ -93,11 +93,19 @@ Negative results are useful when the setup and validation are clear.
 
 As of experiment 011:
 
-- The 4.8k-character corpus run reached tiny GPT validation loss `2.4505` and
+- The 4.8k-character corpus run reached GPTiny validation loss `2.4505` and
   slightly beat bigram `2.5562`.
-- The 144.5k-character public-domain corpus run reached tiny GPT validation
+- The 144.5k-character public-domain corpus run reached GPTiny validation
   loss `2.5914` and trailed bigram `2.4340`.
 - Greedy generation still collapses into repeated `the`.
 
-The next technical experiment should test training budget, optimizer settings,
-capacity, or tokenization before adding unrelated infrastructure.
+As of experiment 013:
+
+- The model/config/run family is now canonically named GPTiny / `gptiny`.
+- The 2k-step GPTiny run reached validation loss `2.2187` and beat the
+  larger-corpus bigram baseline.
+- The optional 5k-step GPTiny run reached validation loss `1.8601`.
+- Greedy generation still collapses into repeated high-probability words.
+
+The next technical experiment should test optimizer settings, capacity, or
+tokenization before adding unrelated infrastructure.

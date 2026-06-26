@@ -47,7 +47,7 @@ task explicitly asks for an experiment run or artifact inspection.
   discovery.
 - `src/smallm/generation/`: text generation and sampling controls.
 - `scripts/`: command-line entry points; keep these thin.
-- `configs/`: smoke and tiny GPT experiment configs.
+- `configs/`: smoke and GPTiny experiment configs.
 - `tests/`: focused contract tests.
 - `docs/`: human-facing docs.
 - `docs/codex/`: agent-facing repository contracts.
@@ -90,11 +90,12 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-The project infrastructure is stronger than the current model quality. The
-latest larger-corpus experiment showed that the unchanged 500-step tiny GPT
-trailed the add-one bigram baseline. Future technical work should first study
-training budget, optimizer settings, model capacity, or tokenization before
-adding unrelated infrastructure.
+The project infrastructure is stronger than the current generation quality. The
+latest larger-corpus budget study showed that GPTiny was materially
+undertrained at 500 steps: 2k and 5k steps beat the add-one bigram baseline,
+while greedy generation still collapsed. Future technical work should study
+optimizer settings, model capacity, or tokenization before adding unrelated
+infrastructure.
 
 ## Safety And Security
 

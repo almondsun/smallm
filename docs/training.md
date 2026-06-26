@@ -20,7 +20,7 @@ metrics, checkpoint, summary, generated sample, and dataset provenance.
 | Config | Use |
 | --- | --- |
 | `configs/smoke.yaml` | Fast full-pipeline check. |
-| `configs/tiny_gpt.yaml` | Lightweight experiment config used by the milestone reports. |
+| `configs/gptiny.yaml` | Lightweight GPTiny experiment config used by current milestone reports. |
 
 ## Corpus Preparation
 
@@ -51,35 +51,39 @@ python scripts/generate.py --run latest --run-name smoke --prompt "Once" --greed
 Use this path to check that the pipeline works after code or environment
 changes.
 
-## Tiny Run
+## GPTiny Run
 
 ```bash
-python scripts/prepare_data.py --config configs/tiny_gpt.yaml
-python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
-python scripts/train.py --config configs/tiny_gpt.yaml
-python scripts/show_run.py --run latest --run-name tiny_gpt
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
+python scripts/prepare_data.py --config configs/gptiny.yaml
+python scripts/evaluate_baselines.py --config configs/gptiny.yaml
+python scripts/train.py --config configs/gptiny.yaml
+python scripts/show_run.py --run latest --run-name gptiny
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
 This is the main lightweight experiment path.
 
+`model.vocab_size` in config files is a placeholder default for incomplete
+configs. Training always uses the tokenizer-derived vocabulary size from the
+prepared corpus and stores that actual value in checkpoints and summaries.
+
 ## Baseline Evaluation
 
 ```bash
-python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
+python scripts/evaluate_baselines.py --config configs/gptiny.yaml
 ```
 
 The evaluator prints uniform, unigram, and add-one smoothed bigram validation
-loss and perplexity. Use the bigram row as the main simple reference for tiny
-GPT.
+loss and perplexity. Use the bigram row as the main simple reference for
+GPTiny.
 
 ## Run Inspection
 
 ```bash
 python scripts/list_runs.py
-python scripts/list_runs.py --run-name tiny_gpt
-python scripts/show_run.py --run runs/tiny_gpt/<run-id>
-python scripts/show_run.py --run latest --run-name tiny_gpt
+python scripts/list_runs.py --run-name gptiny
+python scripts/show_run.py --run runs/gptiny/<run-id>
+python scripts/show_run.py --run latest --run-name gptiny
 ```
 
 `show_run.py` prints run paths, dataset summary fields, the latest metric, and
@@ -88,9 +92,9 @@ the saved sample.
 ## Generation Controls
 
 ```bash
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --greedy --max-new-tokens 100
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --seed 1337 --max-new-tokens 100
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --greedy --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --seed 1337 --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
 Training-time samples use these config fields:
@@ -116,10 +120,10 @@ The settings are stored in `summary.json` under `generation`.
 
 ## Current Reading Of Results
 
-The current tiny model trains, but generation quality is still weak. On the
-larger public-domain corpus in experiment 011, the bigram baseline beat the
-unchanged 500-step tiny GPT. Treat that as the starting point for the next
-technical study.
+The current GPTiny model trains and longer budgets materially improve
+validation loss. On the larger public-domain corpus in experiment 013, 2k and
+5k steps beat the add-one bigram baseline, but greedy generation still
+collapsed into repeated high-probability words.
 
 ## Artifact Policy
 

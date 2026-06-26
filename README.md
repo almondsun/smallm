@@ -56,11 +56,11 @@ python scripts/generate.py --run latest --run-name smoke --prompt "Once" --greed
 For the longer lightweight config:
 
 ```bash
-python scripts/prepare_data.py --config configs/tiny_gpt.yaml
-python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
-python scripts/train.py --config configs/tiny_gpt.yaml
-python scripts/show_run.py --run latest --run-name tiny_gpt
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
+python scripts/prepare_data.py --config configs/gptiny.yaml
+python scripts/evaluate_baselines.py --config configs/gptiny.yaml
+python scripts/train.py --config configs/gptiny.yaml
+python scripts/show_run.py --run latest --run-name gptiny
+python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
 ## Repository Map
@@ -75,7 +75,7 @@ python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --te
   artifacts, progress logging, and run discovery.
 - [`src/smallm/generation/`](src/smallm/generation/): sampling controls.
 - [`scripts/`](scripts/): command-line entry points.
-- [`configs/`](configs/): smoke and tiny GPT configs.
+- [`configs/`](configs/): smoke and GPTiny configs.
 - [`tests/`](tests/): focused contract tests.
 
 ## Current Status
@@ -83,15 +83,17 @@ python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --te
 The infrastructure is ahead of the model quality. The pipeline is reproducible
 and the run records are useful, but the current tiny model remains weak.
 
-Experiment 011 is the clearest status check:
+Experiment 013 is the clearest status check:
 
 - Corpus grew from 4,838 to 144,530 prepared characters.
 - The larger-corpus bigram baseline reached validation loss `2.4340`.
-- The unchanged 500-step tiny GPT reached validation loss `2.5914`.
-- Greedy generation still collapses into repeated `the`.
+- The unchanged 500-step GPTiny reached validation loss `2.5914`.
+- The 2k-step GPTiny run reached validation loss `2.2187` and beat bigram.
+- The optional 5k-step GPTiny run reached validation loss `1.8601`.
+- Greedy generation still collapses into repeated high-probability words.
 
-The next technical question is whether the current model is undertrained,
-underpowered, or limited by character-level tokenization.
+The budget study shows that the current model was materially undertrained at
+500 steps, but generation quality remains limited.
 
 ## Material Status
 
@@ -104,6 +106,6 @@ outputs are not tracked.
 
 - BPE or subword tokenization.
 - Larger model configurations.
-- Training-budget or optimizer studies beyond the current tiny config.
+- Optimizer, capacity, or tokenization studies beyond the current GPTiny budget sweep.
 - Checkpoint resume, mixed precision, distributed training, or dashboards.
 - Remote dataset registry or hosted experiment tracking.
