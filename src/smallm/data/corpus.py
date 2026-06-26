@@ -2,8 +2,16 @@ from __future__ import annotations
 
 from collections import Counter
 from datetime import datetime, timezone
+import hashlib
 from pathlib import Path
 from typing import Any
+
+NORMALIZATION_RULES = [
+    "normalize CRLF/CR to LF",
+    "strip trailing whitespace",
+    "collapse repeated blank lines",
+    "ensure final newline",
+]
 
 
 def clean_corpus_text(text: str) -> str:
@@ -20,6 +28,14 @@ def clean_corpus_text(text: str) -> str:
     while cleaned_lines and cleaned_lines[-1] == "":
         cleaned_lines.pop()
     return "\n".join(cleaned_lines) + "\n"
+
+
+def file_sha256(path: str | Path) -> str:
+    digest = hashlib.sha256()
+    with Path(path).open("rb") as handle:
+        for chunk in iter(lambda: handle.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
 
 
 def corpus_stats(
@@ -53,6 +69,35 @@ def corpus_stats(
         "train_split": train_split,
         "train_characters": split_index,
         "validation_characters": total_characters - split_index,
+    }
+
+
+def corpus_manifest(
+    *,
+    raw_path: str | Path,
+    prepared_path: str | Path,
+    stats_path: str | Path,
+    stats: dict[str, Any],
+    raw_characters: int,
+    source_name: str | None,
+    source_note: str | None,
+) -> dict[str, Any]:
+    return {
+        "source_name": source_name,
+        "source_note": source_note,
+        "raw_path": str(raw_path),
+        "prepared_path": str(prepared_path),
+        "stats_path": str(stats_path),
+        "raw_sha256": file_sha256(raw_path),
+        "prepared_sha256": file_sha256(prepared_path),
+        "raw_characters": raw_characters,
+        "prepared_characters": stats["total_characters"],
+        "unique_characters": stats["unique_characters"],
+        "train_split": stats["train_split"],
+        "train_characters": stats["train_characters"],
+        "validation_characters": stats["validation_characters"],
+        "normalization_rules": NORMALIZATION_RULES,
+        "generated_at": datetime.now(timezone.utc).isoformat(),
     }
 
 

@@ -1,11 +1,21 @@
-from smallm.data.corpus import clean_corpus_text, corpus_stats, load_prepared_corpus
+from smallm.data.corpus import (
+    NORMALIZATION_RULES,
+    clean_corpus_text,
+    corpus_manifest,
+    corpus_stats,
+    file_sha256,
+    load_prepared_corpus,
+)
 from smallm.data.tokenizer import CharTokenizer
 
 __all__ = [
     "CharTokenizer",
+    "NORMALIZATION_RULES",
     "TokenBlockDataset",
     "clean_corpus_text",
+    "corpus_manifest",
     "corpus_stats",
+    "file_sha256",
     "load_prepared_corpus",
     "split_tokens",
 ]

@@ -8,7 +8,7 @@ The training path has two small configs:
 Smoke test:
 
 1. Put a plain text corpus at `data/raw/input.txt`.
-2. Run `python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --source-name "local text corpus"`.
+2. Run `python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --manifest data/processed/corpus_manifest.json --source-name "local text corpus"`.
 3. Run `python scripts/prepare_data.py --config configs/smoke.yaml`.
 4. Run `python scripts/evaluate_baselines.py --config configs/smoke.yaml`.
 5. Run `python scripts/train.py --config configs/smoke.yaml`.
@@ -19,7 +19,7 @@ Smoke test:
 Tiny training:
 
 ```bash
-python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --source-name "local text corpus"
+python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --manifest data/processed/corpus_manifest.json --source-name "local text corpus"
 python scripts/prepare_data.py --config configs/tiny_gpt.yaml
 python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
 python scripts/train.py --config configs/tiny_gpt.yaml

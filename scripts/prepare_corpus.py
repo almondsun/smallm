@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from smallm.data import clean_corpus_text, corpus_stats
+from smallm.data import clean_corpus_text, corpus_manifest, corpus_stats
 
 
 def main() -> None:
@@ -12,12 +12,14 @@ def main() -> None:
     parser.add_argument("--input", required=True)
     parser.add_argument("--output", required=True)
     parser.add_argument("--stats", required=True)
+    parser.add_argument("--manifest", required=True)
     parser.add_argument("--source-name")
     parser.add_argument("--source-note")
     parser.add_argument("--train-split", type=float, default=0.9)
     args = parser.parse_args()
 
-    raw_text = Path(args.input).read_text(encoding="utf-8")
+    input_path = Path(args.input)
+    raw_text = input_path.read_text(encoding="utf-8")
     cleaned = clean_corpus_text(raw_text)
     output_path = Path(args.output)
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -33,11 +35,24 @@ def main() -> None:
     stats_path = Path(args.stats)
     stats_path.parent.mkdir(parents=True, exist_ok=True)
     stats_path.write_text(json.dumps(stats, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    manifest = corpus_manifest(
+        raw_path=input_path,
+        prepared_path=output_path,
+        stats_path=stats_path,
+        stats=stats,
+        raw_characters=len(raw_text),
+        source_name=args.source_name,
+        source_note=args.source_note,
+    )
+    manifest_path = Path(args.manifest)
+    manifest_path.parent.mkdir(parents=True, exist_ok=True)
+    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     print(
         f"prepared corpus: {stats['total_characters']} chars, "
         f"{stats['unique_characters']} unique chars -> {output_path}"
     )
     print(f"wrote corpus stats to {stats_path}")
+    print(f"wrote corpus manifest to {manifest_path}")
 
 
 if __name__ == "__main__":
