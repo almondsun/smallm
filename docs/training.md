@@ -1,54 +1,127 @@
 # Training
 
-The training path has two small configs:
+The training workflow is organized around reproducible local runs. A run starts
+from a prepared corpus and ends with a preserved directory containing config,
+metrics, checkpoint, summary, generated sample, and dataset provenance.
 
-- `configs/smoke.yaml` verifies the full pipeline quickly.
-- `configs/tiny_gpt.yaml` runs a lightweight tiny GPT training job with visible progress and validation loss.
+## Workflow Map
 
-Smoke test:
+| Step | Command |
+| --- | --- |
+| Prepare corpus | `python scripts/prepare_corpus.py ...` |
+| Prepare tokenizer | `python scripts/prepare_data.py --config configs/<name>.yaml` |
+| Evaluate baselines | `python scripts/evaluate_baselines.py --config configs/<name>.yaml` |
+| Train | `python scripts/train.py --config configs/<name>.yaml` |
+| Inspect run | `python scripts/show_run.py --run latest --run-name <name>` |
+| Generate | `python scripts/generate.py --run latest --run-name <name> --prompt "Once"` |
 
-1. Put a plain text corpus at `data/raw/input.txt`.
-2. Run `python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --manifest data/processed/corpus_manifest.json --source-name "local text corpus"`.
-3. Run `python scripts/prepare_data.py --config configs/smoke.yaml`.
-4. Run `python scripts/evaluate_baselines.py --config configs/smoke.yaml`.
-5. Run `python scripts/train.py --config configs/smoke.yaml`.
-6. List runs with `python scripts/list_runs.py`.
-7. Inspect the latest smoke run with `python scripts/show_run.py --run latest --run-name smoke`.
-8. Generate text with `python scripts/generate.py --run latest --run-name smoke --prompt "Once"`.
+## Configs
 
-Tiny training:
+| Config | Use |
+| --- | --- |
+| `configs/smoke.yaml` | Fast full-pipeline check. |
+| `configs/tiny_gpt.yaml` | Lightweight experiment config used by the milestone reports. |
+
+## Corpus Preparation
+
+Put a plain text corpus at `data/raw/input.txt`.
 
 ```bash
-python scripts/prepare_corpus.py --input data/raw/input.txt --output data/processed/corpus.txt --stats data/processed/corpus_stats.json --manifest data/processed/corpus_manifest.json --source-name "local text corpus"
+python scripts/prepare_corpus.py \
+  --input data/raw/input.txt \
+  --output data/processed/corpus.txt \
+  --stats data/processed/corpus_stats.json \
+  --manifest data/processed/corpus_manifest.json \
+  --source-name "local text corpus"
+```
+
+Use `--source-note` for fetch URLs, extraction notes, or manual curation notes.
+The manifest is copied into each training run.
+
+## Smoke Run
+
+```bash
+python scripts/prepare_data.py --config configs/smoke.yaml
+python scripts/evaluate_baselines.py --config configs/smoke.yaml
+python scripts/train.py --config configs/smoke.yaml
+python scripts/show_run.py --run latest --run-name smoke
+python scripts/generate.py --run latest --run-name smoke --prompt "Once" --greedy --max-new-tokens 100
+```
+
+Use this path to check that the pipeline works after code or environment
+changes.
+
+## Tiny Run
+
+```bash
 python scripts/prepare_data.py --config configs/tiny_gpt.yaml
 python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
 python scripts/train.py --config configs/tiny_gpt.yaml
 python scripts/show_run.py --run latest --run-name tiny_gpt
-python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once"
+python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
-The training progress logger prints run settings, aligned progress rows, validation loss at evaluation intervals, throughput, ETA, and a final checkpoint summary.
+This is the main lightweight experiment path.
 
-Every run writes reproducibility artifacts under `runs/<run-name>/<run-id>/`:
+## Baseline Evaluation
 
-- `config.yaml`: exact config used for the run.
-- `metrics.jsonl`: logged training and validation metrics.
-- `summary.json`: final losses, duration, parameter count, vocab size, and paths.
-- `checkpoint.pt`: model weights and embedded tokenizer state.
-- `sample.txt`: generated text from the configured prompt.
-- `dataset_manifest.json`: copied corpus manifest with source, checksum, and normalization metadata.
+```bash
+python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
+```
 
-Run discovery:
+The evaluator prints uniform, unigram, and add-one smoothed bigram validation
+loss and perplexity. Use the bigram row as the main simple reference for tiny
+GPT.
+
+## Run Inspection
 
 ```bash
 python scripts/list_runs.py
-python scripts/list_runs.py --run-name smoke
-python scripts/show_run.py --run runs/smoke/<run-id>
+python scripts/list_runs.py --run-name tiny_gpt
+python scripts/show_run.py --run runs/tiny_gpt/<run-id>
 python scripts/show_run.py --run latest --run-name tiny_gpt
-python scripts/generate.py --run runs/smoke/<run-id> --prompt "Once"
-python scripts/generate.py --run latest --run-name smoke --prompt "Once"
 ```
 
-`show_run.py` prints a compact dataset section when the run summary includes manifest metadata.
+`show_run.py` prints run paths, dataset summary fields, the latest metric, and
+the saved sample.
 
-Runtime artifacts under `data/raw/`, `data/processed/`, `checkpoints/`, and `runs/` are local by default.
+## Generation Controls
+
+```bash
+python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --greedy --max-new-tokens 100
+python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --seed 1337 --max-new-tokens 100
+python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
+```
+
+Training-time samples use these config fields:
+
+- `sample_max_new_tokens`
+- `sample_temperature`
+- `sample_top_k`
+- `sample_seed`
+- `sample_greedy`
+
+The settings are stored in `summary.json` under `generation`.
+
+## Run Directory Contents
+
+| File | Notes |
+| --- | --- |
+| `config.yaml` | Exact config snapshot. |
+| `metrics.jsonl` | Training and validation metrics. |
+| `summary.json` | Final losses, paths, dataset fields, and generation settings. |
+| `checkpoint.pt` | Model and tokenizer state. |
+| `sample.txt` | End-of-training generated sample. |
+| `dataset_manifest.json` | Copied corpus manifest. |
+
+## Current Reading Of Results
+
+The current tiny model trains, but generation quality is still weak. On the
+larger public-domain corpus in experiment 011, the bigram baseline beat the
+unchanged 500-step tiny GPT. Treat that as the starting point for the next
+technical study.
+
+## Artifact Policy
+
+`data/raw/`, `data/processed/`, `checkpoints/`, and `runs/` are local runtime
+artifact directories and are ignored by git.

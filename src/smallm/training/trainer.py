@@ -173,7 +173,23 @@ def train(config: ExperimentConfig) -> Path:
     )
     prompt = config.train.sample_prompt
     prompt_tokens = torch.tensor([tokenizer.encode(prompt)], dtype=torch.long, device=device)
-    sample_tokens = generate(model, prompt_tokens, config.train.sample_max_new_tokens)
+    generation_settings = {
+        "prompt": prompt,
+        "max_new_tokens": config.train.sample_max_new_tokens,
+        "temperature": config.train.sample_temperature,
+        "top_k": config.train.sample_top_k,
+        "seed": config.train.sample_seed,
+        "greedy": config.train.sample_greedy,
+    }
+    sample_tokens = generate(
+        model,
+        prompt_tokens,
+        config.train.sample_max_new_tokens,
+        temperature=config.train.sample_temperature,
+        top_k=config.train.sample_top_k,
+        seed=config.train.sample_seed,
+        greedy=config.train.sample_greedy,
+    )
     sample_text = tokenizer.decode(sample_tokens[0].tolist())
     (run_dir / "sample.txt").write_text(sample_text, encoding="utf-8")
     elapsed_seconds = perf_counter() - start_time
@@ -192,6 +208,7 @@ def train(config: ExperimentConfig) -> Path:
             "vocab_size": tokenizer.vocab_size,
             "max_steps": config.train.max_steps,
             "device": str(device),
+            "generation": generation_settings,
             "dataset": dataset_summary_from_manifest(
                 dataset_manifest,
                 run_manifest_path=run_manifest_path,

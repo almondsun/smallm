@@ -1,35 +1,109 @@
 # smaLLM
 
-`smaLLM` is a small GPT-style language model implemented from scratch in PyTorch.
+`smaLLM` is a small, reproducible GPT-style language-model lab built from
+scratch in PyTorch. It is meant for inspecting the core language-modeling path:
+corpus preparation, character tokenization, causal self-attention, Transformer
+blocks, next-token training, baselines, generation, and experiment records.
 
-The goal of this project is not to train a frontier-scale model, but to understand the core machinery of modern language models: tokenization, embeddings, causal self-attention, Transformer blocks, next-token prediction, training dynamics, text generation, etc.
+## Start Here
 
-## Project layout
+- [`docs/architecture.md`](docs/architecture.md): package boundaries and model
+  data flow.
+- [`docs/training.md`](docs/training.md): corpus preparation, baseline
+  evaluation, training, run inspection, and generation commands.
+- [`docs/experiments.md`](docs/experiments.md): milestone index with results and
+  takeaways.
+- [`experiments/`](experiments/): chronological experiment reports.
 
-- `src/smallm/` contains the reusable Python package.
-- `scripts/` contains thin command-line entry points for data preparation, training, and generation.
-- `configs/` contains reproducible experiment settings.
-- `tests/` contains focused unit tests for tokenizer, dataset, model shape, and generation contracts.
-- `docs/` contains project documentation.
-- `research/` contains papers, notes, and reference metadata.
-- `data/`, `checkpoints/`, and experiment outputs are local runtime artifacts by default.
+## Current Capabilities
 
-## Quick start
+| Area | What exists |
+| --- | --- |
+| Corpus preparation | Normalized corpus output, stats, checksums, source metadata, and manifest files. |
+| Tokenization | Character-level tokenizer trained from the prepared corpus. |
+| Model | Decoder-only GPT-style Transformer with causal self-attention. |
+| Evaluation | Uniform, unigram, and add-one smoothed bigram baselines. |
+| Training | Config-driven training with validation loss, progress logging, checkpoints, metrics, summaries, and samples. |
+| Run records | Preserved run directories with copied dataset manifests and selected provenance fields in `summary.json`. |
+| Generation | `max_new_tokens`, `temperature`, `top_k`, `seed`, and greedy decoding. |
+| Tests | Focused tests for data, baselines, model shape, training artifacts, run utilities, and generation behavior. |
+
+## Quick Start
+
+Install the package:
 
 ```bash
 python -m pip install -e ".[dev]"
-python scripts/prepare_data.py --config configs/smoke.yaml
-python scripts/train.py --config configs/smoke.yaml
-python scripts/generate.py --checkpoint runs/smoke/<run-id>/checkpoint.pt --prompt "Once"
 ```
 
-For a longer lightweight run with visible training progress:
+Put a plain text corpus at `data/raw/input.txt`, then run the pipeline:
+
+```bash
+python scripts/prepare_corpus.py \
+  --input data/raw/input.txt \
+  --output data/processed/corpus.txt \
+  --stats data/processed/corpus_stats.json \
+  --manifest data/processed/corpus_manifest.json \
+  --source-name "local text corpus"
+
+python scripts/prepare_data.py --config configs/smoke.yaml
+python scripts/evaluate_baselines.py --config configs/smoke.yaml
+python scripts/train.py --config configs/smoke.yaml
+python scripts/show_run.py --run latest --run-name smoke
+python scripts/generate.py --run latest --run-name smoke --prompt "Once" --greedy --max-new-tokens 100
+```
+
+For the longer lightweight config:
 
 ```bash
 python scripts/prepare_data.py --config configs/tiny_gpt.yaml
+python scripts/evaluate_baselines.py --config configs/tiny_gpt.yaml
 python scripts/train.py --config configs/tiny_gpt.yaml
+python scripts/show_run.py --run latest --run-name tiny_gpt
+python scripts/generate.py --run latest --run-name tiny_gpt --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
-Each training run writes `config.yaml`, `metrics.jsonl`, `summary.json`, `checkpoint.pt`, and `sample.txt` under `runs/<run-name>/<run-id>/`.
+## Repository Map
 
-Put a plain text corpus at `data/raw/input.txt` before running the data and training scripts.
+- [`src/smallm/data/`](src/smallm/data/): corpus preparation, tokenizer, and
+  token block dataset.
+- [`src/smallm/model/`](src/smallm/model/): GPT config, attention, blocks, and
+  language-model head.
+- [`src/smallm/evaluation/`](src/smallm/evaluation/): character-level
+  baselines.
+- [`src/smallm/training/`](src/smallm/training/): trainer, checkpoints,
+  artifacts, progress logging, and run discovery.
+- [`src/smallm/generation/`](src/smallm/generation/): sampling controls.
+- [`scripts/`](scripts/): command-line entry points.
+- [`configs/`](configs/): smoke and tiny GPT configs.
+- [`tests/`](tests/): focused contract tests.
+
+## Current Status
+
+The infrastructure is ahead of the model quality. The pipeline is reproducible
+and the run records are useful, but the current tiny model remains weak.
+
+Experiment 011 is the clearest status check:
+
+- Corpus grew from 4,838 to 144,530 prepared characters.
+- The larger-corpus bigram baseline reached validation loss `2.4340`.
+- The unchanged 500-step tiny GPT reached validation loss `2.5914`.
+- Greedy generation still collapses into repeated `the`.
+
+The next technical question is whether the current model is undertrained,
+underpowered, or limited by character-level tokenization.
+
+## Material Status
+
+Runtime artifacts under `data/raw/`, `data/processed/`, `checkpoints/`, and
+`runs/` are local and ignored by default. Experiment reports record selected
+results and validation evidence, but generated corpora, checkpoints, and run
+outputs are not tracked.
+
+## Not Implemented Yet
+
+- BPE or subword tokenization.
+- Larger model configurations.
+- Training-budget or optimizer studies beyond the current tiny config.
+- Checkpoint resume, mixed precision, distributed training, or dashboards.
+- Remote dataset registry or hosted experiment tracking.

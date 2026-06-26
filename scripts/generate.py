@@ -21,6 +21,10 @@ def main() -> None:
     parser.add_argument("--runs-dir", default="runs")
     parser.add_argument("--prompt", required=True)
     parser.add_argument("--max-new-tokens", type=int, default=100)
+    parser.add_argument("--temperature", type=float, default=1.0)
+    parser.add_argument("--top-k", type=int)
+    parser.add_argument("--seed", type=int)
+    parser.add_argument("--greedy", action="store_true")
     args = parser.parse_args()
 
     checkpoint_path = args.checkpoint
@@ -37,7 +41,15 @@ def main() -> None:
     model = GPT(GPTConfig(**checkpoint["model_config"])).to(device)
     model.load_state_dict(checkpoint["model_state"])
     prompt = torch.tensor([tokenizer.encode(args.prompt)], dtype=torch.long, device=device)
-    output = generate(model, prompt, args.max_new_tokens)
+    output = generate(
+        model,
+        prompt,
+        args.max_new_tokens,
+        temperature=args.temperature,
+        top_k=args.top_k,
+        seed=args.seed,
+        greedy=args.greedy,
+    )
     print(tokenizer.decode(output[0].tolist()))
 
 

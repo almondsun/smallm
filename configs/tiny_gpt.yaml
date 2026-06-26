@@ -25,4 +25,8 @@ train:
   eval_batches: 5
   sample_prompt: Once
   sample_max_new_tokens: 100
+  sample_temperature: 1.0
+  sample_top_k: null
+  sample_seed: 1337
+  sample_greedy: false
   seed: 1337

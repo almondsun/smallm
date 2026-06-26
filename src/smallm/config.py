@@ -42,6 +42,10 @@ class TrainConfig:
     eval_batches: int = 5
     sample_prompt: str = "Once"
     sample_max_new_tokens: int = 100
+    sample_temperature: float = 1.0
+    sample_top_k: int | None = None
+    sample_seed: int | None = None
+    sample_greedy: bool = False
     seed: int = 1337
 
 
@@ -57,6 +61,8 @@ def _section(cls: type, values: dict[str, Any] | None) -> Any:
 
 
 def _coerce_scalar(value: str) -> Any:
+    if value in {"null", "None"}:
+        return None
     if value in {"true", "false"}:
         return value == "true"
     try:
