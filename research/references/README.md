@@ -1,4 +1,4 @@
-# Research
+# References
 
 Here I cloned the following repos for guidance:
 - llm.c
