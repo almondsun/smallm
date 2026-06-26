@@ -13,10 +13,10 @@ model:
   n_layer: 2
   n_head: 2
   n_embd: 64
-  dropout: 0.1
+  dropout: 0.0
 
 train:
-  run_name: gptiny_5k
+  run_name: gptiny_5k_dropout0
   runs_dir: runs
   batch_size: 16
   max_steps: 5000

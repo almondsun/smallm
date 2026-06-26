@@ -54,6 +54,28 @@ def _parameter_count(model: torch.nn.Module) -> int:
     return sum(parameter.numel() for parameter in model.parameters())
 
 
+def _build_optimizer(model: torch.nn.Module, config: ExperimentConfig) -> torch.optim.Optimizer:
+    return torch.optim.AdamW(
+        model.parameters(),
+        lr=config.train.learning_rate,
+        weight_decay=config.train.weight_decay,
+    )
+
+
+def _update_best_validation(
+    *,
+    best_loss: float | None,
+    best_step: int | None,
+    val_loss: float | None,
+    step: int,
+) -> tuple[float | None, int | None]:
+    if val_loss is None:
+        return best_loss, best_step
+    if best_loss is None or val_loss < best_loss:
+        return val_loss, step
+    return best_loss, best_step
+
+
 def _metrics_record(
     *,
     step: int,
@@ -104,7 +126,7 @@ def train(config: ExperimentConfig) -> Path:
     if config.data.block_size > model_config.block_size:
         raise ValueError("data.block_size cannot exceed model.block_size")
     model = GPT(model_config).to(device)
-    optimizer = torch.optim.AdamW(model.parameters(), lr=config.train.learning_rate)
+    optimizer = _build_optimizer(model, config)
     checkpoint_path = run_dir / "checkpoint.pt"
     parameter_count = _parameter_count(model)
     logger = TrainingProgressLogger()
@@ -127,6 +149,8 @@ def train(config: ExperimentConfig) -> Path:
     step = 0
     final_loss = float("nan")
     final_val_loss = None
+    best_val_loss = None
+    best_val_step = None
     start_time = perf_counter()
     with MetricsWriter(run_dir / "metrics.jsonl") as metrics:
         while step < config.train.max_steps:
@@ -157,6 +181,12 @@ def train(config: ExperimentConfig) -> Path:
                             config.train.eval_batches,
                         )
                         final_val_loss = val_loss
+                        best_val_loss, best_val_step = _update_best_validation(
+                            best_loss=best_val_loss,
+                            best_step=best_val_step,
+                            val_loss=val_loss,
+                            step=step,
+                        )
                     record = _metrics_record(
                         step=step,
                         config=config,
@@ -189,6 +219,12 @@ def train(config: ExperimentConfig) -> Path:
                 val_loader,
                 device,
                 config.train.eval_batches,
+            )
+            best_val_loss, best_val_step = _update_best_validation(
+                best_loss=best_val_loss,
+                best_step=best_val_step,
+                val_loss=final_val_loss,
+                step=step,
             )
             record = _metrics_record(
                 step=step,
@@ -251,6 +287,8 @@ def train(config: ExperimentConfig) -> Path:
             "config_path": str(run_dir / "config.yaml"),
             "final_train_loss": final_loss,
             "final_val_loss": final_val_loss,
+            "best_val_loss": best_val_loss,
+            "best_val_step": best_val_step,
             "duration_seconds": elapsed_seconds,
             "parameter_count": parameter_count,
             "vocab_size": tokenizer.vocab_size,

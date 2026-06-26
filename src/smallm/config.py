@@ -38,6 +38,7 @@ class TrainConfig:
     batch_size: int = 32
     max_steps: int = 1000
     learning_rate: float = 3e-4
+    weight_decay: float = 0.0
     log_interval: int = 10
     eval_interval: int = 100
     eval_batches: int = 5

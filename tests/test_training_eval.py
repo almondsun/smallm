@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 from smallm.config import DataConfig, ExperimentConfig, ModelConfig, TrainConfig
 from smallm.data import TokenBlockDataset
 from smallm.model import GPT, GPTConfig
-from smallm.training.trainer import estimate_loss, train
+from smallm.training.trainer import _build_optimizer, _update_best_validation, estimate_loss, train
 
 
 def test_estimate_loss_returns_loss_and_restores_train_mode():
@@ -20,6 +20,40 @@ def test_estimate_loss_returns_loss_and_restores_train_mode():
     assert loss is not None
     assert loss > 0
     assert model.training
+
+
+def test_build_optimizer_uses_configured_weight_decay():
+    model = GPT(GPTConfig(vocab_size=8, block_size=4, n_layer=1, n_head=1, n_embd=8))
+    config = ExperimentConfig(train=TrainConfig(learning_rate=1e-4, weight_decay=0.01))
+
+    optimizer = _build_optimizer(model, config)
+
+    assert optimizer.param_groups[0]["lr"] == 1e-4
+    assert optimizer.param_groups[0]["weight_decay"] == 0.01
+
+
+def test_update_best_validation_tracks_lower_loss_only():
+    best_loss, best_step = _update_best_validation(
+        best_loss=None,
+        best_step=None,
+        val_loss=2.0,
+        step=10,
+    )
+    best_loss, best_step = _update_best_validation(
+        best_loss=best_loss,
+        best_step=best_step,
+        val_loss=2.5,
+        step=20,
+    )
+    best_loss, best_step = _update_best_validation(
+        best_loss=best_loss,
+        best_step=best_step,
+        val_loss=1.8,
+        step=30,
+    )
+
+    assert best_loss == 1.8
+    assert best_step == 30
 
 
 def test_train_records_final_validation_when_max_steps_misses_eval_interval(tmp_path):
@@ -72,5 +106,7 @@ def test_train_records_final_validation_when_max_steps_misses_eval_interval(tmp_
     ]
 
     assert summary["final_val_loss"] is not None
+    assert summary["best_val_loss"] is not None
+    assert summary["best_val_step"] in {2, 3}
     assert metrics[-1]["step"] == 3
     assert metrics[-1]["val_loss"] == summary["final_val_loss"]

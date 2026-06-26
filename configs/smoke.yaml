@@ -21,6 +21,7 @@ train:
   batch_size: 4
   max_steps: 5
   learning_rate: 0.0003
+  weight_decay: 0.0
   log_interval: 1
   eval_interval: 5
   eval_batches: 2

@@ -44,6 +44,12 @@ def main() -> None:
             f"train_loss={last_metric.get('train_loss')} "
             f"val_loss={last_metric.get('val_loss')}"
         )
+    if summary.get("best_val_loss") is not None:
+        print(
+            "best validation: "
+            f"step={summary.get('best_val_step')} "
+            f"val_loss={summary.get('best_val_loss')}"
+        )
     print("sample:")
     print(sample_text)
 

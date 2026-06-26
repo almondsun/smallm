@@ -83,17 +83,20 @@ python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temp
 The infrastructure is ahead of the model quality. The pipeline is reproducible
 and the run records are useful, but the current tiny model remains weak.
 
-Experiment 013 is the clearest status check:
+Experiment 014 is the clearest status check:
 
 - Corpus grew from 4,838 to 144,530 prepared characters.
 - The larger-corpus bigram baseline reached validation loss `2.4340`.
 - The unchanged 500-step GPTiny reached validation loss `2.5914`.
 - The 2k-step GPTiny run reached validation loss `2.2187` and beat bigram.
-- The optional 5k-step GPTiny run reached validation loss `1.8601`.
+- The 5k-step GPTiny control reached validation loss about `1.860`.
+- The 5k-step `lr=0.001` GPTiny run reached final validation loss `1.6792`
+  and best validation loss `1.6501`.
 - Greedy generation still collapses into repeated high-probability words.
 
-The budget study shows that the current model was materially undertrained at
-500 steps, but generation quality remains limited.
+The budget and optimizer studies show that the current model was materially
+undertrained and benefited from a higher learning rate, but generation quality
+remains limited.
 
 ## Material Status
 
@@ -106,6 +109,6 @@ outputs are not tracked.
 
 - BPE or subword tokenization.
 - Larger model configurations.
-- Optimizer, capacity, or tokenization studies beyond the current GPTiny budget sweep.
+- Capacity or tokenization studies beyond the current GPTiny optimizer sweep.
 - Checkpoint resume, mixed precision, distributed training, or dashboards.
 - Remote dataset registry or hosted experiment tracking.

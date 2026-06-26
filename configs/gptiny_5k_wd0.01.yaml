@@ -16,12 +16,12 @@ model:
   dropout: 0.1
 
 train:
-  run_name: gptiny_5k
+  run_name: gptiny_5k_wd0.01
   runs_dir: runs
   batch_size: 16
   max_steps: 5000
   learning_rate: 0.0003
-  weight_decay: 0.0
+  weight_decay: 0.01
   log_interval: 100
   eval_interval: 250
   eval_batches: 5

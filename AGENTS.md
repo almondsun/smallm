@@ -91,11 +91,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 ## Current Technical Status
 
 The project infrastructure is stronger than the current generation quality. The
-latest larger-corpus budget study showed that GPTiny was materially
-undertrained at 500 steps: 2k and 5k steps beat the add-one bigram baseline,
-while greedy generation still collapsed. Future technical work should study
-optimizer settings, model capacity, or tokenization before adding unrelated
-infrastructure.
+latest optimizer study showed that GPTiny benefits from a higher learning rate:
+the 5k `lr=0.001` run beat the 5k control on validation loss, while greedy
+generation still collapsed. Future technical work should study capacity or
+tokenization before adding unrelated infrastructure.
 
 ## Safety And Security
 

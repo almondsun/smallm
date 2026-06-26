@@ -121,9 +121,9 @@ The settings are stored in `summary.json` under `generation`.
 ## Current Reading Of Results
 
 The current GPTiny model trains and longer budgets materially improve
-validation loss. On the larger public-domain corpus in experiment 013, 2k and
-5k steps beat the add-one bigram baseline, but greedy generation still
-collapsed into repeated high-probability words.
+validation loss. On the larger public-domain corpus, experiment 014 found that
+the 5k `lr=0.001` run beat the 5k control on validation loss. Greedy generation
+still collapsed into repeated high-probability words.
 
 ## Artifact Policy
 

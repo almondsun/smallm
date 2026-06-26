@@ -107,5 +107,13 @@ As of experiment 013:
 - The optional 5k-step GPTiny run reached validation loss `1.8601`.
 - Greedy generation still collapses into repeated high-probability words.
 
-The next technical experiment should test optimizer settings, capacity, or
-tokenization before adding unrelated infrastructure.
+As of experiment 014:
+
+- The 5k `lr=0.001` GPTiny run reached final validation loss `1.6792` and
+  best validation loss `1.6501`, beating the 5k control.
+- Dropout-off improved over the control but did not beat the higher learning
+  rate run.
+- Greedy generation still collapsed in every optimizer variant.
+
+The next technical experiment should test capacity or tokenization before
+adding unrelated infrastructure.
