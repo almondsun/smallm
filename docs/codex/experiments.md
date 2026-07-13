@@ -176,7 +176,7 @@ region unavailable to tokenizer fitting, training, early stopping, and checkpoin
 One-shot best-checkpoint test evaluation confirms ByteBPE512 by `0.0614` BPC on Alice and `0.0258`
 on Peter Pan. Those test segments are consumed and must not guide further tuning.
 
-Milestone 027 was preregistered in commit `d4a17dc` before Hamlet corpus access. Under the unchanged
+Milestone 027 was preregistered in commit `6f130d5` before Hamlet corpus access. Under the unchanged
 seed-1337 sealed protocol, ByteBPE512 beats character by `0.0673` test BPC on the dramatic-play
 distribution. Hamlet's terminal segment is easier than validation for both models, so gap direction
 and effect magnitude remain corpus-dependent. The Hamlet test is consumed.
