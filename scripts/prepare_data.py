@@ -23,7 +23,11 @@ def main() -> None:
     split_index = int(len(text) * config.data.train_split)
     tokenizer = train_tokenizer(config.data, text[:split_index])
     tokenizer.save(config.data.tokenizer_path)
-    label = "BPE" if config.data.tokenizer_type == "bpe" else "char"
+    label = {
+        "bpe": "BPE",
+        "byte_bpe": "byte BPE",
+        "char": "character",
+    }[config.data.tokenizer_type]
     print(
         f"saved {label} tokenizer with {tokenizer.vocab_size} tokens to {config.data.tokenizer_path}"
     )

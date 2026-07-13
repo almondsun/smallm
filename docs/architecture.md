@@ -12,8 +12,10 @@ flowchart TD
     B --> C{Tokenizer selected from config}
     C -->|char| D[Character tokenizer]
     C -->|simple BPE| E[Simple BPE tokenizer]
+    C -->|byte BPE| N[Boundary-aware byte BPE]
     D --> F[Token blocks]
     E --> F
+    N --> F
     F --> G[GPTiny model]
     G --> H[Training loop]
     H --> I[checkpoint.pt]
@@ -76,7 +78,9 @@ The forward pass returns logits and, when targets are provided, next-token
 cross-entropy loss.
 
 Tokenizer fitting uses training text only. Validation traverses deterministic non-overlapping
-blocks and weights NLL by target count; summaries disclose full or sampled coverage.
+blocks and weights NLL by target count; summaries disclose full or sampled coverage. Byte BPE uses
+a complete UTF-8 byte fallback, forbids merges across whitespace boundaries, and preserves aligned
+Unicode-character completion counts for exact BPC.
 
 ## Run Artifacts
 

@@ -38,6 +38,10 @@ class CharTokenizer:
             return [self.stoi[char] for char in text]
         return [self.stoi.get(char, self.stoi[self.unk_token]) for char in text]
 
+    def encode_with_character_counts(self, text: str) -> tuple[list[int], list[int]]:
+        token_ids = self.encode(text)
+        return token_ids, [1] * len(token_ids)
+
     def decode(self, token_ids: list[int]) -> str:
         return "".join(self.itos[token_id] for token_id in token_ids)
 
@@ -84,6 +88,15 @@ def train_tokenizer(config: DataConfig, text: str) -> Any:
             vocab_size=config.bpe_vocab_size,
             min_frequency=config.bpe_min_frequency,
         )
+    if config.tokenizer_type == "byte_bpe":
+        from smallm.data.byte_bpe_tokenizer import ByteBPETokenizer
+
+        assert config.bpe_vocab_size is not None
+        return ByteBPETokenizer.train(
+            text,
+            vocab_size=config.bpe_vocab_size,
+            min_frequency=config.bpe_min_frequency,
+        )
     raise ValueError(f"unsupported tokenizer type: {config.tokenizer_type}")
 
 
@@ -95,6 +108,10 @@ def tokenizer_from_state(payload: dict[str, Any]) -> Any:
         from smallm.data.bpe_tokenizer import SimpleBPETokenizer
 
         return SimpleBPETokenizer.from_state(payload)
+    if tokenizer_type == "byte_bpe":
+        from smallm.data.byte_bpe_tokenizer import ByteBPETokenizer
+
+        return ByteBPETokenizer.from_state(payload)
     raise ValueError(f"unsupported tokenizer artifact type: {tokenizer_type}")
 
 

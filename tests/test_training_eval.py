@@ -4,7 +4,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from smallm.config import DataConfig, ExperimentConfig, ModelConfig, TrainConfig
-from smallm.data import CharTokenizer, TokenBlockDataset
+from smallm.data import ByteBPETokenizer, CharTokenizer, TokenBlockDataset
 from smallm.data.corpus import file_sha256
 from smallm.model import GPT, GPTConfig
 from smallm.training import load_checkpoint
@@ -61,6 +61,28 @@ def test_evaluate_tokens_reports_exact_full_coverage():
     assert result.coverage == 1.0
     assert result.bits_per_character > 0
     assert model.training
+
+
+def test_evaluate_tokens_uses_exact_unicode_character_counts():
+    tokenizer = ByteBPETokenizer.train("é🙂 text", vocab_size=256)
+    token_ids, character_counts = tokenizer.encode_with_character_counts("é🙂")
+    tokens = torch.tensor(token_ids)
+    model = GPT(
+        GPTConfig(vocab_size=tokenizer.vocab_size, block_size=4, n_layer=1, n_head=1, n_embd=8)
+    )
+
+    result = evaluate_tokens(
+        model,
+        tokens,
+        tokenizer=tokenizer,
+        device=torch.device("cpu"),
+        block_size=4,
+        max_batches=None,
+        character_counts=torch.tensor(character_counts),
+    )
+
+    assert result is not None
+    assert result.target_characters == 1
 
 
 def test_build_optimizer_uses_configured_weight_decay():

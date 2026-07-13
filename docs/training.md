@@ -155,8 +155,9 @@ BPC `2.0760` for the character control and `2.0976` for BPE128. BPE128 shortened
 produced competitive seeded diversity, but remained narrowly worse on character-normalized loss.
 Experiments 016–017 retain errata and must not be mixed into the corrected metric series.
 Experiment 020 found that matching BPE character context and halving its learning rate did not beat
-the experiment-019 BPE control. Future tokenization work should change vocabulary or boundary
-behavior rather than continue tuning this narrow configuration.
+the experiment-019 BPE control. Experiment 021 changed the tokenizer itself: boundary-aware
+ByteBPE320 and ByteBPE512 reached best BPC `2.0286` and `2.0083`, both beating the character
+control, though ByteBPE512 overfit sharply after step 1,750.
 
 ## Artifact Policy
 

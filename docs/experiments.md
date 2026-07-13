@@ -27,6 +27,7 @@ not a replacement for the original reports.
 | [018 Launch Polish and Public Evidence](../experiments/018-launch-polish-and-public-evidence.md) | Launch polish | Added reviewer navigation, CI, local checks, and a public evidence summary. |
 | [019 Professionalization and Corrected Evaluation](../experiments/019-professionalization-and-corrected-evaluation.md) | Scientific hardening | Corrects tokenizer leakage and validation coverage, hardens artifacts and quality gates, adds the theory handbook, and reruns the controlled comparison. |
 | [020 BPE Context and Learning Rate](../experiments/020-bpe-context-and-learning-rate.md) | Tokenizer diagnostics | Matching character context and lowering BPE learning rate did not beat the corrected BPE128 control or character model. |
+| [021 Boundary-Aware Byte BPE](../experiments/021-boundary-aware-byte-bpe.md) | Tokenizer design | Lossless boundary-aware ByteBPE320/512 beat both corrected controls on best BPC; ByteBPE512 reached `2.0083` but overfit early. |
 
 ## Topic Shortcuts
 
@@ -49,7 +50,9 @@ not a replacement for the original reports.
   [015](../experiments/015-gptiny-capacity-and-generation-diagnostics.md),
   [016](../experiments/016-tokenization-study.md),
   [017](../experiments/017-best-checkpoint-evaluation.md).
-- Tokenization: [016](../experiments/016-tokenization-study.md).
+- Tokenization: [016](../experiments/016-tokenization-study.md),
+  [020](../experiments/020-bpe-context-and-learning-rate.md),
+  [021](../experiments/021-boundary-aware-byte-bpe.md).
 
 ## Current Status
 
@@ -67,3 +70,7 @@ per character.
 Milestone 019 corrects the old evaluation contract. Full held-out evaluation reached best BPC
 `2.0760` for character and `2.0976` for BPE128. The BPE gap is much smaller than previously
 reported, but it did not beat the character control.
+
+Milestone 021 adds a lossless UTF-8 byte fallback and whitespace-boundary-aware merges. ByteBPE320
+reached best BPC `2.0286`; ByteBPE512 reached `2.0083`, the strongest corrected result so far.
+The 512-token run's final BPC rose to `2.2450`, making early best-checkpoint selection essential.

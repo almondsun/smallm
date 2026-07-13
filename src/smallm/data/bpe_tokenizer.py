@@ -30,8 +30,12 @@ class SimpleBPETokenizer:
     def train(cls, text: str, vocab_size: int, min_frequency: int = 2) -> SimpleBPETokenizer:
         if vocab_size <= 0:
             raise ValueError("vocab_size must be positive")
-        if min_frequency <= 0:
-            raise ValueError("min_frequency must be positive")
+        if (
+            not isinstance(min_frequency, int)
+            or isinstance(min_frequency, bool)
+            or not 0 < min_frequency <= 1_000_000_000
+        ):
+            raise ValueError("min_frequency must be an integer between 1 and 1000000000")
 
         unk_token = "<unk>"
         symbols = list(text)
@@ -81,6 +85,13 @@ class SimpleBPETokenizer:
             merged = left + right
             symbols = _merge_symbols(symbols, (left, right), merged)
         return [self.vocab.get(symbol, self.vocab[self.unk_token]) for symbol in symbols]
+
+    def encode_with_character_counts(self, text: str) -> tuple[list[int], list[int]]:
+        token_ids = self.encode(text)
+        return token_ids, [
+            1 if self.itos[token_id] == self.unk_token else len(self.itos[token_id])
+            for token_id in token_ids
+        ]
 
     def decode(self, ids: list[int]) -> str:
         return "".join(self.itos[token_id] for token_id in ids)

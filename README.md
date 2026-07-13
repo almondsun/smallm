@@ -6,7 +6,7 @@
 
 `smaLLM` is a small, reproducible GPT-style language-model lab built from
 scratch in PyTorch. It is meant for inspecting the core language-modeling path:
-corpus preparation, character and simple BPE tokenization, causal
+corpus preparation, character, educational BPE, and boundary-aware byte BPE tokenization, causal
 self-attention, Transformer blocks, next-token training, baselines, controlled
 generation, and experiment records.
 
@@ -17,7 +17,7 @@ For a fast technical review, inspect:
 1. [`docs/architecture.md`](docs/architecture.md) for boundaries and the
    end-to-end pipeline.
 2. [`docs/experiments.md`](docs/experiments.md) for the milestone index.
-3. [`experiments/019-professionalization-and-corrected-evaluation.md`](experiments/019-professionalization-and-corrected-evaluation.md)
+3. [`experiments/021-boundary-aware-byte-bpe.md`](experiments/021-boundary-aware-byte-bpe.md)
    for the latest corrected modeling evidence and its limitations.
 4. [`src/smallm/model/`](src/smallm/model/) for the from-scratch GPTiny model.
 5. [`src/smallm/training/`](src/smallm/training/) for training and run artifacts.
@@ -45,6 +45,7 @@ chronological 90/10 split unless noted otherwise.
 | [017](experiments/017-best-checkpoint-evaluation.md) | Final vs best checkpoint | BPE validation loss and controlled generation | `2.8109` final vs `2.5727` best | Best validation did not improve generation quality under the tested prompt and seed. |
 | [019](experiments/019-professionalization-and-corrected-evaluation.md) | Corrected character vs BPE128 | Full-validation best bits/character | `2.0760` char vs `2.0976` BPE128 | BPE128 shortened sequences but remained narrowly worse after removing leakage and coverage bias. |
 | [020](experiments/020-bpe-context-and-learning-rate.md) | BPE context/LR controls | Best BPE128 bits/character | `2.0976` remains best | Matched character context and `5e-4` LR changed timing/diversity but did not improve held-out BPC. |
+| [021](experiments/021-boundary-aware-byte-bpe.md) | Boundary-aware ByteBPE320/512 | Full-validation best bits/character | `2.0286` / `2.0083` | Both beat the corrected character and BPE128 controls; ByteBPE512 overfit after step 1750. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer
@@ -77,7 +78,7 @@ shapes link directly to the implementation and its tests.
 | Area | What exists |
 | --- | --- |
 | Corpus preparation | Normalized corpus output, stats, checksums, source metadata, and manifest files. |
-| Tokenization | Character-level tokenizer plus a small educational BPE tokenizer for controlled experiments. |
+| Tokenization | Character, educational character-BPE, and lossless boundary-aware UTF-8 byte-BPE tokenizers. |
 | Model | Decoder-only GPT-style Transformer with causal self-attention. |
 | Evaluation | Uniform, unigram, and add-one smoothed bigram baselines. |
 | Training | Config-driven training with validation loss, progress logging, checkpoints, metrics, summaries, and samples. |
