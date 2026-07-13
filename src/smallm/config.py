@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from math import isfinite
 from pathlib import Path
 from typing import Any
 
@@ -8,6 +9,15 @@ try:
     import yaml
 except ModuleNotFoundError:  # pragma: no cover - exercised when PyYAML is absent.
     yaml = None
+
+
+def _is_bounded_finite_number(value: object) -> bool:
+    return (
+        isinstance(value, int | float)
+        and not isinstance(value, bool)
+        and (not isinstance(value, float) or isfinite(value))
+        and abs(value) <= 1_000_000_000
+    )
 
 
 @dataclass(frozen=True)
@@ -77,6 +87,8 @@ class TrainConfig:
     log_interval: int = 10
     eval_interval: int = 100
     eval_batches: int | None = 5
+    early_stopping_patience: int | None = None
+    early_stopping_min_delta: float = 0.0
     sample_prompt: str = "Once"
     sample_max_new_tokens: int = 100
     sample_temperature: float = 1.0
@@ -93,16 +105,35 @@ class TrainConfig:
                 raise ValueError(f"train.{name} must be positive")
         if self.eval_batches is not None and self.eval_batches <= 0:
             raise ValueError("train.eval_batches must be positive or null")
-        if self.learning_rate <= 0:
-            raise ValueError("train.learning_rate must be positive")
-        if self.weight_decay < 0:
-            raise ValueError("train.weight_decay must be non-negative")
+        if self.early_stopping_patience is not None and (
+            not isinstance(self.early_stopping_patience, int)
+            or isinstance(self.early_stopping_patience, bool)
+            or self.early_stopping_patience <= 0
+        ):
+            raise ValueError("train.early_stopping_patience must be a positive integer or null")
+        if (
+            not isinstance(self.early_stopping_min_delta, int | float)
+            or isinstance(self.early_stopping_min_delta, bool)
+            or (
+                isinstance(self.early_stopping_min_delta, float)
+                and not isfinite(self.early_stopping_min_delta)
+            )
+            or self.early_stopping_min_delta < 0
+            or self.early_stopping_min_delta > 1_000_000_000
+        ):
+            raise ValueError(
+                "train.early_stopping_min_delta must be finite and between 0 and 1000000000"
+            )
+        if not _is_bounded_finite_number(self.learning_rate) or self.learning_rate <= 0:
+            raise ValueError("train.learning_rate must be finite and positive")
+        if not _is_bounded_finite_number(self.weight_decay) or self.weight_decay < 0:
+            raise ValueError("train.weight_decay must be finite and non-negative")
         if not self.sample_prompt:
             raise ValueError("train.sample_prompt must not be empty")
         if self.sample_max_new_tokens < 0:
             raise ValueError("train.sample_max_new_tokens must be non-negative")
-        if self.sample_temperature <= 0:
-            raise ValueError("train.sample_temperature must be positive")
+        if not _is_bounded_finite_number(self.sample_temperature) or self.sample_temperature <= 0:
+            raise ValueError("train.sample_temperature must be finite and positive")
         if self.sample_top_k is not None and self.sample_top_k <= 0:
             raise ValueError("train.sample_top_k must be positive or null")
 

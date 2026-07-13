@@ -153,3 +153,7 @@ tokenizer design rather than continue fine tuning around BPE128.
 Milestone 021 altered tokenizer design with boundary-aware ByteBPE320/512. Best full-validation BPC
 improved to `2.0286` and `2.0083`; the 512-token model overfit sharply after step 1,750, so the next
 controlled question is early stopping or modest regularization rather than more scale.
+
+Milestone 022 adds patience-3 validation early stopping. It reproduces ByteBPE512's step-1,750 best
+checkpoint and stops at step 2,500, roughly halving runtime. Weight decay `0.01` is effectively
+neutral at best BPC `2.0080`; future work should test robustness across seeds or corpus splits.

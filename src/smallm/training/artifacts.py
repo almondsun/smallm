@@ -48,7 +48,7 @@ def write_config_snapshot(path: str | Path, config: ExperimentConfig) -> None:
     for section, values in data.items():
         lines.append(f"{section}:")
         for key, value in values.items():
-            lines.append(f"  {key}: {json.dumps(value, ensure_ascii=False)}")
+            lines.append(f"  {key}: {json.dumps(value, ensure_ascii=False, allow_nan=False)}")
         lines.append("")
     atomic_write_text(output, "\n".join(lines).rstrip() + "\n")
 
@@ -60,7 +60,7 @@ class MetricsWriter:
         self._handle = self.path.open("w", encoding="utf-8")
 
     def write(self, record: dict[str, Any]) -> None:
-        self._handle.write(json.dumps(record, sort_keys=True) + "\n")
+        self._handle.write(json.dumps(record, sort_keys=True, allow_nan=False) + "\n")
         self._handle.flush()
         os.fsync(self._handle.fileno())
 
@@ -82,7 +82,7 @@ class MetricsWriter:
 def write_json(path: str | Path, payload: dict[str, Any]) -> None:
     output = Path(path)
     output.parent.mkdir(parents=True, exist_ok=True)
-    atomic_write_text(output, json.dumps(payload, indent=2, sort_keys=True) + "\n")
+    atomic_write_text(output, json.dumps(payload, indent=2, sort_keys=True, allow_nan=False) + "\n")
 
 
 def load_dataset_manifest(path: str | Path) -> dict[str, Any]:

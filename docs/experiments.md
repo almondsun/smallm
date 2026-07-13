@@ -28,6 +28,7 @@ not a replacement for the original reports.
 | [019 Professionalization and Corrected Evaluation](../experiments/019-professionalization-and-corrected-evaluation.md) | Scientific hardening | Corrects tokenizer leakage and validation coverage, hardens artifacts and quality gates, adds the theory handbook, and reruns the controlled comparison. |
 | [020 BPE Context and Learning Rate](../experiments/020-bpe-context-and-learning-rate.md) | Tokenizer diagnostics | Matching character context and lowering BPE learning rate did not beat the corrected BPE128 control or character model. |
 | [021 Boundary-Aware Byte BPE](../experiments/021-boundary-aware-byte-bpe.md) | Tokenizer design | Lossless boundary-aware ByteBPE320/512 beat both corrected controls on best BPC; ByteBPE512 reached `2.0083` but overfit early. |
+| [022 Early Stopping and Regularization](../experiments/022-early-stopping-and-regularization.md) | Training control | Patience-3 stopping reproduced the step-1750 optimum and halved runtime; weight decay `0.01` was effectively neutral. |
 
 ## Topic Shortcuts
 
@@ -74,3 +75,7 @@ reported, but it did not beat the character control.
 Milestone 021 adds a lossless UTF-8 byte fallback and whitespace-boundary-aware merges. ByteBPE320
 reached best BPC `2.0286`; ByteBPE512 reached `2.0083`, the strongest corrected result so far.
 The 512-token run's final BPC rose to `2.2450`, making early best-checkpoint selection essential.
+
+Milestone 022 operationalizes that result. Patience-3 early stopping terminates at step 2,500 and
+retains best BPC `2.0083`, while stopped-final BPC improves from `2.2450` to `2.0554`. Weight decay
+`0.01` reaches best BPC `2.0080`; the `0.00025` difference is too small to interpret as a real gain.

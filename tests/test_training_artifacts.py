@@ -37,6 +37,18 @@ def test_metrics_writer_writes_jsonl(tmp_path):
     assert json.loads(path.read_text(encoding="utf-8")) == {"step": 1, "train_loss": 3.0}
 
 
+def test_artifact_json_rejects_non_finite_numbers(tmp_path):
+    metrics_path = tmp_path / "metrics.jsonl"
+    with MetricsWriter(metrics_path) as metrics, pytest.raises(ValueError):
+        metrics.write({"train_loss": float("nan")})
+    assert metrics_path.read_text(encoding="utf-8") == ""
+
+    summary_path = tmp_path / "summary.json"
+    with pytest.raises(ValueError):
+        write_json(summary_path, {"loss": float("inf")})
+    assert not summary_path.exists()
+
+
 def test_write_config_snapshot_and_summary_json(tmp_path):
     config_path = tmp_path / "config.yaml"
     summary_path = tmp_path / "summary.json"

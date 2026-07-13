@@ -1,5 +1,6 @@
 import json
 
+import pytest
 import torch
 from torch.utils.data import DataLoader
 
@@ -9,13 +10,48 @@ from smallm.data.corpus import file_sha256
 from smallm.model import GPT, GPTConfig
 from smallm.training import load_checkpoint
 from smallm.training.trainer import (
+    EarlyStoppingState,
+    EvaluationResult,
     _build_optimizer,
     _update_best_validation,
+    _update_early_stopping,
     _validation_starts,
     estimate_loss,
     evaluate_tokens,
     train,
 )
+
+
+def test_early_stopping_resets_on_meaningful_improvement():
+    state = EarlyStoppingState()
+    state, stopped = _update_early_stopping(state, val_loss=2.0, patience=2, min_delta=0.01)
+    assert not stopped
+    state, stopped = _update_early_stopping(state, val_loss=1.995, patience=2, min_delta=0.01)
+    assert not stopped
+    assert state.evaluations_without_improvement == 1
+
+    state, stopped = _update_early_stopping(state, val_loss=1.98, patience=2, min_delta=0.01)
+    assert not stopped
+    assert state == EarlyStoppingState(reference_loss=1.98)
+
+
+def test_early_stopping_triggers_at_patience_and_can_be_disabled():
+    state = EarlyStoppingState(reference_loss=1.0)
+    state, stopped = _update_early_stopping(state, val_loss=1.1, patience=2, min_delta=0.0)
+    assert not stopped
+    state, stopped = _update_early_stopping(state, val_loss=1.2, patience=2, min_delta=0.0)
+    assert stopped
+
+    unchanged, stopped = _update_early_stopping(state, val_loss=1.3, patience=None, min_delta=0.0)
+    assert unchanged == state
+    assert not stopped
+
+
+def test_early_stopping_rejects_non_finite_validation_loss():
+    with pytest.raises(RuntimeError, match="non-finite"):
+        _update_early_stopping(
+            EarlyStoppingState(), val_loss=float("nan"), patience=1, min_delta=0.0
+        )
 
 
 def test_estimate_loss_returns_loss_and_restores_train_mode():
@@ -180,6 +216,130 @@ def test_train_records_final_validation_when_max_steps_misses_eval_interval(tmp_
     assert load_checkpoint(run_dir / "best_checkpoint.pt")["step"] == summary["best_val_step"]
     assert metrics[-1]["step"] == 3
     assert metrics[-1]["val_loss"] == summary["final_val_loss"]
+    assert summary["actual_steps"] == 3
+    assert summary["stopped_early"] is False
+    assert summary["stop_reason"] == "max_steps"
+
+
+def test_train_stops_after_configured_non_improving_evaluations(tmp_path, monkeypatch):
+    prepared_path = tmp_path / "corpus.txt"
+    manifest_path = tmp_path / "corpus_manifest.json"
+    text = "Once upon a time\n" * 8
+    prepared_path.write_text(text, encoding="utf-8")
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "source_name": "test corpus",
+                "prepared_sha256": file_sha256(prepared_path),
+                "prepared_characters": len(text),
+                "train_split": 0.8,
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    def constant_evaluation(*args, **kwargs):
+        return EvaluationResult(
+            loss=1.0,
+            total_nll=4.0,
+            target_tokens=4,
+            total_target_tokens=4,
+            target_characters=4,
+            mode="sampled",
+        )
+
+    monkeypatch.setattr("smallm.training.trainer.evaluate_tokens", constant_evaluation)
+    config = ExperimentConfig(
+        data=DataConfig(
+            prepared_path=str(prepared_path),
+            manifest_path=str(manifest_path),
+            tokenizer_path=str(tmp_path / "tokenizer.json"),
+            block_size=4,
+            train_split=0.8,
+        ),
+        model=ModelConfig(vocab_size=256, block_size=4, n_layer=1, n_head=1, n_embd=8),
+        train=TrainConfig(
+            run_name="early_stop",
+            runs_dir=str(tmp_path / "runs"),
+            batch_size=2,
+            max_steps=5,
+            log_interval=1,
+            eval_interval=1,
+            eval_batches=1,
+            early_stopping_patience=1,
+            sample_max_new_tokens=1,
+        ),
+    )
+
+    checkpoint_path = train(config)
+    summary = json.loads((checkpoint_path.parent / "summary.json").read_text(encoding="utf-8"))
+
+    assert summary["actual_steps"] == 2
+    assert summary["stopped_early"] is True
+    assert summary["stop_reason"] == "early_stopping"
+    assert summary["best_val_step"] == 1
+    assert load_checkpoint(checkpoint_path)["step"] == 2
+
+    def nan_evaluation(*args, **kwargs):
+        return EvaluationResult(
+            loss=float("nan"),
+            total_nll=float("nan"),
+            target_tokens=4,
+            total_target_tokens=4,
+            target_characters=4,
+            mode="sampled",
+        )
+
+    monkeypatch.setattr("smallm.training.trainer.evaluate_tokens", nan_evaluation)
+    nan_config = ExperimentConfig(
+        data=config.data,
+        model=config.model,
+        train=TrainConfig(
+            run_name="nan_loss",
+            runs_dir=str(tmp_path / "runs"),
+            batch_size=2,
+            max_steps=2,
+            log_interval=1,
+            eval_interval=1,
+            eval_batches=1,
+            early_stopping_patience=1,
+            sample_max_new_tokens=1,
+        ),
+    )
+
+    with pytest.raises(RuntimeError, match="non-finite"):
+        train(nan_config)
+    nan_run_dirs = list((tmp_path / "runs" / "nan_loss").iterdir())
+    assert len(nan_run_dirs) == 1
+    assert not (nan_run_dirs[0] / "summary.json").exists()
+
+    optimizer_steps = 0
+
+    def nan_forward(self, idx, targets=None):
+        return torch.empty(0), torch.tensor(float("nan"), requires_grad=True)
+
+    def count_optimizer_step(self, closure=None):
+        nonlocal optimizer_steps
+        optimizer_steps += 1
+
+    monkeypatch.setattr(GPT, "forward", nan_forward)
+    monkeypatch.setattr(torch.optim.AdamW, "step", count_optimizer_step)
+    training_nan_config = ExperimentConfig(
+        data=config.data,
+        model=config.model,
+        train=TrainConfig(
+            run_name="nan_training_loss",
+            runs_dir=str(tmp_path / "runs"),
+            batch_size=2,
+            max_steps=1,
+            log_interval=1,
+            eval_interval=1,
+            sample_max_new_tokens=1,
+        ),
+    )
+    with pytest.raises(RuntimeError, match="training loss became non-finite"):
+        train(training_nan_config)
+    assert optimizer_steps == 0
 
 
 def test_train_can_use_bpe_tokenizer(tmp_path):
