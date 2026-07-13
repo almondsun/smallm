@@ -60,3 +60,24 @@ Implementation: [`artifacts.py`](../src/smallm/training/artifacts.py),
 
 Checks: reconstruct a result from its summary; identify which failures occur before any run
 directory exists; explain why old and corrected BPC values cannot be compared as one series.
+### Seed ensembles and descriptive uncertainty
+
+A random seed fixes initialization, minibatch order, dropout masks, and sampling streams; it is an
+experimental condition, not a hyperparameter to optimize. For preregistered seeds
+(s_1,\ldots,s_n) and metric (x_i), report every observation plus
+
+\[
+\bar{x}=\frac1n\sum_{i=1}^n x_i,
+\qquad
+\sigma_{\mathrm{pop}}=\sqrt{\frac1n\sum_{i=1}^n(x_i-\bar{x})^2}.
+\]
+
+smaLLM uses population standard deviation because the report describes the complete, explicitly
+chosen seed set; it does not pretend three seeds estimate a universal sampling distribution. The
+minimum and maximum expose asymmetry that a mean and deviation can hide. Stop step is itself a
+random outcome under early stopping and must be summarized alongside model quality.
+
+Never discard a completed seed because it weakens the conclusion, and never report the best seed as
+the expected result. A hyperparameter difference much smaller than seed-to-seed spread is not robust
+evidence. Decoding randomness is held fixed when comparing training seeds so observed generation
+variation comes from model training rather than a second uncontrolled random stream.

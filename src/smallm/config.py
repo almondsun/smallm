@@ -136,6 +136,12 @@ class TrainConfig:
             raise ValueError("train.sample_temperature must be finite and positive")
         if self.sample_top_k is not None and self.sample_top_k <= 0:
             raise ValueError("train.sample_top_k must be positive or null")
+        if (
+            not isinstance(self.seed, int)
+            or isinstance(self.seed, bool)
+            or not 0 <= self.seed <= 9_223_372_036_854_775_807
+        ):
+            raise ValueError("train.seed must be an integer between 0 and 2^63-1")
 
 
 @dataclass(frozen=True)
