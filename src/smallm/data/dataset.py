@@ -4,6 +4,24 @@ import torch
 from torch.utils.data import Dataset
 
 
+def split_corpus_text(
+    text: str,
+    *,
+    train_split: float,
+    validation_split: float | None = None,
+) -> tuple[str, str, str]:
+    if not 0.0 < train_split < 1.0:
+        raise ValueError("train_split must be between 0 and 1")
+    if validation_split is None:
+        split_index = int(len(text) * train_split)
+        return text[:split_index], text[split_index:], ""
+    if not 0.0 < validation_split < 1.0 - train_split:
+        raise ValueError("validation_split must be positive and leave a non-empty test fraction")
+    train_end = int(len(text) * train_split)
+    validation_end = int(len(text) * (train_split + validation_split))
+    return text[:train_end], text[train_end:validation_end], text[validation_end:]
+
+
 class TokenBlockDataset(Dataset[tuple[torch.Tensor, torch.Tensor]]):
     def __init__(self, tokens: list[int] | torch.Tensor, block_size: int) -> None:
         if block_size < 1:

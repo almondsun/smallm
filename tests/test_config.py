@@ -26,6 +26,14 @@ def test_data_config_defaults_to_char_tokenizer():
 
     assert config.tokenizer_type == "char"
     assert config.bpe_vocab_size is None
+    assert config.validation_split is None
+
+
+def test_data_config_accepts_explicit_sealed_test_split():
+    config = DataConfig(train_split=0.8, validation_split=0.1)
+
+    assert config.train_split == 0.8
+    assert config.validation_split == 0.1
 
 
 def test_load_config_reads_bpe_tokenizer_settings(tmp_path):
@@ -86,6 +94,8 @@ def test_data_config_rejects_invalid_bpe_vocab_size():
     [
         (lambda: DataConfig(block_size=0), "block_size"),
         (lambda: DataConfig(train_split=1.0), "train_split"),
+        (lambda: DataConfig(train_split=0.9, validation_split=0.1), "validation_split"),
+        (lambda: DataConfig(validation_split=True), "validation_split"),
         (
             lambda: DataConfig(tokenizer_type="bpe", bpe_vocab_size=10, bpe_min_frequency=0),
             "min_frequency",

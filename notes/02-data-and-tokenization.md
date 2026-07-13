@@ -7,10 +7,12 @@ distribution. smaLLM normalizes line endings, strips trailing whitespace, collap
 lines, and ensures one final newline. A manifest records raw and prepared SHA-256 hashes, counts,
 split policy, and normalization rules so a run identifies bytes rather than a mutable filename.
 
-For split fraction \(\alpha\) and `C` characters, \(s=\lfloor\alpha C\rfloor\). Training receives
-`text[:s]`, validation `text[s:]`. A chronological split can expose distribution shift across the
-source; unlike randomized windows, it does not scatter near-duplicate neighboring contexts across
-both partitions.
+For training fraction \(\alpha\), optional validation fraction \(\beta\), and \(C\) characters,
+the boundaries are \(s=\lfloor\alpha C\rfloor\) and
+\(v=\lfloor(\alpha+\beta)C\rfloor\). Training receives `text[:s]`, validation `text[s:v]`, and
+test `text[v:]`. Without \(\beta\), legacy configs use `text[s:]` entirely for validation. A
+chronological split can expose distribution shift across the source; unlike randomized windows, it
+does not scatter near-duplicate neighboring contexts across partitions.
 
 ## Character tokenizer
 
@@ -74,10 +76,13 @@ flowchart LR
     A[Prepared text] --> B[Character split]
     B --> C[Training text]
     B --> D[Validation text]
+    B --> H[Sealed test text]
     C --> E[Fit tokenizer]
     E --> F[Encode training]
     E --> G[Encode validation]
     D --> G
+    E -.->|after frozen checkpoint only| I[One-shot test encoding]
+    H -.-> I
 ```
 
 If character length is \(C_s\) and token length \(T_s\), compression is \(C_s/T_s\). Shorter

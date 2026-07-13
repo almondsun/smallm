@@ -170,3 +170,8 @@ Milestone 025 completes the balanced corpus-by-seed matrix. ByteBPE512 beats cha
 same-seed pairs. Mean candidate-minus-reference BPC is `-0.0619` on Alice and `-0.0252` on Peter
 Pan; the corpus interaction is `+0.0367`, so report a robust direction but corpus-dependent size.
 The next contract change should introduce a sealed test segment before further model selection.
+
+Milestone 026 introduces an optional `validation_split`; explicit 80/10/10 configs keep the final
+region unavailable to tokenizer fitting, training, early stopping, and checkpoint selection.
+One-shot best-checkpoint test evaluation confirms ByteBPE512 by `0.0614` BPC on Alice and `0.0258`
+on Peter Pan. Those test segments are consumed and must not guide further tuning.

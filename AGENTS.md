@@ -90,11 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 025 is the latest modeling evidence. In a balanced 2-tokenizer × 2-corpus × 3-seed
-matrix, ByteBPE512 beats character in all six paired comparisons. Its mean advantage is `0.0619`
-BPC on Alice and `0.0252` on Peter Pan; the `+0.0367` corpus interaction means effect magnitude is
-not distribution-invariant. The next contract change should add a sealed chronological test segment
-before further model selection.
+Milestone 026 is the latest modeling evidence. Frozen 80/10/10 runs evaluated once on sealed
+terminal segments confirm ByteBPE512 over character by `0.0614` BPC on Alice and `0.0258` on Peter
+Pan. Test BPC is worse than validation for all four models. These test segments are consumed and
+must not guide further tuning; future modeling needs a new untouched evaluation distribution.
 
 ## Safety And Security
 

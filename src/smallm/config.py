@@ -31,12 +31,23 @@ class DataConfig:
     bpe_min_frequency: int = 2
     block_size: int = 128
     train_split: float = 0.9
+    validation_split: float | None = None
 
     def __post_init__(self) -> None:
         if self.block_size <= 0:
             raise ValueError("data.block_size must be positive")
         if not 0.0 < self.train_split < 1.0:
             raise ValueError("data.train_split must be between 0 and 1")
+        if self.validation_split is not None and (
+            not isinstance(self.validation_split, int | float)
+            or isinstance(self.validation_split, bool)
+            or not isfinite(float(self.validation_split))
+            or self.validation_split <= 0
+            or self.train_split + self.validation_split >= 1.0
+        ):
+            raise ValueError(
+                "data.validation_split must be positive and leave a non-empty test fraction"
+            )
         if self.tokenizer_type not in {"char", "bpe", "byte_bpe"}:
             raise ValueError("data.tokenizer_type must be 'char', 'bpe', or 'byte_bpe'")
         if self.tokenizer_type in {"bpe", "byte_bpe"}:

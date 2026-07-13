@@ -21,6 +21,9 @@ flowchart TD
     H --> I[checkpoint.pt]
     H --> J[best_checkpoint.pt]
     H --> K[metrics.jsonl + summary.json]
+    J --> O[One-shot sealed test evaluator]
+    B -. terminal split .-> O
+    O --> P[test_evaluation_best.json]
     I --> L[Generation + diagnostics]
     J --> L
     K --> M[Experiment reports]
@@ -35,8 +38,8 @@ block construction.
 `model/` owns the GPT network: embeddings, causal self-attention, Transformer
 blocks, final normalization, and language-model head.
 
-`evaluation/` owns simple character-level reference models used to interpret
-validation loss.
+`evaluation/` owns simple reference models, bounded run observations, and shared evaluation
+contracts used to interpret validation and sealed-test loss.
 
 `training/` owns orchestration: dataloaders, optimization, evaluation intervals,
 progress logging, checkpoints, run directories, metrics, summaries, and copied
@@ -82,6 +85,11 @@ blocks and weights NLL by target count; summaries disclose full or sampled cover
 a complete UTF-8 byte fallback, forbids merges across whitespace boundaries, and preserves aligned
 Unicode-character completion counts for exact BPC.
 
+An optional explicit validation fraction activates a chronological train/validation/test split.
+Training does not encode the terminal test text. After checkpoint selection, the sealed evaluator
+verifies corpus and checkpoint identity, evaluates full coverage once, and refuses to overwrite its
+result artifact.
+
 ## Run Artifacts
 
 Each training run writes:
@@ -95,6 +103,7 @@ Each training run writes:
 | `best_checkpoint.pt` | Same checkpoint payload captured at the best validation step, when validation is available. |
 | `sample.txt` | Text generated at the end of training. |
 | `dataset_manifest.json` | Copied corpus manifest for run-local provenance. |
+| `test_evaluation_best.json` | Optional post-training sealed-test result with corpus and checkpoint hashes. |
 
 Run utilities resolve explicit run paths and `latest` by run name.
 

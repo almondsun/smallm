@@ -50,7 +50,7 @@ The individual commands remain canonical and are listed below.
 python -m pytest
 ```
 
-Current expected result after milestone 025+: at least 155 tests passing with at least 90% coverage.
+Current expected result after milestone 026+: at least 163 tests passing with at least 90% coverage.
 
 ### Compile Check
 
@@ -136,6 +136,16 @@ python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --gree
 python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
 
+### Sealed Test Evaluation
+
+For an explicitly configured three-way split, evaluate only after the checkpoint decision is frozen:
+
+```bash
+python scripts/evaluate_test.py --run runs/<name>/<id> --checkpoint-kind best
+```
+
+Do not rerun, delete, or use the resulting test artifact for model selection.
+
 ## Validation Matrix
 
 | Change type | Minimum validation |
@@ -147,6 +157,7 @@ python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temp
 | Model code | `python -m pytest`, compileall. |
 | Baselines | `python -m pytest`, `evaluate_baselines.py`, compileall. |
 | Training/artifacts/runs | smoke or tiny training path, `show_run.py`, `python -m pytest`, compileall. |
+| Split or sealed-test contract | Legacy smoke plus three-way fixture, one-shot evaluator, `python -m pytest`, compileall. |
 | Generation | greedy and seeded top-k generation commands, `python -m pytest`, compileall. |
 | Experiment report | Commands claimed in the report, plus tests and compileall when code changed. |
 
@@ -165,6 +176,8 @@ current task or explicitly quoted from a prior report.
 
 ## Current Milestone Status
 
-Milestone 019 is the current validation contract: frozen dependencies, Ruff, strict mypy, at
-least 90% coverage, compile and link checks, a smoke pipeline, and corrected full-validation
-character/BPE evidence.
+Milestone 026 is the current evaluation contract: legacy two-way splits remain compatible, while
+explicit validation fractions reserve a chronological test region that training leaves unencoded
+and unscored.
+Best-checkpoint test evaluation verifies corpus/checkpoint identity, requires full coverage, and
+refuses artifact overwrite.
