@@ -90,10 +90,11 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 027 is the latest modeling evidence. It was preregistered before Hamlet corpus access and
-confirms ByteBPE512 over character by `0.0673` sealed-test BPC on a dramatic play. Hamlet test BPC
-is better than validation for both models, reversing milestone 026's harder-tail pattern. Alice,
-Peter Pan, and Hamlet tests are consumed and must not guide further tuning.
+Milestone 028 is the latest modeling evidence. Its preregistered 2-corpus × 2-tokenizer × 3-seed
+panel finds ByteBPE512 wins all six sealed-test pairs, averaging `0.1134` BPC better on Art of War
+and `0.1543` on Lincoln. Both new terminal regions are harder than validation, and effect magnitude
+remains corpus-dependent. All previously reported sealed-test segments are consumed and must not
+drive later selection.
 
 ## Safety And Security
 

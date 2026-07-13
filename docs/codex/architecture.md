@@ -61,6 +61,8 @@ config/checkpoints, call package code, and print results. Do not put reusable
 domain logic in scripts when it belongs under `src/smallm/`.
 `scripts/evaluate_test.py` is the post-selection edge: it verifies run-local provenance and writes
 the one-shot sealed-test artifact without exposing test data to training orchestration.
+`scripts/summarize_test_matrix.py` is the panel-analysis edge: reusable completeness, identity,
+comparability, and paired-contrast logic remains in `smallm.evaluation.sealed_matrix`.
 
 ## Module Boundaries
 
@@ -84,6 +86,7 @@ the one-shot sealed-test artifact without exposing test data to training orchest
 - baseline probability models
 - validation loss and perplexity calculations
 - exact full-coverage sealed-test evaluation results
+- complete sealed-test matrix validation and descriptive paired effects
 
 `training/` owns:
 

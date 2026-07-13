@@ -17,8 +17,8 @@ For a fast technical review, inspect:
 1. [`docs/architecture.md`](docs/architecture.md) for boundaries and the
    end-to-end pipeline.
 2. [`docs/experiments.md`](docs/experiments.md) for the milestone index.
-3. [`experiments/027-hamlet-external-distribution.md`](experiments/027-hamlet-external-distribution.md)
-   for the latest preregistered external-distribution evidence and its limitations.
+3. [`experiments/028-preregistered-external-corpus-panel.md`](experiments/028-preregistered-external-corpus-panel.md)
+   for the latest preregistered multi-corpus, multi-seed evidence and its limitations.
 4. [`src/smallm/model/`](src/smallm/model/) for the from-scratch GPTiny model.
 5. [`src/smallm/training/`](src/smallm/training/) for training and run artifacts.
 6. [`src/smallm/data/`](src/smallm/data/) for corpus and tokenizer contracts.
@@ -52,6 +52,7 @@ chronological 90/10 split unless noted otherwise.
 | [025](experiments/025-corpus-by-seed-matrix.md) | 2 tokenizers × 2 corpora × 3 seeds | Paired ByteBPE512 minus character BPC | `-0.0619` Alice; `-0.0252` Peter Pan | ByteBPE512 wins all six pairs; effect magnitude is corpus-dependent. |
 | [026](experiments/026-sealed-test-evaluation.md) | Frozen decision on terminal 10% test segments | ByteBPE512 minus character test BPC | `-0.0614` Alice; `-0.0258` Peter Pan | The tokenizer decision survives one-shot full-coverage tests on both books. |
 | [027](experiments/027-hamlet-external-distribution.md) | Preregistered Hamlet play replication | ByteBPE512 minus character test BPC | `-0.0673` | The direction replicates on drama, while validation/test difficulty and effect size remain corpus-dependent. |
+| [028](experiments/028-preregistered-external-corpus-panel.md) | 2 new corpora × 2 tokenizers × 3 seeds | Mean paired ByteBPE512 minus character test BPC | `-0.1134` Art of War; `-0.1543` Lincoln | ByteBPE512 wins all six preregistered pairs; magnitude and chronological-tail difficulty remain corpus-dependent. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer
@@ -86,7 +87,7 @@ shapes link directly to the implementation and its tests.
 | Corpus preparation | Normalized corpus output, stats, checksums, source metadata, and manifest files. |
 | Tokenization | Character, educational character-BPE, and lossless boundary-aware UTF-8 byte-BPE tokenizers. |
 | Model | Decoder-only GPT-style Transformer with causal self-attention. |
-| Evaluation | Uniform, unigram, and add-one bigram baselines; optional sealed chronological test evaluation. |
+| Evaluation | Uniform, unigram, and add-one bigram baselines; sealed chronological tests and complete factorial-matrix aggregation. |
 | Training | Config-driven training with validation loss, optional early stopping, progress logging, checkpoints, metrics, summaries, and samples. |
 | Run records | Preserved run directories with copied dataset manifests and selected provenance fields in `summary.json`. |
 | Generation | `max_new_tokens`, `temperature`, `top_k`, `seed`, and greedy decoding. |

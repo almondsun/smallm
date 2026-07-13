@@ -212,3 +212,34 @@ milestone 027 finds \(G_c<0\) for both Hamlet models. Textual position can alter
 chapter or scene structure, punctuation, verse density, and intrinsic entropy. A professional
 interpretation therefore reports both the model contrast and the regional difficulty shift rather
 than labeling every positive gap "overfitting" or every negative gap "improved generalization."
+
+### Balanced confirmatory panels and analysis contracts
+
+A multi-corpus confirmatory panel adds two forms of blocking. Same-seed pairing within corpus
+removes the seed component shared by candidate and control, while repeating the pair across corpus
+families exposes tokenizer-by-corpus heterogeneity. For corpora (c=1,\ldots,C), tokenizers
+(t\in\{A,B\}), and fixed seeds (s=1,\ldots,S), completeness is part of the estimand:
+
+\[
+\mathcal{D}=\{y_{tcs}:t\in\{A,B\},c\in\{1,\ldots,C\},s\in\{1,\ldots,S\}\}.
+\]
+
+Silently dropping a failed, inconvenient, or missing cell changes \(\mathcal{D}\) after outcomes
+are partially known. A professional aggregator therefore validates the exact Cartesian product,
+unique paths, common seed sets, artifact schema, checkpoint kind and hash, corpus hash, and full
+coverage before calculating any effect. Validation failure is an outcome of the analysis contract,
+not an invitation to weaken it.
+
+Comparability fingerprints must encode causes of the likelihood result—data, model, optimizer,
+training budget, and selection policy—but exclude downstream presentation controls such as sample
+prompt, decoding temperature, and generation seed. Including an irrelevant sample seed creates a
+false mismatch; excluding a learning rate or split creates a false match. Milestone 028 encountered
+the former after test access, repaired it transparently without changing artifacts, and added a
+regression test. This illustrates why preregistering the analysis rule is necessary but executable
+schema checks are still fallible software that require audit trails.
+
+Milestone 028's complete 2 × 2 × 3 panel finds all six ByteBPE512-minus-character test contrasts
+negative. The result strengthens a directional claim, not a universal effect-size claim: the mean
+interaction differs across Art of War and Lincoln, the corpora are fixed rather than sampled, and
+three population-SD summaries are descriptive. Every accessed terminal region is now historical
+evidence and cannot serve as a clean test set for a parameter-matched follow-up.

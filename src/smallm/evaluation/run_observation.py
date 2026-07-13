@@ -62,7 +62,17 @@ def _required_int(summary: dict[str, Any], field: str) -> int:
 def _comparison_fingerprint(config: Any, summary: dict[str, Any]) -> str:
     config_state = asdict(config)
     train_state = config_state["train"]
-    for field in ("run_name", "runs_dir", "seed"):
+    for field in (
+        "run_name",
+        "runs_dir",
+        "seed",
+        "sample_prompt",
+        "sample_max_new_tokens",
+        "sample_temperature",
+        "sample_top_k",
+        "sample_seed",
+        "sample_greedy",
+    ):
         train_state.pop(field)
     dataset = summary.get("dataset")
     if not isinstance(dataset, dict) or not isinstance(dataset.get("prepared_sha256"), str):

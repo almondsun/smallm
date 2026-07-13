@@ -50,6 +50,7 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny_peterpan_*_earlystop_seed*.yaml` | Additional Peter Pan matrix seeds. |
 | `configs/gptiny_{alice,peterpan}_{char,bytebpe512}_sealed.yaml` | Frozen 80/10/10 confirmatory runs. |
 | `configs/gptiny_hamlet_{char,bytebpe512}_sealed.yaml` | Preregistered 80/10/10 dramatic-play replication. |
+| `configs/gptiny_{artofwar,lincoln}_{char,bytebpe512}_sealed_seed{1337,2027,4242}.yaml` | Preregistered 2 × 2 × 3 external-corpus panel. |
 
 ## Corpus Preparation
 
@@ -235,6 +236,11 @@ four test results are worse than validation, and these terminal segments are now
 Experiment 027 preregisters a structurally different Hamlet distribution before corpus access.
 ByteBPE512 beats character by `0.0673` sealed-test BPC. Both terminal results are better than
 validation, demonstrating that chronological gap direction is not stable across corpora.
+
+Experiment 028 preregisters two additional external corpora and three seeds. ByteBPE512 beats the
+character control in all six paired sealed-test comparisons, averaging `0.1134` BPC better on Art
+of War and `0.1543` better on Lincoln. Use `scripts/summarize_test_matrix.py` for complete balanced
+panels; it refuses missing cells, identity mismatches, non-best checkpoints, and partial coverage.
 
 ## Artifact Policy
 

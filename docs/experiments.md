@@ -34,6 +34,7 @@ not a replacement for the original reports.
 | [025 Corpus-by-Seed Matrix](../experiments/025-corpus-by-seed-matrix.md) | Factorial robustness | ByteBPE512 wins all six paired comparisons; mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan. |
 | [026 Sealed Test Evaluation](../experiments/026-sealed-test-evaluation.md) | Confirmatory evaluation | On untouched terminal segments, ByteBPE512 beats character by `0.0614` BPC on Alice and `0.0258` on Peter Pan. |
 | [027 Hamlet External-Distribution Replication](../experiments/027-hamlet-external-distribution.md) | Preregistered external validity | ByteBPE512 beats character by `0.0673` sealed-test BPC on a dramatic play; the terminal region is easier than validation for both models. |
+| [028 Preregistered External Corpus Panel](../experiments/028-preregistered-external-corpus-panel.md) | Multi-corpus confirmatory panel | ByteBPE512 wins all six same-seed sealed-test pairs, averaging `-0.1134` BPC on Art of War and `-0.1543` on Lincoln. |
 
 ## Topic Shortcuts
 
@@ -62,7 +63,8 @@ not a replacement for the original reports.
   [024](../experiments/024-cross-corpus-robustness.md),
   [025](../experiments/025-corpus-by-seed-matrix.md),
   [026](../experiments/026-sealed-test-evaluation.md),
-  [027](../experiments/027-hamlet-external-distribution.md).
+  [027](../experiments/027-hamlet-external-distribution.md),
+  [028](../experiments/028-preregistered-external-corpus-panel.md).
 
 ## Current Status
 
@@ -112,3 +114,8 @@ Milestone 027 preregisters Hamlet before corpus access and transfers the same fr
 dramatic play. ByteBPE512 reaches sealed-test BPC `2.2546` versus character's `2.3219`, an advantage
 of `0.0673`. Both terminal results are better than validation, reversing milestone 026's gap
 direction and reinforcing that chronological difficulty is corpus-dependent.
+
+Milestone 028 expands that confirmatory design to two new corpora and three seeds. ByteBPE512 wins
+all six same-seed test comparisons, with mean paired effects `-0.1134 ± 0.0041` BPC on Art of War
+and `-0.1543 ± 0.0130` on Lincoln. Every terminal segment is harder than validation, and the
+`-0.0409` mean corpus interaction again rejects a universal effect-size interpretation.

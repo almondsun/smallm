@@ -50,7 +50,7 @@ The individual commands remain canonical and are listed below.
 python -m pytest
 ```
 
-Current expected result after milestone 026+: at least 163 tests passing with at least 90% coverage.
+Current expected result after milestone 028: at least 166 tests passing with at least 90% coverage.
 
 ### Compile Check
 
@@ -146,6 +146,20 @@ python scripts/evaluate_test.py --run runs/<name>/<id> --checkpoint-kind best
 
 Do not rerun, delete, or use the resulting test artifact for model selection.
 
+For a preregistered balanced panel, aggregate only after every one-shot artifact exists:
+
+```bash
+python scripts/summarize_test_matrix.py \
+  --reference-tokenizer char --candidate-tokenizer byte_bpe \
+  --cell artofwar char <run-dir> \
+  --cell artofwar byte_bpe <run-dir> \
+  --cell lincoln char <run-dir> \
+  --cell lincoln byte_bpe <run-dir>
+```
+
+The command rejects missing or duplicate cells, incomparable configurations, corpus/checkpoint
+identity failures, non-best checkpoints, and partial evaluation coverage.
+
 ## Validation Matrix
 
 | Change type | Minimum validation |
@@ -176,9 +190,7 @@ current task or explicitly quoted from a prior report.
 
 ## Current Milestone Status
 
-Milestone 027 uses the milestone-026 evaluation contract: legacy two-way splits remain compatible,
-while explicit validation fractions reserve a chronological test region that training leaves
-unencoded and unscored.
-Best-checkpoint test evaluation verifies corpus/checkpoint identity, requires full coverage, and
-refuses artifact overwrite. The preregistered Hamlet replication confirms the workflow on an
-external dramatic-play distribution.
+Milestone 028 extends the sealed-test contract to a complete preregistered 2 × 2 × 3 factorial
+panel. The matrix aggregator validates schema, coverage, identities, cell comparability, and exact
+declared membership before computing paired effects and interactions. Art of War and Lincoln test
+segments are consumed alongside the earlier Alice, Peter Pan, and Hamlet segments.

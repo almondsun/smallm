@@ -24,6 +24,7 @@ flowchart TD
     J --> O[One-shot sealed test evaluator]
     B -. terminal split .-> O
     O --> P[test_evaluation_best.json]
+    P --> Q[Sealed matrix validator + paired contrasts]
     I --> L[Generation + diagnostics]
     J --> L
     K --> M[Experiment reports]
@@ -89,6 +90,10 @@ An optional explicit validation fraction activates a chronological train/validat
 Training does not encode the terminal test text. After checkpoint selection, the sealed evaluator
 verifies corpus and checkpoint identity, evaluates full coverage once, and refuses to overwrite its
 result artifact.
+
+For balanced panels, `sealed_matrix.py` reads only bounded run artifacts and refuses incomplete,
+duplicated, incomparable, identity-invalid, or partially evaluated cells before computing paired
+tokenizer effects and corpus interactions. The CLI remains a thin adapter.
 
 ## Run Artifacts
 

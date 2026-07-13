@@ -8,7 +8,9 @@ from smallm.evaluation.robustness import summarize_observations
 from smallm.training.artifacts import write_config_snapshot
 
 
-def _write_run(tmp_path, name, *, seed=1, learning_rate=1e-3, summary_updates=None):
+def _write_run(
+    tmp_path, name, *, seed=1, sample_seed=1337, learning_rate=1e-3, summary_updates=None
+):
     run_dir = tmp_path / name
     run_dir.mkdir()
     write_config_snapshot(
@@ -18,6 +20,7 @@ def _write_run(tmp_path, name, *, seed=1, learning_rate=1e-3, summary_updates=No
                 run_name=name,
                 runs_dir=str(tmp_path),
                 seed=seed,
+                sample_seed=sample_seed,
                 learning_rate=learning_rate,
             )
         ),
@@ -47,8 +50,8 @@ def _write_run(tmp_path, name, *, seed=1, learning_rate=1e-3, summary_updates=No
 
 
 def test_observations_verify_training_comparability(tmp_path):
-    first = _observation(_write_run(tmp_path, "first", seed=1))
-    second = _observation(_write_run(tmp_path, "second", seed=2))
+    first = _observation(_write_run(tmp_path, "first", seed=1, sample_seed=101))
+    second = _observation(_write_run(tmp_path, "second", seed=2, sample_seed=202))
     different = _observation(_write_run(tmp_path, "different", seed=3, learning_rate=2e-3))
 
     assert first.comparison_fingerprint == second.comparison_fingerprint
