@@ -40,6 +40,9 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny.yaml` | Lightweight GPTiny experiment config used by current milestone reports. |
 | `configs/gptiny_5k_lr1e-3_deep.yaml` | Current best character-level capacity control. |
 | `configs/gptiny_bpe128_5k_lr1e-3_deep.yaml` | First simple BPE128 tokenization comparison. |
+| `configs/gptiny_bpe128_5k_lr1e-3_ctx42.yaml` | Character-context-matched BPE128 control. |
+| `configs/gptiny_bpe128_5k_lr5e-4_ctx42.yaml` | Matched-context lower-learning-rate BPE128 run. |
+| `configs/gptiny_bpe128_5k_lr5e-4_ctx64.yaml` | Longer-context lower-learning-rate BPE128 run. |
 
 ## Corpus Preparation
 
@@ -151,6 +154,9 @@ Milestone 019 corrected tokenizer leakage and validation coverage. Full evaluati
 BPC `2.0760` for the character control and `2.0976` for BPE128. BPE128 shortened the sequence and
 produced competitive seeded diversity, but remained narrowly worse on character-normalized loss.
 Experiments 016–017 retain errata and must not be mixed into the corrected metric series.
+Experiment 020 found that matching BPE character context and halving its learning rate did not beat
+the experiment-019 BPE control. Future tokenization work should change vocabulary or boundary
+behavior rather than continue tuning this narrow configuration.
 
 ## Artifact Policy
 

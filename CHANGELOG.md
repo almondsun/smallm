@@ -5,6 +5,10 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 
 ## [Unreleased]
 
+### Added
+
+- Added milestone 020's controlled BPE context-length and learning-rate study.
+
 ## [0.2.0] - 2026-07-12
 
 ### Changed
