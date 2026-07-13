@@ -1,5 +1,10 @@
 # 016 Tokenization Study
 
+> **Erratum (milestone 019):** this experiment fitted the tokenizer on the complete corpus before
+> splitting, so BPE merge statistics leaked from validation. Its BPC combined loss from a small
+> overlapping validation prefix with whole-validation counts. Preserve these values as historical
+> observations, but do not compare them directly with corrected milestone-019 metrics.
+
 ## Goal
 
 Test whether a small educational BPE tokenizer improves GPTiny generation coherence or modeling efficiency compared with the current character tokenizer, while keeping the corpus, architecture, optimizer, training budget, prompt, and generation diagnostics controlled.
