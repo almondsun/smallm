@@ -1,0 +1,15 @@
+name: Feature proposal
+description: Propose a focused research or reliability improvement.
+body:
+  - type: textarea
+    attributes:
+      label: Research or reliability need
+      description: What concrete question, limitation, or contract does this address?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Proposed evidence
+      description: How should the change be tested or evaluated?
+    validations:
+      required: true
