@@ -35,6 +35,8 @@ from smallm.utils.seed import set_seed
 class TokenizerLike(Protocol):
     def source_character_count(self, token_ids: list[int]) -> int: ...
 
+    def encode_with_character_counts(self, text: str) -> tuple[list[int], list[int]]: ...
+
 
 @torch.no_grad()
 def estimate_loss(
@@ -99,6 +101,7 @@ def evaluate_tokens(
     device: torch.device,
     block_size: int,
     max_batches: int | None,
+    character_counts: torch.Tensor | None = None,
 ) -> EvaluationResult | None:
     if tokens.numel() < 2:
         return None
@@ -117,7 +120,10 @@ def evaluate_tokens(
         count = y.numel()
         total_nll += float(loss.item()) * count
         target_tokens += count
-        target_characters += tokenizer.source_character_count(y[0].tolist())
+        if character_counts is None:
+            target_characters += tokenizer.source_character_count(y[0].tolist())
+        else:
+            target_characters += int(character_counts[start + 1 : end + 1].sum().item())
     if was_training:
         model.train()
     return EvaluationResult(
@@ -206,8 +212,11 @@ def train(config: ExperimentConfig) -> Path:
     val_text = text[character_split_index:]
     tokenizer = train_tokenizer(config.data, train_text)
     tokenizer.save(config.data.tokenizer_path)
-    train_tokens = torch.tensor(tokenizer.encode(train_text), dtype=torch.long)
-    val_tokens = torch.tensor(tokenizer.encode(val_text), dtype=torch.long)
+    train_token_ids, _ = tokenizer.encode_with_character_counts(train_text)
+    val_token_ids, val_character_counts = tokenizer.encode_with_character_counts(val_text)
+    train_tokens = torch.tensor(train_token_ids, dtype=torch.long)
+    val_tokens = torch.tensor(val_token_ids, dtype=torch.long)
+    val_character_counts_tensor = torch.tensor(val_character_counts, dtype=torch.long)
     train_characters = len(train_text)
     val_characters = len(val_text)
     train_dataset = TokenBlockDataset(train_tokens, config.data.block_size)
@@ -294,6 +303,7 @@ def train(config: ExperimentConfig) -> Path:
                             device=device,
                             block_size=config.data.block_size,
                             max_batches=config.train.eval_batches,
+                            character_counts=val_character_counts_tensor,
                         )
                         val_loss = evaluation.loss if evaluation else None
                         final_evaluation = evaluation
@@ -340,6 +350,7 @@ def train(config: ExperimentConfig) -> Path:
                 device=device,
                 block_size=config.data.block_size,
                 max_batches=config.train.eval_batches,
+                character_counts=val_character_counts_tensor,
             )
             final_val_loss = final_evaluation.loss if final_evaluation else None
             best_val_loss, best_val_step = _update_best_validation(

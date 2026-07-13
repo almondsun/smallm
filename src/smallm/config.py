@@ -27,13 +27,23 @@ class DataConfig:
             raise ValueError("data.block_size must be positive")
         if not 0.0 < self.train_split < 1.0:
             raise ValueError("data.train_split must be between 0 and 1")
-        if self.tokenizer_type not in {"char", "bpe"}:
-            raise ValueError("data.tokenizer_type must be 'char' or 'bpe'")
-        if self.tokenizer_type == "bpe":
+        if self.tokenizer_type not in {"char", "bpe", "byte_bpe"}:
+            raise ValueError("data.tokenizer_type must be 'char', 'bpe', or 'byte_bpe'")
+        if self.tokenizer_type in {"bpe", "byte_bpe"}:
             if self.bpe_vocab_size is None or self.bpe_vocab_size <= 0:
                 raise ValueError("data.bpe_vocab_size must be positive for BPE tokenizers")
-            if self.bpe_min_frequency <= 0:
-                raise ValueError("data.bpe_min_frequency must be positive")
+            if self.bpe_vocab_size > 100_000:
+                raise ValueError("data.bpe_vocab_size must not exceed 100000")
+            if self.tokenizer_type == "byte_bpe" and self.bpe_vocab_size < 256:
+                raise ValueError("data.bpe_vocab_size must be at least 256 for byte BPE")
+            if (
+                not isinstance(self.bpe_min_frequency, int)
+                or isinstance(self.bpe_min_frequency, bool)
+                or not 0 < self.bpe_min_frequency <= 1_000_000_000
+            ):
+                raise ValueError(
+                    "data.bpe_min_frequency must be an integer between 1 and 1000000000"
+                )
 
 
 @dataclass(frozen=True)

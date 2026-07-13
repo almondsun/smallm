@@ -277,3 +277,59 @@ def test_checkpoint_validates_bpe_merge_structure(tmp_path):
         torch.save({**base, "tokenizer": state}, path)
         with pytest.raises(ValueError):
             load_checkpoint(path)
+
+
+def test_checkpoint_validates_byte_bpe_structure(tmp_path):
+    path = tmp_path / "checkpoint.pt"
+    vocab = {f"{value:02x}": value for value in range(256)}
+    vocab["0001"] = 256
+    tokenizer = {
+        "schema_version": 2,
+        "type": "byte_bpe",
+        "vocab": vocab,
+        "vocab_size": 257,
+        "merges": [["00", "01"]],
+        "min_frequency": 2,
+        "boundary_policy": "whitespace_segments",
+        "encoding": "utf-8",
+    }
+    base = {
+        "schema_version": 2,
+        "model_state": {"weight": torch.tensor([1.0])},
+        "model_config": {
+            "vocab_size": 257,
+            "block_size": 4,
+            "n_layer": 1,
+            "n_head": 1,
+            "n_embd": 8,
+            "dropout": 0.0,
+        },
+        "tokenizer": tokenizer,
+        "step": 1,
+    }
+    torch.save(base, path)
+    assert load_checkpoint(path)["tokenizer"]["type"] == "byte_bpe"
+
+    invalid_vocabs = []
+    for replacement in ("zz", "0", "0002"):
+        invalid_vocab = dict(vocab)
+        del invalid_vocab["0001"]
+        invalid_vocab[replacement] = 256
+        invalid_vocabs.append(invalid_vocab)
+    missing_base = dict(vocab)
+    del missing_base["ff"]
+    missing_base["0002"] = 255
+    invalid_vocabs.append(missing_base)
+
+    invalid_states = [
+        *[{**tokenizer, "vocab": invalid_vocab} for invalid_vocab in invalid_vocabs],
+        {**tokenizer, "encoding": "utf-16"},
+        {**tokenizer, "boundary_policy": "none"},
+        {**tokenizer, "min_frequency": True},
+        {**tokenizer, "min_frequency": 0},
+        {**tokenizer, "merges": [["00", "ff"]]},
+    ]
+    for state in invalid_states:
+        torch.save({**base, "tokenizer": state}, path)
+        with pytest.raises(ValueError):
+            load_checkpoint(path)

@@ -12,7 +12,7 @@ text to trained checkpoint inspectable:
 ```text
 raw text
   -> prepared corpus, stats, manifest
-  -> selected character or simple BPE tokenizer
+  -> selected character, simple BPE, or boundary-aware byte BPE tokenizer
   -> token blocks
   -> GPT logits and next-token loss
   -> checkpoint, metrics, summary, sample, copied manifest
@@ -33,6 +33,8 @@ Core logic is deterministic or tensor-oriented package code:
   character-tokenizer state.
 - `smallm.data.bpe_tokenizer`: educational BPE training, encode/decode, and
   inspectable JSON state.
+- `smallm.data.byte_bpe_tokenizer`: lossless UTF-8 byte fallback, boundary-aware merges, and
+  character-aligned evaluation counts.
 - `smallm.data.dataset`: train/validation split and shifted token blocks.
 - `smallm.model`: causal attention, Transformer blocks, GPT forward/loss.
 - `smallm.evaluation`: baseline losses and perplexity.

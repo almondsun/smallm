@@ -1,6 +1,7 @@
 from typing import Any
 
 from smallm.data.bpe_tokenizer import SimpleBPETokenizer
+from smallm.data.byte_bpe_tokenizer import ByteBPETokenizer
 from smallm.data.corpus import (
     NORMALIZATION_RULES,
     clean_corpus_text,
@@ -18,6 +19,7 @@ from smallm.data.tokenizer import (
 
 __all__ = [
     "NORMALIZATION_RULES",
+    "ByteBPETokenizer",
     "CharTokenizer",
     "SimpleBPETokenizer",
     "TokenBlockDataset",

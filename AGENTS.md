@@ -90,10 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 020 is the latest modeling evidence. It preserves milestone 019's corrected metric
-contract and finds that matching BPE character context or halving its learning rate does not beat
-the 64-token `1e-3` BPE128 control. Best BPC remains `2.0760` for character and `2.0976` for BPE128;
-future tokenization work should change tokenizer design rather than narrowly tune this setup.
+Milestone 021 is the latest modeling evidence. Boundary-aware UTF-8 ByteBPE320 and ByteBPE512 reach
+best full-validation BPC `2.0286` and `2.0083`, beating the corrected character (`2.0760`) and
+BPE128 (`2.0976`) controls. ByteBPE512 overfits after step 1,750 and ends at BPC `2.2450`; future
+work should test early stopping or regularization before increasing model scale.
 
 ## Safety And Security
 

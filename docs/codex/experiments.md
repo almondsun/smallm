@@ -149,3 +149,7 @@ narrowly worse, while its seeded samples retained competitive surface diversity.
 Milestone 020 matched BPE character context and tested `1e-3` versus `5e-4`. Neither the matched
 42-token context nor the lower rate beat the 64-token `1e-3` BPE control; future work should alter
 tokenizer design rather than continue fine tuning around BPE128.
+
+Milestone 021 altered tokenizer design with boundary-aware ByteBPE320/512. Best full-validation BPC
+improved to `2.0286` and `2.0083`; the 512-token model overfit sharply after step 1,750, so the next
+controlled question is early stopping or modest regularization rather than more scale.

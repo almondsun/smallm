@@ -94,7 +94,7 @@ def _validate_tokenizer_state(
         raise ValueError(f"unsupported tokenizer schema version: {schema_version}")
     tokenizer_type = state.get("type", "char")
     vocab = state.get("stoi") if tokenizer_type == "char" else state.get("vocab")
-    if tokenizer_type not in {"char", "bpe"} or not isinstance(vocab, dict):
+    if tokenizer_type not in {"char", "bpe", "byte_bpe"} or not isinstance(vocab, dict):
         raise ValueError("checkpoint tokenizer has an unsupported type or vocabulary")
     if not 0 < len(vocab) <= 100_000:
         raise ValueError("checkpoint tokenizer vocabulary is outside supported bounds")
@@ -114,6 +114,9 @@ def _validate_tokenizer_state(
         if unk_token is not None and unk_token not in vocab:
             raise ValueError("checkpoint character tokenizer has an invalid unknown token")
         return
+    if tokenizer_type == "byte_bpe":
+        _validate_byte_bpe_state(state, vocab)
+        return
     unk_token = state.get("unk_token", "<unk>")
     if unk_token not in vocab:
         raise ValueError("checkpoint BPE tokenizer has an invalid unknown token")
@@ -132,3 +135,42 @@ def _validate_tokenizer_state(
         if merged not in vocab:
             raise ValueError("checkpoint BPE merge result is missing from vocabulary")
         known.add(merged)
+
+
+def _validate_byte_bpe_state(state: dict[str, Any], vocab: dict[str, Any]) -> None:
+    base = {f"{value:02x}" for value in range(256)}
+    if len(vocab) < 256 or not base.issubset(vocab):
+        raise ValueError("checkpoint byte BPE tokenizer is missing its byte alphabet")
+    if state.get("encoding") != "utf-8" or state.get("boundary_policy") != "whitespace_segments":
+        raise ValueError("checkpoint byte BPE tokenizer has unsupported encoding or boundaries")
+    min_frequency = state.get("min_frequency")
+    if (
+        not isinstance(min_frequency, int)
+        or isinstance(min_frequency, bool)
+        or not 0 < min_frequency <= 1_000_000_000
+    ):
+        raise ValueError("checkpoint byte BPE tokenizer has invalid minimum frequency")
+    if not all(
+        len(token) % 2 == 0
+        and token == token.lower()
+        and all(c in "0123456789abcdef" for c in token)
+        for token in vocab
+    ):
+        raise ValueError("checkpoint byte BPE vocabulary must contain canonical hex strings")
+    merges = state.get("merges", [])
+    if not isinstance(merges, list) or len(merges) > len(vocab) - 256:
+        raise ValueError("checkpoint byte BPE merges are outside supported bounds")
+    known = set(base)
+    for merge in merges:
+        if (
+            not isinstance(merge, list | tuple)
+            or len(merge) != 2
+            or not all(isinstance(part, str) and part in known for part in merge)
+        ):
+            raise ValueError("checkpoint byte BPE merge references unknown symbols")
+        merged = merge[0] + merge[1]
+        if merged in known or merged not in vocab:
+            raise ValueError("checkpoint byte BPE merge result is missing from vocabulary")
+        known.add(merged)
+    if known != set(vocab):
+        raise ValueError("checkpoint byte BPE vocabulary contains non-derived tokens")

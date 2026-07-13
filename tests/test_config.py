@@ -53,6 +53,24 @@ def test_data_config_rejects_unknown_tokenizer_type():
         DataConfig(tokenizer_type="wordpiece")
 
 
+def test_byte_bpe_requires_full_byte_alphabet():
+    with pytest.raises(ValueError, match="at least 256"):
+        DataConfig(tokenizer_type="byte_bpe", bpe_vocab_size=128)
+
+    assert DataConfig(tokenizer_type="byte_bpe", bpe_vocab_size=320).bpe_vocab_size == 320
+
+
+def test_bpe_vocab_rejects_artifact_limit_overflow():
+    with pytest.raises(ValueError, match="must not exceed"):
+        DataConfig(tokenizer_type="byte_bpe", bpe_vocab_size=100_001)
+
+
+@pytest.mark.parametrize("value", [True, 1.5, 1_000_000_001])
+def test_bpe_min_frequency_matches_artifact_contract(value):
+    with pytest.raises(ValueError, match="must be an integer"):
+        DataConfig(tokenizer_type="byte_bpe", bpe_vocab_size=256, bpe_min_frequency=value)
+
+
 def test_data_config_rejects_missing_bpe_vocab_size():
     with pytest.raises(ValueError, match="bpe_vocab_size"):
         DataConfig(tokenizer_type="bpe")
