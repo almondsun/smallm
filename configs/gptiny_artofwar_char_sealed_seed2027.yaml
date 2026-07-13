@@ -1,0 +1,38 @@
+data:
+  input_path: data/raw/art_of_war_body.txt
+  prepared_path: data/processed/art_of_war_corpus.txt
+  manifest_path: data/processed/art_of_war_corpus_sealed_manifest.json
+  tokenizer_path: data/processed/art_of_war_tokenizer_char_sealed.json
+  tokenizer_type: char
+  block_size: 64
+  train_split: 0.8
+  validation_split: 0.1
+
+model:
+  vocab_size: 256
+  block_size: 64
+  n_layer: 4
+  n_head: 4
+  n_embd: 128
+  dropout: 0.1
+
+train:
+  run_name: gptiny_artofwar_char_sealed_seed2027
+  runs_dir: runs
+  batch_size: 16
+  max_steps: 5000
+  learning_rate: 0.001
+  weight_decay: 0.0
+  log_interval: 100
+  eval_interval: 250
+  eval_batches: null
+  early_stopping_patience: 3
+  early_stopping_min_delta: 0.0
+  sample_prompt: "The art"
+  sample_max_new_tokens: 100
+  sample_temperature: 1.0
+  sample_top_k: null
+  sample_seed: 2027
+  sample_greedy: false
+  seed: 2027
+
