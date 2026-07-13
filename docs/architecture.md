@@ -6,15 +6,23 @@ scripts parse arguments and call package code.
 
 ## Model Path
 
-```text
-raw text
-  -> prepared corpus, stats, manifest
-  -> selected character or simple BPE tokenizer
-  -> token block dataset
-  -> GPT forward pass
-  -> next-token loss
-  -> checkpoint, metrics, summary, sample
-  -> generation from checkpoint or run
+```mermaid
+flowchart TD
+    A[Raw corpus] --> B[Prepared corpus + manifest]
+    B --> C{Tokenizer selected from config}
+    C -->|char| D[Character tokenizer]
+    C -->|simple BPE| E[Simple BPE tokenizer]
+    D --> F[Token blocks]
+    E --> F
+    F --> G[GPTiny model]
+    G --> H[Training loop]
+    H --> I[checkpoint.pt]
+    H --> J[best_checkpoint.pt]
+    H --> K[metrics.jsonl + summary.json]
+    I --> L[Generation + diagnostics]
+    J --> L
+    K --> M[Experiment reports]
+    L --> M
 ```
 
 ## Module Boundaries
@@ -67,6 +75,9 @@ lower-triangular causal mask so position `t` cannot attend to future tokens.
 The forward pass returns logits and, when targets are provided, next-token
 cross-entropy loss.
 
+Tokenizer fitting uses training text only. Validation traverses deterministic non-overlapping
+blocks and weights NLL by target count; summaries disclose full or sampled coverage.
+
 ## Run Artifacts
 
 Each training run writes:
@@ -75,8 +86,9 @@ Each training run writes:
 | --- | --- |
 | `config.yaml` | Exact config snapshot. |
 | `metrics.jsonl` | Step-level training and validation metrics. |
-| `summary.json` | Final losses, duration, paths, parameter count, vocab size, dataset summary, and generation settings. |
+| `summary.json` | Versioned losses, exact validation coverage, paths, parameter count, dataset identity, and generation settings. |
 | `checkpoint.pt` | Model state, model config, tokenizer state, and run metadata. |
+| `best_checkpoint.pt` | Same checkpoint payload captured at the best validation step, when validation is available. |
 | `sample.txt` | Text generated at the end of training. |
 | `dataset_manifest.json` | Copied corpus manifest for run-local provenance. |
 
@@ -115,7 +127,7 @@ data, training, artifact, and script layers rather than leaking into model code.
 
 ## Deferred Work
 
-The project intentionally does not yet include production tokenizer libraries,
+The project intentionally does not include production tokenizer libraries,
 larger model families, distributed training, checkpoint resume, dashboards, or
-hosted tracking. The next technical work should refine tokenizer/training
-comparisons before adding unrelated infrastructure.
+hosted tracking. Those are outside the current public learning and
+research-engineering artifact rather than launch blockers.

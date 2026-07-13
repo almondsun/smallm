@@ -1,9 +1,57 @@
 # smaLLM
 
+[![CI](https://github.com/almondsun/smallm/actions/workflows/ci.yml/badge.svg)](https://github.com/almondsun/smallm/actions/workflows/ci.yml)
+[![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+
 `smaLLM` is a small, reproducible GPT-style language-model lab built from
 scratch in PyTorch. It is meant for inspecting the core language-modeling path:
-corpus preparation, character tokenization, causal self-attention, Transformer
-blocks, next-token training, baselines, generation, and experiment records.
+corpus preparation, character and simple BPE tokenization, causal
+self-attention, Transformer blocks, next-token training, baselines, controlled
+generation, and experiment records.
+
+## Reviewer Path
+
+For a fast technical review, inspect:
+
+1. [`docs/architecture.md`](docs/architecture.md) for boundaries and the
+   end-to-end pipeline.
+2. [`docs/experiments.md`](docs/experiments.md) for the milestone index.
+3. [`experiments/019-professionalization-and-corrected-evaluation.md`](experiments/019-professionalization-and-corrected-evaluation.md)
+   for the latest corrected modeling evidence and its limitations.
+4. [`src/smallm/model/`](src/smallm/model/) for the from-scratch GPTiny model.
+5. [`src/smallm/training/`](src/smallm/training/) for training and run artifacts.
+6. [`src/smallm/data/`](src/smallm/data/) for corpus and tokenizer contracts.
+7. [`tests/`](tests/) for focused behavioral checks.
+8. [`notes/`](notes/) for the theory, mathematics, and complete system rationale.
+
+This is a reproducible learning and research-engineering artifact, not a
+competitive language model.
+
+## Results at a Glance
+
+All neural results below use the 144,530-character Alice corpus and its
+chronological 90/10 split unless noted otherwise.
+
+| Milestone | Setup | Main metric | Result | Interpretation |
+| --- | --- | --- | --- | --- |
+| [011](experiments/011-larger-corpus-tiny-gpt.md) | Add-one bigram baseline | Validation loss | `2.4340` | Strong simple reference on the larger corpus. |
+| [011](experiments/011-larger-corpus-tiny-gpt.md) | 500-step GPTiny | Validation loss | `2.5914` | Trailed bigram by `0.1574`; the unchanged budget was too short. |
+| [013](experiments/013-gptiny-training-budget-and-optimization.md) | 2k-step GPTiny | Validation loss | `2.2187` | Beat bigram by `0.2153`, showing that training budget mattered. |
+| [013](experiments/013-gptiny-training-budget-and-optimization.md) | 5k-step GPTiny control | Validation loss | `1.8601` | Improved local sample texture, but greedy decoding still collapsed. |
+| [014](experiments/014-optimizer-and-sampling-diagnostics.md) | 5k-step GPTiny, `lr=0.001` | Best / final validation loss | `1.6501` / `1.6792` | Higher learning rate beat the 5k control; prose remained incoherent. |
+| [015](experiments/015-gptiny-capacity-and-generation-diagnostics.md) | Deep character GPTiny | Best validation loss | `1.4950` at step 2500 | Best character validation point; later train/validation separation signaled overfit. |
+| [016](experiments/016-tokenization-study.md) | BPE128 vs character control | Estimated best bits/character | `2.4453` vs `2.1569` | BPE shortened validation from 14,453 to 9,522 tokens but underperformed the character control. |
+| [017](experiments/017-best-checkpoint-evaluation.md) | Final vs best checkpoint | BPE validation loss and controlled generation | `2.8109` final vs `2.5727` best | Best validation did not improve generation quality under the tested prompt and seed. |
+| [019](experiments/019-professionalization-and-corrected-evaluation.md) | Corrected character vs BPE128 | Full-validation best bits/character | `2.0760` char vs `2.0976` BPE128 | BPE128 shortened sequences but remained narrowly worse after removing leakage and coverage bias. |
+
+Token-level loss and perplexity are not directly comparable between character
+and BPE tokenizers because they predict different units. The tokenizer
+comparison therefore uses character-normalized bits per character; milestone 019 computes it from
+exact evaluated coverage.
+
+Rows 016–017 use the superseded evaluation contract and are retained as historical evidence; row
+019 is the current held-out comparison and computes BPC from exact evaluated coverage.
 
 ## Start Here
 
@@ -14,6 +62,14 @@ blocks, next-token training, baselines, generation, and experiment records.
 - [`docs/experiments.md`](docs/experiments.md): milestone index with results and
   takeaways.
 - [`experiments/`](experiments/): chronological experiment reports.
+- [`notes/`](notes/): advanced theory and implementation handbook.
+
+## Theory Handbook
+
+The [`notes/`](notes/) handbook derives the autoregressive objective, tokenization, shifted
+datasets, causal multi-head attention, Transformer blocks, AdamW, held-out evaluation, BPC,
+decoding, diagnostics, provenance, artifact safety, and experiment design. Equations and tensor
+shapes link directly to the implementation and its tests.
 
 ## Current Capabilities
 
@@ -80,10 +136,16 @@ python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temp
 
 ## Current Status
 
-The infrastructure is ahead of the model quality. The pipeline is reproducible
-and the run records are useful, but the current tiny model remains weak.
+The first public evidence package is complete: the pipeline is reproducible,
+the experiment record is inspectable, and automated checks are available
+locally and in CI. The current tiny model remains weak, which the reports state
+directly.
 
-Experiment 016 is the clearest status check:
+Experiments 016–017 remain historical evidence, but their tokenizer fitting and sampled-prefix BPC
+methodology have been superseded by milestone 019. Their reports carry explicit errata. Corrected
+headline results must come from fresh milestone-019 runs rather than mixing metric contracts.
+
+Experiment 017 previously reported:
 
 - Corpus grew from 4,838 to 144,530 prepared characters.
 - The larger-corpus bigram baseline reached validation loss `2.4340`.
@@ -99,13 +161,19 @@ Experiment 016 is the clearest status check:
   best bits per character (`2.4453` versus `2.1569`).
 - BPE128 produced somewhat more word-like greedy text, but generation still
   showed phrase-level repetition and incoherent prose.
+- Training now saves both final and best-validation checkpoints. In the focused
+  final-versus-best comparison, the BPE128 best checkpoint improved validation
+  loss but produced less diverse text with more phrase reuse under the tested
+  greedy and seeded settings. The character best checkpoint also lost diversity
+  and did not improve qualitatively.
 
-The budget and optimizer studies show that the current model was materially
-undertrained and benefited from a higher learning rate. The capacity study
-shows model size still helps. The first tokenization study shows that simple
-BPE is a useful direction, but this BPE128 setup did not beat the character
-control; the next technical direction should tune tokenization and training
-together before adding unrelated infrastructure.
+The budget and optimizer studies show that the model was materially
+undertrained and benefited from a higher learning rate. Capacity still helped.
+Best-checkpoint evaluation removed an ambiguity from the tokenization study but
+did not change its conclusion: this BPE128 setup did not beat the character
+control. Any future modeling work should tune tokenization and training
+together while evaluating both final and best checkpoints; it is not a
+prerequisite for inspecting this release.
 
 ## Material Status
 
