@@ -157,3 +157,7 @@ controlled question is early stopping or modest regularization rather than more 
 Milestone 022 adds patience-3 validation early stopping. It reproduces ByteBPE512's step-1,750 best
 checkpoint and stops at step 2,500, roughly halving runtime. Weight decay `0.01` is effectively
 neutral at best BPC `2.0080`; future work should test robustness across seeds or corpus splits.
+
+Milestone 023 runs the unregularized ByteBPE512 early-stopping setup at seeds 1337, 2027, and 4242.
+Best BPC is `2.0225 ± 0.0124` (population SD), range `2.0083–2.0384`; every seed beats the
+character control. The next modeling question should test split/corpus robustness, not select a seed.

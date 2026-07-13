@@ -47,6 +47,7 @@ chronological 90/10 split unless noted otherwise.
 | [020](experiments/020-bpe-context-and-learning-rate.md) | BPE context/LR controls | Best BPE128 bits/character | `2.0976` remains best | Matched character context and `5e-4` LR changed timing/diversity but did not improve held-out BPC. |
 | [021](experiments/021-boundary-aware-byte-bpe.md) | Boundary-aware ByteBPE320/512 | Full-validation best bits/character | `2.0286` / `2.0083` | Both beat the corrected character and BPE128 controls; ByteBPE512 overfit after step 1750. |
 | [022](experiments/022-early-stopping-and-regularization.md) | ByteBPE512 early stopping / weight decay | Actual steps and best BPC | `2500`, `2.0083` / `2.0080` | Early stopping halves runtime and limits final degradation; weight decay `0.01` is effectively neutral. |
+| [023](experiments/023-multi-seed-robustness.md) | ByteBPE512 across three seeds | Best BPC mean ± population SD | `2.0225 ± 0.0124` | All tested seeds beat the character control; stopping varies from 2500–3000 steps. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer

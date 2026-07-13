@@ -114,6 +114,9 @@ def test_data_config_rejects_invalid_bpe_vocab_size():
         (lambda: TrainConfig(sample_temperature=0), "sample_temperature"),
         (lambda: TrainConfig(sample_temperature=float("inf")), "sample_temperature"),
         (lambda: TrainConfig(sample_top_k=0), "sample_top_k"),
+        (lambda: TrainConfig(seed=True), "train.seed"),
+        (lambda: TrainConfig(seed=-1), "train.seed"),
+        (lambda: TrainConfig(seed=2**63), "train.seed"),
         (
             lambda: ExperimentConfig(
                 data=DataConfig(block_size=8), model=ModelConfig(block_size=4)

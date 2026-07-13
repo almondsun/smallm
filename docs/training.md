@@ -117,6 +117,15 @@ the saved sample.
 inspectable. The final checkpoint is the model at the stop step, while `best_checkpoint.pt` remains
 the lowest observed validation-loss model.
 
+Aggregate completed runs without selecting a winner:
+
+```bash
+python scripts/summarize_runs.py runs/<name-a>/<id> runs/<name-b>/<id> runs/<name-c>/<id>
+```
+
+The command reads each run's config and summary, requires distinct training seeds, and prints every
+observation plus mean, population standard deviation, minimum, and maximum.
+
 ## Generation Controls
 
 ```bash
@@ -167,6 +176,9 @@ control, though ByteBPE512 overfit sharply after step 1,750.
 Experiment 022 adds patience-3 early stopping: it ends at step 2,500, halves runtime, and avoids most
 final-checkpoint degradation. Weight decay `0.01` changes best BPC by only `0.00025`, which is not
 meaningful evidence of improvement.
+Experiment 023 repeats the unregularized early-stopping run across seeds 1337, 2027, and 4242.
+Best BPC is `2.0225 ± 0.0124` (population SD), and all three runs remain better than the corrected
+character control. Stop steps vary from 2,500 to 3,000.
 
 ## Artifact Policy
 

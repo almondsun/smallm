@@ -90,10 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 022 is the latest modeling evidence. Patience-3 validation early stopping reproduces
-ByteBPE512's best full-validation BPC `2.0083`, stops at step 2,500, and roughly halves runtime.
-Weight decay `0.01` reaches `2.0080`, too small a difference to claim improvement. Future work should
-test the tokenizer result across seeds or corpus splits rather than add another narrow hyperparameter.
+Milestone 023 is the latest modeling evidence. Across preregistered seeds 1337, 2027, and 4242,
+ByteBPE512 early stopping reaches best full-validation BPC `2.0225 ± 0.0124` (population SD), range
+`2.0083–2.0384`; all seeds beat the character control. Future work should test split or corpus
+robustness rather than select a favorable seed or add another narrow hyperparameter.
 
 ## Safety And Security
 
