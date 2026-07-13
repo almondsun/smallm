@@ -32,6 +32,7 @@ not a replacement for the original reports.
 | [023 Multi-Seed Robustness](../experiments/023-multi-seed-robustness.md) | Robustness | Three preregistered seeds average best BPC `2.0225 ± 0.0124`; every seed beats the corrected character control. |
 | [024 Cross-Corpus Robustness](../experiments/024-cross-corpus-robustness.md) | External validity | On near-size-matched Peter Pan, ByteBPE512 narrowly beats character at `2.1539` versus `2.1721` BPC. |
 | [025 Corpus-by-Seed Matrix](../experiments/025-corpus-by-seed-matrix.md) | Factorial robustness | ByteBPE512 wins all six paired comparisons; mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan. |
+| [026 Sealed Test Evaluation](../experiments/026-sealed-test-evaluation.md) | Confirmatory evaluation | On untouched terminal segments, ByteBPE512 beats character by `0.0614` BPC on Alice and `0.0258` on Peter Pan. |
 
 ## Topic Shortcuts
 
@@ -58,7 +59,8 @@ not a replacement for the original reports.
   [020](../experiments/020-bpe-context-and-learning-rate.md),
   [021](../experiments/021-boundary-aware-byte-bpe.md),
   [024](../experiments/024-cross-corpus-robustness.md),
-  [025](../experiments/025-corpus-by-seed-matrix.md).
+  [025](../experiments/025-corpus-by-seed-matrix.md),
+  [026](../experiments/026-sealed-test-evaluation.md).
 
 ## Current Status
 
@@ -98,3 +100,8 @@ advantage; a corpus-by-seed matrix is the next stronger test.
 Milestone 025 completes that balanced matrix. ByteBPE512 beats character for seeds 1337, 2027, and
 4242 on both Alice and Peter Pan. Its paired mean advantage is `0.0619` BPC on Alice and `0.0252`
 on Peter Pan; the `+0.0367` BPC interaction shows that effect magnitude remains corpus-dependent.
+
+Milestone 026 freezes that decision and evaluates new 80/10/10 runs once on terminal test segments.
+ByteBPE512 reaches test BPC `2.1178` versus `2.1792` on Alice and `2.2484` versus `2.2742` on Peter
+Pan. The direction and approximate margins survive, while every model's test BPC is worse than its
+validation BPC.

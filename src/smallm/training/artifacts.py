@@ -7,7 +7,7 @@ from dataclasses import asdict
 from datetime import datetime
 from pathlib import Path
 from types import TracebackType
-from typing import Any, cast
+from typing import Any
 
 from smallm.config import ExperimentConfig
 from smallm.utils.io import atomic_write_text
@@ -22,9 +22,13 @@ DATASET_SUMMARY_FIELDS = [
     "unique_characters",
     "train_split",
     "train_characters",
+    "validation_split",
     "validation_characters",
+    "test_characters",
     "normalization_rules",
 ]
+
+MAX_DATASET_MANIFEST_BYTES = 1_000_000
 
 
 def create_run_dir(runs_dir: str | Path, run_name: str) -> Path:
@@ -86,21 +90,36 @@ def write_json(path: str | Path, payload: dict[str, Any]) -> None:
 
 
 def load_dataset_manifest(path: str | Path) -> dict[str, Any]:
+    _, manifest = _read_dataset_manifest(path)
+    return manifest
+
+
+def _read_dataset_manifest(path: str | Path) -> tuple[str, dict[str, Any]]:
     manifest_path = Path(path)
     if not manifest_path.exists():
         raise FileNotFoundError(
             f"dataset manifest not found at {manifest_path}. "
             "Run scripts/prepare_corpus.py with --manifest before training."
         )
-    return cast(dict[str, Any], json.loads(manifest_path.read_text(encoding="utf-8")))
+    with manifest_path.open("rb") as handle:
+        raw = handle.read(MAX_DATASET_MANIFEST_BYTES + 1)
+    if len(raw) > MAX_DATASET_MANIFEST_BYTES:
+        raise ValueError(
+            f"dataset manifest exceeds {MAX_DATASET_MANIFEST_BYTES} bytes: {manifest_path}"
+        )
+    text = raw.decode("utf-8")
+    parsed = json.loads(text)
+    if not isinstance(parsed, dict):
+        raise ValueError("dataset manifest must contain a JSON object")
+    return text, parsed
 
 
 def copy_dataset_manifest(
     manifest_path: str | Path, run_dir: str | Path
 ) -> tuple[Path, dict[str, Any]]:
-    manifest = load_dataset_manifest(manifest_path)
+    text, manifest = _read_dataset_manifest(manifest_path)
     destination = Path(run_dir) / "dataset_manifest.json"
-    atomic_write_text(destination, Path(manifest_path).read_text(encoding="utf-8"))
+    atomic_write_text(destination, text)
     return destination, manifest
 
 
@@ -110,6 +129,7 @@ def verify_dataset_manifest(
     prepared_path: str | Path,
     prepared_text: str,
     train_split: float,
+    validation_split: float | None = None,
 ) -> None:
     required = {"prepared_sha256", "prepared_characters", "train_split"}
     missing = sorted(required - manifest.keys())
@@ -122,10 +142,23 @@ def verify_dataset_manifest(
         raise ValueError("prepared corpus character count does not match dataset manifest")
     if float(manifest["train_split"]) != train_split:
         raise ValueError("configured train split does not match dataset manifest")
-    split_index = int(len(prepared_text) * train_split)
+    manifest_validation_split = manifest.get("validation_split")
+    if validation_split is None:
+        if manifest_validation_split is not None:
+            raise ValueError("configured validation split does not match dataset manifest")
+        validation_end = len(prepared_text)
+    else:
+        if (
+            manifest_validation_split is None
+            or float(manifest_validation_split) != validation_split
+        ):
+            raise ValueError("configured validation split does not match dataset manifest")
+        validation_end = int(len(prepared_text) * (train_split + validation_split))
+    train_end = int(len(prepared_text) * train_split)
     expected_counts = {
-        "train_characters": split_index,
-        "validation_characters": len(prepared_text) - split_index,
+        "train_characters": train_end,
+        "validation_characters": validation_end - train_end,
+        "test_characters": len(prepared_text) - validation_end,
     }
     for field, expected in expected_counts.items():
         if field in manifest and int(manifest[field]) != expected:

@@ -35,7 +35,7 @@ Core logic is deterministic or tensor-oriented package code:
   inspectable JSON state.
 - `smallm.data.byte_bpe_tokenizer`: lossless UTF-8 byte fallback, boundary-aware merges, and
   character-aligned evaluation counts.
-- `smallm.data.dataset`: train/validation split and shifted token blocks.
+- `smallm.data.dataset`: backward-compatible train/validation/test split and shifted token blocks.
 - `smallm.model`: causal attention, Transformer blocks, GPT forward/loss.
 - `smallm.evaluation`: baseline losses and perplexity.
 - `smallm.generation`: decoding controls over model logits.
@@ -59,6 +59,8 @@ policy explicit in config and summary fields.
 Scripts under `scripts/` are CLI adapters. They should parse arguments, load
 config/checkpoints, call package code, and print results. Do not put reusable
 domain logic in scripts when it belongs under `src/smallm/`.
+`scripts/evaluate_test.py` is the post-selection edge: it verifies run-local provenance and writes
+the one-shot sealed-test artifact without exposing test data to training orchestration.
 
 ## Module Boundaries
 
@@ -81,6 +83,7 @@ domain logic in scripts when it belongs under `src/smallm/`.
 
 - baseline probability models
 - validation loss and perplexity calculations
+- exact full-coverage sealed-test evaluation results
 
 `training/` owns:
 

@@ -154,3 +154,37 @@ early stopping and configuration choice; a sealed test segment is read once afte
 is frozen. For chronological text, the ordering must remain explicit because a terminal test block
 measures forward generalization, not exchangeable random-split performance. Test metrics must never
 flow back into checkpoint choice, hyperparameter tuning, or seed selection.
+
+### The test set as an information firewall
+
+Let the research process before test access produce a decision
+\(D=f(X_{\mathrm{train}},X_{\mathrm{val}},R)\), where \(R\) includes seeds, code, and declared
+rules. A confirmatory test estimate is interpretable because \(X_{\mathrm{test}}\) is absent from
+\(f\). Once its result \(T(D,X_{\mathrm{test}})\) is observed, any later decision
+\(D'=g(D,T)\) is statistically coupled to the test set. The same examples have become validation
+data in practice, regardless of their filename.
+
+An information firewall therefore requires both a data boundary and a workflow boundary. smaLLM's
+training path computes split indices and records the terminal character count, but does not encode
+the terminal text into tokens. The separate evaluator verifies the copied manifest, prepared-text
+hash, checkpoint hash, and checkpoint step before evaluating full coverage. Recording these
+identities makes accidental substitution detectable.
+
+The no-overwrite artifact rule prevents a common accidental second look, but cannot prove secrecy:
+a user controls the local filesystem and can delete outputs or modify code. Reproducibility tooling
+can make violations conspicuous; it cannot replace research discipline or an external data
+custodian. After milestone 026, the Alice and Peter Pan terminal segments are permanently consumed
+for this research line.
+
+The observed generalization gap is
+
+\[
+G=\operatorname{BPC}_{\mathrm{test}}-\operatorname{BPC}_{\mathrm{val}}.
+\]
+
+A positive \(G\) does not by itself prove overfitting: a chronological terminal segment may have
+higher irreducible entropy or a shifted style. Comparing tokenizer contrasts
+\(\Delta_c=\operatorname{BPC}_{\mathrm{Byte},c}-\operatorname{BPC}_{\mathrm{char},c}\) across
+validation and test asks a different question: whether the frozen decision preserves its direction
+under forward distribution shift. Milestone 026 finds \(G>0\) for every model while
+\(\Delta_c<0\) on both sealed tests.

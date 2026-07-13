@@ -3,7 +3,7 @@ from __future__ import annotations
 import argparse
 
 from smallm.config import load_config
-from smallm.data import load_prepared_corpus, train_tokenizer
+from smallm.data import load_prepared_corpus, split_corpus_text, train_tokenizer
 from smallm.evaluation import evaluate_baselines
 from smallm.training.artifacts import load_dataset_manifest, verify_dataset_manifest
 
@@ -20,9 +20,13 @@ def main() -> None:
         prepared_path=config.data.prepared_path,
         prepared_text=text,
         train_split=config.data.train_split,
+        validation_split=config.data.validation_split,
     )
-    split_index = int(len(text) * config.data.train_split)
-    train_text, val_text = text[:split_index], text[split_index:]
+    train_text, val_text, _ = split_corpus_text(
+        text,
+        train_split=config.data.train_split,
+        validation_split=config.data.validation_split,
+    )
     tokenizer = train_tokenizer(config.data, train_text)
     train_tokens = tokenizer.encode(train_text)
     val_tokens = tokenizer.encode(val_text)

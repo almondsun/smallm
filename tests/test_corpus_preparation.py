@@ -98,6 +98,21 @@ def test_corpus_stats_json_round_trip(tmp_path):
     assert loaded["unique_characters"] == 2
 
 
+def test_corpus_stats_records_three_way_chronological_split(tmp_path):
+    stats = corpus_stats(
+        "abcdefghij",
+        train_split=0.6,
+        validation_split=0.2,
+        source_name="source",
+        source_note=None,
+        output_path=tmp_path / "corpus.txt",
+    )
+
+    assert stats["train_characters"] == 6
+    assert stats["validation_characters"] == 2
+    assert stats["test_characters"] == 2
+
+
 def test_file_sha256_hashes_file_contents(tmp_path):
     path = tmp_path / "tiny.txt"
     path.write_text("abc\n", encoding="utf-8")

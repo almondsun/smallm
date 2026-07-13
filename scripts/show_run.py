@@ -39,7 +39,12 @@ def main() -> None:
         print(
             "  split_characters: "
             f"train={dataset.get('train_characters')} "
-            f"val={dataset.get('validation_characters')}"
+            f"val={dataset.get('validation_characters')} "
+            f"test={dataset.get('test_characters', 0)}"
+        )
+    if summary.get("test_status") is not None:
+        print(
+            f"test: status={summary.get('test_status')} characters={summary.get('test_characters')}"
         )
     if last_metric is not None:
         print(

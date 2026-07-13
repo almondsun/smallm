@@ -31,6 +31,7 @@ __all__ = [
     "file_sha256",
     "load_prepared_corpus",
     "load_tokenizer",
+    "split_corpus_text",
     "split_tokens",
     "tokenizer_from_state",
     "train_tokenizer",
@@ -38,8 +39,12 @@ __all__ = [
 
 
 def __getattr__(name: str) -> Any:
-    if name in {"TokenBlockDataset", "split_tokens"}:
-        from smallm.data.dataset import TokenBlockDataset, split_tokens
+    if name in {"TokenBlockDataset", "split_corpus_text", "split_tokens"}:
+        from smallm.data.dataset import TokenBlockDataset, split_corpus_text, split_tokens
 
-        return {"TokenBlockDataset": TokenBlockDataset, "split_tokens": split_tokens}[name]
+        return {
+            "TokenBlockDataset": TokenBlockDataset,
+            "split_corpus_text": split_corpus_text,
+            "split_tokens": split_tokens,
+        }[name]
     raise AttributeError(f"module 'smallm.data' has no attribute {name!r}")

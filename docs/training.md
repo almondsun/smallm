@@ -14,6 +14,7 @@ dataset provenance.
 | Evaluate baselines | `python scripts/evaluate_baselines.py --config configs/<name>.yaml` |
 | Train | `python scripts/train.py --config configs/<name>.yaml` |
 | Inspect run | `python scripts/show_run.py --run latest --run-name <name>` |
+| Evaluate sealed test | `python scripts/evaluate_test.py --run <run-dir> --checkpoint-kind best` |
 | Generate | `python scripts/generate.py --run latest --run-name <name> --prompt "Once"` |
 
 ## Common Make Targets
@@ -47,6 +48,7 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny_peterpan_bytebpe512_5k_lr1e-3_ctx37_earlystop.yaml` | Context-matched Peter Pan ByteBPE512 run. |
 | `configs/gptiny_char_5k_lr1e-3_earlystop*.yaml` | Three-seed Alice character early-stopping controls. |
 | `configs/gptiny_peterpan_*_earlystop_seed*.yaml` | Additional Peter Pan matrix seeds. |
+| `configs/gptiny_{alice,peterpan}_{char,bytebpe512}_sealed.yaml` | Frozen 80/10/10 confirmatory runs. |
 
 ## Corpus Preparation
 
@@ -63,6 +65,12 @@ python scripts/prepare_corpus.py \
 
 Use `--source-note` for fetch URLs, extraction notes, or manual curation notes.
 The manifest is copied into each training run.
+
+Add `--validation-split 0.1` with `--train-split 0.8` to reserve a terminal 10% test segment. When
+`data.validation_split` is absent, existing configs retain the legacy two-way behavior. With an
+explicit validation fraction, tokenizer fitting and training use only the leading train region,
+early stopping uses only the middle validation region, and the final region stays unencoded and
+unscored.
 
 ## Smoke Run
 
@@ -120,6 +128,20 @@ the saved sample.
 `early_stopping_min_delta`; `stopped_early`, `stop_reason`, and the terminal state make the decision
 inspectable. The final checkpoint is the model at the stop step, while `best_checkpoint.pt` remains
 the lowest observed validation-loss model.
+
+For a run with an explicit sealed split, training records the logical status
+`test_status: sealed_unread` and the test character count but no test tokens or metrics. The label
+means sealed from modeling and selection; the prepared corpus is still loaded to calculate slice
+boundaries. After freezing the decision, evaluate once:
+
+```bash
+python scripts/evaluate_test.py --run runs/<name>/<id> --checkpoint-kind best
+```
+
+The command verifies the run's copied manifest, corpus checksum, selected checkpoint step, and full
+coverage. It writes `test_evaluation_best.json` with checkpoint/corpus hashes, loss, BPC, and exact
+target counts, then refuses to overwrite the artifact. Deleting a local artifact can bypass this
+guardrail, so the scientific one-shot rule remains procedural.
 
 Aggregate completed runs without selecting a winner:
 
@@ -179,6 +201,7 @@ runs; summaries record evaluated targets and coverage.
 | `best_checkpoint.pt` | Same payload at the best validation step; absent when validation is unavailable. |
 | `sample.txt` | End-of-training generated sample. |
 | `dataset_manifest.json` | Copied corpus manifest. |
+| `test_evaluation_best.json` | Optional one-shot sealed-test result; created after training only. |
 
 ## Current Reading Of Results
 
@@ -205,6 +228,9 @@ effect size.
 Experiment 025 completes the 2-tokenizer × 2-corpus × 3-seed matrix. ByteBPE512 wins every paired
 comparison. Its mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan, so the direction
 is robust within the matrix while the effect magnitude remains corpus-dependent.
+Experiment 026 adds a three-way chronological contract and evaluates the frozen decision once.
+ByteBPE512 beats character on sealed test BPC by `0.0614` on Alice and `0.0258` on Peter Pan. All
+four test results are worse than validation, and these terminal segments are now consumed evidence.
 
 ## Artifact Policy
 

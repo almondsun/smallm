@@ -17,6 +17,7 @@ def main() -> None:
     parser.add_argument("--source-name")
     parser.add_argument("--source-note")
     parser.add_argument("--train-split", type=float, default=0.9)
+    parser.add_argument("--validation-split", type=float)
     args = parser.parse_args()
 
     input_path = Path(args.input)
@@ -31,6 +32,7 @@ def main() -> None:
         source_name=args.source_name,
         source_note=args.source_note,
         output_path=output_path,
+        validation_split=args.validation_split,
     )
     stats_path = Path(args.stats)
     atomic_write_text(stats_path, json.dumps(stats, indent=2, sort_keys=True) + "\n")

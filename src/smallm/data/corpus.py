@@ -64,13 +64,21 @@ def corpus_stats(
     source_name: str | None,
     source_note: str | None,
     output_path: str | Path,
+    validation_split: float | None = None,
     top_n: int = 20,
 ) -> dict[str, Any]:
     if not 0.0 < train_split < 1.0:
         raise ValueError("train_split must be between 0 and 1")
     counter = Counter(text)
     total_characters = len(text)
-    split_index = int(total_characters * train_split)
+    if validation_split is not None and not 0.0 < validation_split < 1.0 - train_split:
+        raise ValueError("validation_split must be positive and leave a non-empty test fraction")
+    train_end = int(total_characters * train_split)
+    validation_end = (
+        total_characters
+        if validation_split is None
+        else int(total_characters * (train_split + validation_split))
+    )
     lines = text.splitlines()
     return {
         "source_name": source_name,
@@ -85,8 +93,10 @@ def corpus_stats(
             {"character": char, "count": count} for char, count in counter.most_common(top_n)
         ],
         "train_split": train_split,
-        "train_characters": split_index,
-        "validation_characters": total_characters - split_index,
+        "train_characters": train_end,
+        "validation_split": validation_split,
+        "validation_characters": validation_end - train_end,
+        "test_characters": total_characters - validation_end,
     }
 
 
@@ -113,7 +123,9 @@ def corpus_manifest(
         "unique_characters": stats["unique_characters"],
         "train_split": stats["train_split"],
         "train_characters": stats["train_characters"],
+        "validation_split": stats.get("validation_split"),
         "validation_characters": stats["validation_characters"],
+        "test_characters": stats.get("test_characters", 0),
         "normalization_rules": NORMALIZATION_RULES,
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }

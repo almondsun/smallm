@@ -74,7 +74,9 @@ def test_dataset_manifest_copy_and_summary_fields(tmp_path):
         "unique_characters": 4,
         "train_split": 0.75,
         "train_characters": 6,
+        "validation_split": None,
         "validation_characters": 2,
+        "test_characters": 0,
         "normalization_rules": ["rule"],
         "extra": "ignored",
     }
@@ -95,7 +97,9 @@ def test_dataset_manifest_copy_and_summary_fields(tmp_path):
         "unique_characters": 4,
         "train_split": 0.75,
         "train_characters": 6,
+        "validation_split": None,
         "validation_characters": 2,
+        "test_characters": 0,
         "normalization_rules": ["rule"],
         "manifest_path": str(copied_path),
     }
@@ -104,6 +108,17 @@ def test_dataset_manifest_copy_and_summary_fields(tmp_path):
 def test_missing_dataset_manifest_has_actionable_error(tmp_path):
     with pytest.raises(FileNotFoundError, match="Run scripts/prepare_corpus.py with --manifest"):
         load_dataset_manifest(tmp_path / "missing.json")
+
+
+def test_dataset_manifest_must_be_a_bounded_json_object(tmp_path):
+    manifest_path = tmp_path / "manifest.json"
+    manifest_path.write_text("[]", encoding="utf-8")
+    with pytest.raises(ValueError, match="JSON object"):
+        load_dataset_manifest(manifest_path)
+
+    manifest_path.write_bytes(b" " * 1_000_001)
+    with pytest.raises(ValueError, match="exceeds 1000000 bytes"):
+        load_dataset_manifest(manifest_path)
 
 
 def test_verify_dataset_manifest_rejects_stale_metadata(tmp_path):
@@ -135,6 +150,37 @@ def test_verify_dataset_manifest_rejects_stale_metadata(tmp_path):
                 prepared_text=text,
                 train_split=0.8,
             )
+
+
+def test_verify_dataset_manifest_accepts_and_checks_sealed_split(tmp_path):
+    prepared = tmp_path / "corpus.txt"
+    text = "abcdefghij"
+    prepared.write_text(text, encoding="utf-8")
+    valid = {
+        "prepared_sha256": file_sha256(prepared),
+        "prepared_characters": 10,
+        "train_split": 0.6,
+        "validation_split": 0.2,
+        "train_characters": 6,
+        "validation_characters": 2,
+        "test_characters": 2,
+    }
+
+    verify_dataset_manifest(
+        valid,
+        prepared_path=prepared,
+        prepared_text=text,
+        train_split=0.6,
+        validation_split=0.2,
+    )
+    with pytest.raises(ValueError, match="validation split"):
+        verify_dataset_manifest(
+            valid,
+            prepared_path=prepared,
+            prepared_text=text,
+            train_split=0.6,
+            validation_split=0.1,
+        )
 
 
 def test_checkpoint_round_trip_and_schema_validation(tmp_path):

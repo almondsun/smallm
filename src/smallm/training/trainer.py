@@ -12,7 +12,7 @@ import torch
 from torch.utils.data import DataLoader
 
 from smallm.config import ExperimentConfig
-from smallm.data import TokenBlockDataset, load_prepared_corpus, train_tokenizer
+from smallm.data import TokenBlockDataset, load_prepared_corpus, split_corpus_text, train_tokenizer
 from smallm.generation import generate
 from smallm.model import GPT, GPTConfig
 from smallm.training.artifacts import (
@@ -240,10 +240,13 @@ def train(config: ExperimentConfig) -> Path:
         prepared_path=config.data.prepared_path,
         prepared_text=text,
         train_split=config.data.train_split,
+        validation_split=config.data.validation_split,
     )
-    character_split_index = int(len(text) * config.data.train_split)
-    train_text = text[:character_split_index]
-    val_text = text[character_split_index:]
+    train_text, val_text, test_text = split_corpus_text(
+        text,
+        train_split=config.data.train_split,
+        validation_split=config.data.validation_split,
+    )
     tokenizer = train_tokenizer(config.data, train_text)
     tokenizer.save(config.data.tokenizer_path)
     train_token_ids, _ = tokenizer.encode_with_character_counts(train_text)
@@ -253,6 +256,7 @@ def train(config: ExperimentConfig) -> Path:
     val_character_counts_tensor = torch.tensor(val_character_counts, dtype=torch.long)
     train_characters = len(train_text)
     val_characters = len(val_text)
+    test_characters = len(test_text)
     train_dataset = TokenBlockDataset(train_tokens, config.data.block_size)
     train_loader = DataLoader(train_dataset, batch_size=config.train.batch_size, shuffle=True)
     run_dir = create_run_dir(config.train.runs_dir, config.train.run_name)
@@ -477,6 +481,8 @@ def train(config: ExperimentConfig) -> Path:
             "val_tokens": int(val_tokens.numel()),
             "train_characters": train_characters,
             "val_characters": val_characters,
+            "test_characters": test_characters,
+            "test_status": "sealed_unread" if test_characters else "not_configured",
             "final_val_bits_per_char": final_evaluation.bits_per_character
             if final_evaluation
             else None,
