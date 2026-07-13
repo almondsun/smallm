@@ -49,6 +49,7 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny_char_5k_lr1e-3_earlystop*.yaml` | Three-seed Alice character early-stopping controls. |
 | `configs/gptiny_peterpan_*_earlystop_seed*.yaml` | Additional Peter Pan matrix seeds. |
 | `configs/gptiny_{alice,peterpan}_{char,bytebpe512}_sealed.yaml` | Frozen 80/10/10 confirmatory runs. |
+| `configs/gptiny_hamlet_{char,bytebpe512}_sealed.yaml` | Preregistered 80/10/10 dramatic-play replication. |
 
 ## Corpus Preparation
 
@@ -231,6 +232,9 @@ is robust within the matrix while the effect magnitude remains corpus-dependent.
 Experiment 026 adds a three-way chronological contract and evaluates the frozen decision once.
 ByteBPE512 beats character on sealed test BPC by `0.0614` on Alice and `0.0258` on Peter Pan. All
 four test results are worse than validation, and these terminal segments are now consumed evidence.
+Experiment 027 preregisters a structurally different Hamlet distribution before corpus access.
+ByteBPE512 beats character by `0.0673` sealed-test BPC. Both terminal results are better than
+validation, demonstrating that chronological gap direction is not stable across corpora.
 
 ## Artifact Policy
 

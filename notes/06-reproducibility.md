@@ -188,3 +188,27 @@ higher irreducible entropy or a shifted style. Comparing tokenizer contrasts
 validation and test asks a different question: whether the frozen decision preserves its direction
 under forward distribution shift. Milestone 026 finds \(G>0\) for every model while
 \(\Delta_c<0\) on both sealed tests.
+
+### Preregistration and distributional replication
+
+Preregistration separates a hypothesis from its outcome in time. A useful repository-native record
+commits the source identity, extraction rule, split, seeds, configurations, stopping policy, primary
+metric, directional contrast, and test-access rule before data or model access. Git history then
+makes later changes observable. It does not prevent misconduct, but it sharply reduces ambiguity
+about which choices preceded the result.
+
+External-distribution replication asks whether a fixed decision transfers when the data-generating
+process changes. Let \(c\) index corpora and
+\(\Delta_c=\operatorname{BPC}_{\mathrm{candidate},c}-
+\operatorname{BPC}_{\mathrm{control},c}\). Repeatedly observing
+\(\operatorname{sign}(\Delta_c)<0\) supports directional robustness. It does not imply a common
+effect size: heterogeneity in \(|\Delta_c|\) is evidence that the tokenizer interacts with corpus
+structure.
+
+The chronological generalization gap
+\(G_c=\operatorname{BPC}_{\mathrm{test},c}-\operatorname{BPC}_{\mathrm{val},c}\) is likewise not a
+model-only property. Milestone 026 finds \(G_c>0\) for Alice and Peter Pan, while preregistered
+milestone 027 finds \(G_c<0\) for both Hamlet models. Textual position can alter speaker mix,
+chapter or scene structure, punctuation, verse density, and intrinsic entropy. A professional
+interpretation therefore reports both the model contrast and the regional difficulty shift rather
+than labeling every positive gap "overfitting" or every negative gap "improved generalization."

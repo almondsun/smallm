@@ -176,8 +176,9 @@ current task or explicitly quoted from a prior report.
 
 ## Current Milestone Status
 
-Milestone 026 is the current evaluation contract: legacy two-way splits remain compatible, while
-explicit validation fractions reserve a chronological test region that training leaves unencoded
-and unscored.
+Milestone 027 uses the milestone-026 evaluation contract: legacy two-way splits remain compatible,
+while explicit validation fractions reserve a chronological test region that training leaves
+unencoded and unscored.
 Best-checkpoint test evaluation verifies corpus/checkpoint identity, requires full coverage, and
-refuses artifact overwrite.
+refuses artifact overwrite. The preregistered Hamlet replication confirms the workflow on an
+external dramatic-play distribution.

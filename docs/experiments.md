@@ -33,6 +33,7 @@ not a replacement for the original reports.
 | [024 Cross-Corpus Robustness](../experiments/024-cross-corpus-robustness.md) | External validity | On near-size-matched Peter Pan, ByteBPE512 narrowly beats character at `2.1539` versus `2.1721` BPC. |
 | [025 Corpus-by-Seed Matrix](../experiments/025-corpus-by-seed-matrix.md) | Factorial robustness | ByteBPE512 wins all six paired comparisons; mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan. |
 | [026 Sealed Test Evaluation](../experiments/026-sealed-test-evaluation.md) | Confirmatory evaluation | On untouched terminal segments, ByteBPE512 beats character by `0.0614` BPC on Alice and `0.0258` on Peter Pan. |
+| [027 Hamlet External-Distribution Replication](../experiments/027-hamlet-external-distribution.md) | Preregistered external validity | ByteBPE512 beats character by `0.0673` sealed-test BPC on a dramatic play; the terminal region is easier than validation for both models. |
 
 ## Topic Shortcuts
 
@@ -60,7 +61,8 @@ not a replacement for the original reports.
   [021](../experiments/021-boundary-aware-byte-bpe.md),
   [024](../experiments/024-cross-corpus-robustness.md),
   [025](../experiments/025-corpus-by-seed-matrix.md),
-  [026](../experiments/026-sealed-test-evaluation.md).
+  [026](../experiments/026-sealed-test-evaluation.md),
+  [027](../experiments/027-hamlet-external-distribution.md).
 
 ## Current Status
 
@@ -105,3 +107,8 @@ Milestone 026 freezes that decision and evaluates new 80/10/10 runs once on term
 ByteBPE512 reaches test BPC `2.1178` versus `2.1792` on Alice and `2.2484` versus `2.2742` on Peter
 Pan. The direction and approximate margins survive, while every model's test BPC is worse than its
 validation BPC.
+
+Milestone 027 preregisters Hamlet before corpus access and transfers the same frozen protocol to a
+dramatic play. ByteBPE512 reaches sealed-test BPC `2.2546` versus character's `2.3219`, an advantage
+of `0.0673`. Both terminal results are better than validation, reversing milestone 026's gap
+direction and reinforcing that chronological difficulty is corpus-dependent.

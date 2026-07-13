@@ -90,10 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 026 is the latest modeling evidence. Frozen 80/10/10 runs evaluated once on sealed
-terminal segments confirm ByteBPE512 over character by `0.0614` BPC on Alice and `0.0258` on Peter
-Pan. Test BPC is worse than validation for all four models. These test segments are consumed and
-must not guide further tuning; future modeling needs a new untouched evaluation distribution.
+Milestone 027 is the latest modeling evidence. It was preregistered before Hamlet corpus access and
+confirms ByteBPE512 over character by `0.0673` sealed-test BPC on a dramatic play. Hamlet test BPC
+is better than validation for both models, reversing milestone 026's harder-tail pattern. Alice,
+Peter Pan, and Hamlet tests are consumed and must not guide further tuning.
 
 ## Safety And Security
 
