@@ -1,0 +1,19 @@
+name: Bug report
+description: Report reproducible incorrect behavior without private artifacts.
+body:
+  - type: textarea
+    attributes:
+      label: Description
+      description: What happened and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Reproduction
+      description: Provide sanitized commands, config, traceback, Python and PyTorch versions.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Validation
+      description: Which checks or minimal reproductions did you run?
