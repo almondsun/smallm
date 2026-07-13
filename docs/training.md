@@ -43,6 +43,8 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny_bpe128_5k_lr1e-3_ctx42.yaml` | Character-context-matched BPE128 control. |
 | `configs/gptiny_bpe128_5k_lr5e-4_ctx42.yaml` | Matched-context lower-learning-rate BPE128 run. |
 | `configs/gptiny_bpe128_5k_lr5e-4_ctx64.yaml` | Longer-context lower-learning-rate BPE128 run. |
+| `configs/gptiny_peterpan_char_5k_lr1e-3_earlystop.yaml` | Peter Pan character control. |
+| `configs/gptiny_peterpan_bytebpe512_5k_lr1e-3_ctx37_earlystop.yaml` | Context-matched Peter Pan ByteBPE512 run. |
 
 ## Corpus Preparation
 
@@ -179,6 +181,10 @@ meaningful evidence of improvement.
 Experiment 023 repeats the unregularized early-stopping run across seeds 1337, 2027, and 4242.
 Best BPC is `2.0225 ± 0.0124` (population SD), and all three runs remain better than the corrected
 character control. Stop steps vary from 2,500 to 3,000.
+Experiment 024 tests a second book. On the near-size-matched Peter Pan corpus, ByteBPE512 reaches
+best BPC `2.1539` versus `2.1721` for character and stops at step 2,750. The 0.83% advantage is a
+cross-corpus replication in direction, but too small and sparsely sampled to establish a stable
+effect size.
 
 ## Artifact Policy
 

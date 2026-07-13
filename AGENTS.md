@@ -90,10 +90,11 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 023 is the latest modeling evidence. Across preregistered seeds 1337, 2027, and 4242,
-ByteBPE512 early stopping reaches best full-validation BPC `2.0225 ± 0.0124` (population SD), range
-`2.0083–2.0384`; all seeds beat the character control. Future work should test split or corpus
-robustness rather than select a favorable seed or add another narrow hyperparameter.
+Milestone 024 is the latest modeling evidence. On a deterministically extracted, near-size-matched
+Peter Pan corpus, ByteBPE512 reaches best BPC `2.1539` versus `2.1721` for character. This
+replicates the direction found on Alice, but the 0.83% margin from one seed is not a stable
+effect-size estimate. Milestone 023 remains the seed-robustness reference (`2.0225 ± 0.0124` on
+Alice); the next strong test is a corpus-by-seed matrix.
 
 ## Safety And Security
 

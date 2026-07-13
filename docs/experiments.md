@@ -30,6 +30,7 @@ not a replacement for the original reports.
 | [021 Boundary-Aware Byte BPE](../experiments/021-boundary-aware-byte-bpe.md) | Tokenizer design | Lossless boundary-aware ByteBPE320/512 beat both corrected controls on best BPC; ByteBPE512 reached `2.0083` but overfit early. |
 | [022 Early Stopping and Regularization](../experiments/022-early-stopping-and-regularization.md) | Training control | Patience-3 stopping reproduced the step-1750 optimum and halved runtime; weight decay `0.01` was effectively neutral. |
 | [023 Multi-Seed Robustness](../experiments/023-multi-seed-robustness.md) | Robustness | Three preregistered seeds average best BPC `2.0225 ± 0.0124`; every seed beats the corrected character control. |
+| [024 Cross-Corpus Robustness](../experiments/024-cross-corpus-robustness.md) | External validity | On near-size-matched Peter Pan, ByteBPE512 narrowly beats character at `2.1539` versus `2.1721` BPC. |
 
 ## Topic Shortcuts
 
@@ -54,7 +55,8 @@ not a replacement for the original reports.
   [017](../experiments/017-best-checkpoint-evaluation.md).
 - Tokenization: [016](../experiments/016-tokenization-study.md),
   [020](../experiments/020-bpe-context-and-learning-rate.md),
-  [021](../experiments/021-boundary-aware-byte-bpe.md).
+  [021](../experiments/021-boundary-aware-byte-bpe.md),
+  [024](../experiments/024-cross-corpus-robustness.md).
 
 ## Current Status
 
@@ -85,3 +87,8 @@ Milestone 023 measures seed sensitivity directly. Across seeds 1337, 2027, and 4
 `2.0225 ± 0.0124` with range `2.0083–2.0384`; best step ranges 1,750–2,250 and stop step
 2,500–3,000. The tokenizer result survives all tested seeds, while the observed seed spread confirms
 that milestone 022's tiny weight-decay delta was not decision-grade evidence.
+
+Milestone 024 changes the data distribution to a near-size-matched Peter Pan corpus. ByteBPE512
+reaches best BPC `2.1539` versus `2.1721` for character, reproducing the direction with a much
+smaller 0.83% margin. This supports limited cross-corpus robustness, not a universal tokenizer
+advantage; a corpus-by-seed matrix is the next stronger test.
