@@ -67,7 +67,7 @@ be reported. Test results will not trigger configuration changes or additional H
 
 ## Observations
 
-The preregistration above was committed as `d4a17dc89138c9ff6b6271b70a7d04d176a9da5e` at
+The preregistration above was committed as `6f130d5b3c9c7b9deaeac09d8e4bb2bd8d325a33` at
 `2026-07-13T01:50:48-05:00`, before the first network request. The declared protocol was executed
 without substitution or post-access configuration changes.
 
