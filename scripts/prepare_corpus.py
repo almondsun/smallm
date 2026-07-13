@@ -5,6 +5,7 @@ import json
 from pathlib import Path
 
 from smallm.data import clean_corpus_text, corpus_manifest, corpus_stats
+from smallm.utils.io import atomic_write_text
 
 
 def main() -> None:
@@ -22,8 +23,7 @@ def main() -> None:
     raw_text = input_path.read_text(encoding="utf-8")
     cleaned = clean_corpus_text(raw_text)
     output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    output_path.write_text(cleaned, encoding="utf-8")
+    atomic_write_text(output_path, cleaned)
 
     stats = corpus_stats(
         cleaned,
@@ -33,8 +33,7 @@ def main() -> None:
         output_path=output_path,
     )
     stats_path = Path(args.stats)
-    stats_path.parent.mkdir(parents=True, exist_ok=True)
-    stats_path.write_text(json.dumps(stats, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    atomic_write_text(stats_path, json.dumps(stats, indent=2, sort_keys=True) + "\n")
     manifest = corpus_manifest(
         raw_path=input_path,
         prepared_path=output_path,
@@ -45,8 +44,7 @@ def main() -> None:
         source_note=args.source_note,
     )
     manifest_path = Path(args.manifest)
-    manifest_path.parent.mkdir(parents=True, exist_ok=True)
-    manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    atomic_write_text(manifest_path, json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     print(
         f"prepared corpus: {stats['total_characters']} chars, "
         f"{stats['unique_characters']} unique chars -> {output_path}"

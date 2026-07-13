@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from smallm.data import CharTokenizer, SimpleBPETokenizer, load_tokenizer
@@ -9,7 +11,8 @@ def test_char_tokenizer_round_trip():
     encoded = tokenizer.encode("hello")
 
     assert tokenizer.decode(encoded) == "hello"
-    assert tokenizer.vocab_size == 4
+    assert tokenizer.vocab_size == 5
+    assert tokenizer.decode(tokenizer.encode("z")) == "<unk>"
 
 
 def test_bpe_tokenizer_round_trip():
@@ -70,3 +73,11 @@ def test_load_tokenizer_supports_legacy_char_artifact(tmp_path):
     tokenizer = load_tokenizer(path)
 
     assert tokenizer.decode(tokenizer.encode("ab")) == "ab"
+
+
+def test_load_tokenizer_rejects_sparse_ids(tmp_path):
+    path = tmp_path / "invalid.json"
+    path.write_text(json.dumps({"type": "char", "stoi": {"a": 0, "b": 2}}), encoding="utf-8")
+
+    with pytest.raises(ValueError, match="contiguous"):
+        load_tokenizer(path)

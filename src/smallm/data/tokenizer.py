@@ -5,19 +5,25 @@ from pathlib import Path
 from typing import Any
 
 from smallm.config import DataConfig
+from smallm.utils.io import atomic_write_text
 
 
 class CharTokenizer:
     """A tiny deterministic character tokenizer for early experiments."""
 
-    def __init__(self, stoi: dict[str, int]) -> None:
+    def __init__(self, stoi: dict[str, int], unk_token: str | None = None) -> None:
         self.stoi = dict(stoi)
         self.itos = {idx: token for token, idx in self.stoi.items()}
+        self.unk_token = unk_token
+        if unk_token is not None and unk_token not in self.stoi:
+            raise ValueError("unk_token must be in stoi")
 
     @classmethod
-    def train(cls, text: str) -> "CharTokenizer":
+    def train(cls, text: str) -> CharTokenizer:
+        unk_token = "<unk>"
         chars = sorted(set(text))
-        return cls({char: idx for idx, char in enumerate(chars)})
+        chars.append(unk_token)
+        return cls({char: idx for idx, char in enumerate(chars)}, unk_token=unk_token)
 
     @property
     def vocab_size(self) -> int:
@@ -28,27 +34,42 @@ class CharTokenizer:
         return "char"
 
     def encode(self, text: str) -> list[int]:
-        return [self.stoi[char] for char in text]
+        if self.unk_token is None:
+            return [self.stoi[char] for char in text]
+        return [self.stoi.get(char, self.stoi[self.unk_token]) for char in text]
 
     def decode(self, token_ids: list[int]) -> str:
         return "".join(self.itos[token_id] for token_id in token_ids)
 
+    def source_character_count(self, token_ids: list[int]) -> int:
+        return len(token_ids)
+
     def save(self, path: str | Path) -> None:
         output = Path(path)
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(self.to_state(), indent=2), encoding="utf-8")
+        atomic_write_text(output, json.dumps(self.to_state(), indent=2) + "\n")
 
     def to_state(self) -> dict[str, Any]:
-        return {"type": "char", "stoi": self.stoi, "vocab_size": self.vocab_size}
+        return {
+            "schema_version": 2,
+            "type": "char",
+            "stoi": self.stoi,
+            "unk_token": self.unk_token,
+            "vocab_size": self.vocab_size,
+        }
 
     @classmethod
-    def load(cls, path: str | Path) -> "CharTokenizer":
+    def load(cls, path: str | Path) -> CharTokenizer:
         payload = json.loads(Path(path).read_text(encoding="utf-8"))
         return cls.from_state(payload)
 
     @classmethod
-    def from_state(cls, payload: dict[str, Any]) -> "CharTokenizer":
-        return cls({str(token): int(index) for token, index in payload["stoi"].items()})
+    def from_state(cls, payload: dict[str, Any]) -> CharTokenizer:
+        unk_token = payload.get("unk_token")
+        return cls(
+            {str(token): int(index) for token, index in payload["stoi"].items()},
+            unk_token=str(unk_token) if unk_token is not None else None,
+        )
 
 
 def train_tokenizer(config: DataConfig, text: str) -> Any:
@@ -79,4 +100,9 @@ def tokenizer_from_state(payload: dict[str, Any]) -> Any:
 
 def load_tokenizer(path: str | Path) -> Any:
     payload = json.loads(Path(path).read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("tokenizer artifact must contain a mapping")
+    from smallm.training.checkpoints import _validate_tokenizer_state
+
+    _validate_tokenizer_state(payload)
     return tokenizer_from_state(payload)

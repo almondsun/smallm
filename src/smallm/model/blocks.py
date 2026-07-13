@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from typing import cast
+
+import torch
 from torch import nn
 
 from smallm.model.attention import CausalSelfAttention
@@ -18,6 +21,6 @@ class TransformerBlock(nn.Module):
             nn.Dropout(dropout),
         )
 
-    def forward(self, x):
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
         x = x + self.attn(self.ln_1(x))
-        return x + self.mlp(self.ln_2(x))
+        return cast(torch.Tensor, x + self.mlp(self.ln_2(x)))

@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+import hashlib
 from collections import Counter
 from datetime import datetime, timezone
-import hashlib
 from pathlib import Path
 from typing import Any
 
@@ -63,8 +63,7 @@ def corpus_stats(
         "non_empty_lines": sum(1 for line in lines if line.strip()),
         "unique_characters": len(counter),
         "top_character_frequencies": [
-            {"character": char, "count": count}
-            for char, count in counter.most_common(top_n)
+            {"character": char, "count": count} for char, count in counter.most_common(top_n)
         ],
         "train_split": train_split,
         "train_characters": split_index,

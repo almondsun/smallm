@@ -1,9 +1,11 @@
 from __future__ import annotations
 
-from collections import Counter
 import json
+from collections import Counter
 from pathlib import Path
 from typing import Any
+
+from smallm.utils.io import atomic_write_text
 
 
 class SimpleBPETokenizer:
@@ -25,7 +27,7 @@ class SimpleBPETokenizer:
             raise ValueError("unk_token must be in vocab")
 
     @classmethod
-    def train(cls, text: str, vocab_size: int, min_frequency: int = 2) -> "SimpleBPETokenizer":
+    def train(cls, text: str, vocab_size: int, min_frequency: int = 2) -> SimpleBPETokenizer:
         if vocab_size <= 0:
             raise ValueError("vocab_size must be positive")
         if min_frequency <= 0:
@@ -83,8 +85,15 @@ class SimpleBPETokenizer:
     def decode(self, ids: list[int]) -> str:
         return "".join(self.itos[token_id] for token_id in ids)
 
+    def source_character_count(self, token_ids: list[int]) -> int:
+        return sum(
+            1 if self.itos[token_id] == self.unk_token else len(self.itos[token_id])
+            for token_id in token_ids
+        )
+
     def to_state(self) -> dict[str, Any]:
         return {
+            "schema_version": 2,
             "type": "bpe",
             "vocab": self.vocab,
             "merges": [list(pair) for pair in self.merges],
@@ -94,7 +103,7 @@ class SimpleBPETokenizer:
         }
 
     @classmethod
-    def from_state(cls, payload: dict[str, Any]) -> "SimpleBPETokenizer":
+    def from_state(cls, payload: dict[str, Any]) -> SimpleBPETokenizer:
         return cls(
             {str(token): int(index) for token, index in payload["vocab"].items()},
             [(str(left), str(right)) for left, right in payload.get("merges", [])],
@@ -105,10 +114,10 @@ class SimpleBPETokenizer:
     def save(self, path: str | Path) -> None:
         output = Path(path)
         output.parent.mkdir(parents=True, exist_ok=True)
-        output.write_text(json.dumps(self.to_state(), indent=2, sort_keys=True), encoding="utf-8")
+        atomic_write_text(output, json.dumps(self.to_state(), indent=2, sort_keys=True) + "\n")
 
     @classmethod
-    def load(cls, path: str | Path) -> "SimpleBPETokenizer":
+    def load(cls, path: str | Path) -> SimpleBPETokenizer:
         return cls.from_state(json.loads(Path(path).read_text(encoding="utf-8")))
 
 

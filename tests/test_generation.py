@@ -1,3 +1,4 @@
+import pytest
 import torch
 from torch import nn
 
@@ -67,3 +68,22 @@ def test_top_k_restricts_candidate_tokens():
     sampled_tokens = output[0, 1:].tolist()
 
     assert set(sampled_tokens) <= {2, 3}
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"max_new_tokens": -1},
+        {"max_new_tokens": 1, "temperature": 0},
+        {"max_new_tokens": 1, "top_k": 0},
+    ],
+)
+def test_generate_rejects_invalid_settings(kwargs):
+    model = ScriptedModel([[0.0, 1.0]])
+    with pytest.raises(ValueError):
+        generate(model, torch.tensor([[0]]), **kwargs)
+
+
+def test_generate_rejects_empty_prompt():
+    with pytest.raises(ValueError, match="prompt"):
+        generate(ScriptedModel([[0.0, 1.0]]), torch.empty((1, 0), dtype=torch.long), 1)
