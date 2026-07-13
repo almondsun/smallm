@@ -9,14 +9,21 @@ repository. Prefer these commands over generic guesses.
 - CLI scripts under `scripts/`.
 - Tests under `tests/`.
 - Build metadata in `pyproject.toml`.
+- Common local commands in `Makefile`.
+- GitHub Actions validation in `.github/workflows/ci.yml`.
 - Runtime artifacts under ignored `data/`, `checkpoints/`, and `runs/` paths.
 
-There is no Makefile, CI workflow, type-checker config, linter config, or
-formatter config currently checked in.
+Ruff, mypy, pytest coverage, compileall, and Markdown links form the quality baseline.
 
 ## Installation
 
-Editable install with development dependencies:
+Frozen development install:
+
+```bash
+uv sync --frozen --extra dev
+```
+
+Editable pip fallback:
 
 ```bash
 python -m pip install -e ".[dev]"
@@ -27,13 +34,23 @@ also include PyYAML and pytest.
 
 ## Canonical Checks
 
+Run the standard local checks together with:
+
+```bash
+make check
+```
+
+Audit the frozen environment against the current vulnerability database with `make audit`.
+
+The individual commands remain canonical and are listed below.
+
 ### Unit Tests
 
 ```bash
 python -m pytest
 ```
 
-Current expected result after milestone 016+: 54 tests passing.
+Current expected result after milestone 019+: 90 tests passing with at least 90% coverage.
 
 ### Compile Check
 
@@ -46,32 +63,19 @@ changes that include command examples.
 
 ### Documentation Link/Path Check
 
-There is no checked-in docs linter. For documentation-only changes, use a small
-Markdown path check when links are changed:
+Use the checked-in Markdown path checker when links are changed:
 
 ```bash
-python - <<'PY'
-from pathlib import Path
-import re
-
-files = [Path("README.md"), *Path("docs").glob("*.md"), *Path("docs/codex").glob("*.md"), Path("experiments/README.md")]
-missing = []
-for file in files:
-    text = file.read_text(encoding="utf-8")
-    for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", text):
-        target = match.group(1)
-        if "://" in target or target.startswith("#"):
-            continue
-        path = (file.parent / target.split("#", 1)[0]).resolve()
-        if not path.exists():
-            missing.append((str(file), target))
-if missing:
-    for item in missing:
-        print("missing:", item)
-    raise SystemExit(1)
-print("markdown links resolve")
-PY
+make links
+# equivalent to: python scripts/check_markdown_links.py
 ```
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs on pushes and pull requests with Python 3.10 and 3.12.
+It installs the frozen `uv` environment, then runs `make check`.
+
+CI intentionally has no coverage service or external tracking integration.
 
 ## Pipeline Validation
 
@@ -158,3 +162,9 @@ Final responses and experiment reports should distinguish:
 
 Do not claim a validation command passed unless it was actually run in the
 current task or explicitly quoted from a prior report.
+
+## Current Milestone Status
+
+Milestone 019 is the current validation contract: frozen dependencies, Ruff, strict mypy, at
+least 90% coverage, compile and link checks, a smoke pipeline, and corrected full-validation
+character/BPE evidence.

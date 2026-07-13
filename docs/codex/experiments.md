@@ -133,5 +133,15 @@ As of experiment 016:
 - BPE128 made some greedy text more word-like, but phrase-level repetition and
   incoherent prose remained.
 
-The next technical experiment should tune tokenization and training together
-before adding unrelated infrastructure.
+As of experiment 017:
+
+- Training saves both final and best-validation checkpoints.
+- The BPE128 best checkpoint improved validation loss but not controlled
+  generation or phrase repetition; the character control showed the same
+  direction.
+- The experiment 016 conclusion is unchanged: BPE128 underperformed the
+  character control on estimated bits per character.
+
+Milestone 019 supersedes the old metric contract. Full corrected evaluation reached best BPC
+`2.0760` for character and `2.0976` for BPE128. BPE still shortened sequences and remained
+narrowly worse, while its seeded samples retained competitive surface diversity.

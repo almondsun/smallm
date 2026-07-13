@@ -2,7 +2,8 @@
 
 The training workflow is organized around reproducible local runs. A run starts
 from a prepared corpus and ends with a preserved directory containing config,
-metrics, checkpoint, summary, generated sample, and dataset provenance.
+metrics, final and best-validation checkpoints, summary, generated sample, and
+dataset provenance.
 
 ## Workflow Map
 
@@ -14,6 +15,22 @@ metrics, checkpoint, summary, generated sample, and dataset provenance.
 | Train | `python scripts/train.py --config configs/<name>.yaml` |
 | Inspect run | `python scripts/show_run.py --run latest --run-name <name>` |
 | Generate | `python scripts/generate.py --run latest --run-name <name> --prompt "Once"` |
+
+## Common Make Targets
+
+The top-level `Makefile` keeps routine local commands short:
+
+```bash
+make install
+make check
+make links
+make smoke
+make generate-smoke
+```
+
+`make check` verifies Ruff formatting and linting, strict mypy, pytest with at least 90% coverage,
+compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
+`make generate-smoke` generates from the latest completed run.
 
 ## Configs
 
@@ -95,6 +112,7 @@ the saved sample.
 
 ```bash
 python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --greedy --max-new-tokens 100
+python scripts/generate.py --run latest --run-name gptiny --checkpoint-kind best --prompt "Once" --greedy --max-new-tokens 100
 python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --seed 1337 --max-new-tokens 100
 python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
 ```
@@ -109,6 +127,10 @@ Training-time samples use these config fields:
 
 The settings are stored in `summary.json` under `generation`.
 
+Official configs set `eval_batches: null`, which evaluates every non-overlapping validation
+target. A positive integer selects evenly distributed deterministic blocks for faster exploratory
+runs; summaries record evaluated targets and coverage.
+
 ## Run Directory Contents
 
 | File | Notes |
@@ -117,6 +139,7 @@ The settings are stored in `summary.json` under `generation`.
 | `metrics.jsonl` | Training and validation metrics. |
 | `summary.json` | Final losses, paths, dataset fields, and generation settings. |
 | `checkpoint.pt` | Model and tokenizer state. |
+| `best_checkpoint.pt` | Same payload at the best validation step; absent when validation is unavailable. |
 | `sample.txt` | End-of-training generated sample. |
 | `dataset_manifest.json` | Copied corpus manifest. |
 
@@ -124,12 +147,10 @@ The settings are stored in `summary.json` under `generation`.
 
 The current GPTiny model trains, and longer budgets, higher learning rate, and
 larger capacity all improve validation loss on the larger public-domain corpus.
-Experiment 015 found that wider/deeper variants also improved simple generation
-diversity diagnostics, but generated prose still showed phrase-level repetition
-and incoherence. Experiment 016 found that simple BPE128 shortened the token
-sequence and made some greedy text more word-like, but it underperformed the
-character control on estimated bits per character and did not solve phrase-level
-repetition.
+Milestone 019 corrected tokenizer leakage and validation coverage. Full evaluation reached best
+BPC `2.0760` for the character control and `2.0976` for BPE128. BPE128 shortened the sequence and
+produced competitive seeded diversity, but remained narrowly worse on character-normalized loss.
+Experiments 016–017 retain errata and must not be mixed into the corrected metric series.
 
 ## Artifact Policy
 

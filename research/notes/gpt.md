@@ -1,3 +1,4 @@
-# GPT
+# GPT Notes Moved
 
-Notes for GPT-style decoder-only language models belong here.
+The maintained explanation now starts in the
+[theory and systems handbook](../../notes/README.md).

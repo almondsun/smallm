@@ -23,6 +23,9 @@ not a replacement for the original reports.
 | [014 Optimizer and Sampling Diagnostics](../experiments/014-optimizer-and-sampling-diagnostics.md) | Optimizer diagnostics | A 5k `lr=0.001` run beat the 5k control, but greedy generation still collapsed. |
 | [015 GPTiny Capacity and Generation Diagnostics](../experiments/015-gptiny-capacity-and-generation-diagnostics.md) | Capacity diagnostics | Wider/deeper GPTiny improved validation and generation diversity metrics, but prose remained incoherent. |
 | [016 Tokenization Study](../experiments/016-tokenization-study.md) | Tokenization | Simple BPE128 shortened sequences and made some greedy text more word-like, but underperformed the character control on estimated bits per character. |
+| [017 Best-Checkpoint Evaluation](../experiments/017-best-checkpoint-evaluation.md) | Checkpoint diagnostics | Added best-validation checkpoints; best checkpoints improved validation but not controlled generation for BPE128 or the character control. |
+| [018 Launch Polish and Public Evidence](../experiments/018-launch-polish-and-public-evidence.md) | Launch polish | Added reviewer navigation, CI, local checks, and a public evidence summary. |
+| [019 Professionalization and Corrected Evaluation](../experiments/019-professionalization-and-corrected-evaluation.md) | Scientific hardening | Corrects tokenizer leakage and validation coverage, hardens artifacts and quality gates, adds the theory handbook, and reruns the controlled comparison. |
 
 ## Topic Shortcuts
 
@@ -43,7 +46,8 @@ not a replacement for the original reports.
   [013](../experiments/013-gptiny-training-budget-and-optimization.md),
   [014](../experiments/014-optimizer-and-sampling-diagnostics.md),
   [015](../experiments/015-gptiny-capacity-and-generation-diagnostics.md),
-  [016](../experiments/016-tokenization-study.md).
+  [016](../experiments/016-tokenization-study.md),
+  [017](../experiments/017-best-checkpoint-evaluation.md).
 - Tokenization: [016](../experiments/016-tokenization-study.md).
 
 ## Current Status
@@ -52,9 +56,13 @@ The infrastructure milestones are mostly complete for a small local lab:
 prepared corpora, manifests, baselines, run artifacts, run discovery, controlled
 generation, and experiment reports.
 
-The latest model-quality milestone tested simple BPE against the character
-tokenizer. BPE128 reduced validation sequence length and made some greedy text
-more word-like, but it underperformed the character control on estimated bits
-per character and did not solve phrase-level repetition. The next technical
-work should tune tokenization and training together before adding unrelated
-infrastructure.
+Experiment 017 added best-validation checkpoint saving and a controlled
+final-versus-best generation comparison. The best checkpoint improved BPE128
+validation loss but not generated text or phrase repetition; the character
+control showed the same direction. This does not change experiment 016's
+conclusion that BPE128 underperformed the character control on estimated bits
+per character.
+
+Milestone 019 corrects the old evaluation contract. Full held-out evaluation reached best BPC
+`2.0760` for character and `2.0976` for BPE128. The BPE gap is much smaller than previously
+reported, but it did not beat the character control.

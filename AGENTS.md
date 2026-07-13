@@ -90,12 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-The project infrastructure is stronger than the current generation quality. The
-latest tokenization study showed that simple BPE128 shortens sequences and can
-make greedy output more word-like, but it underperformed the character control
-on estimated bits per character and did not solve phrase-level repetition.
-Future technical work should tune tokenization and training together before
-adding unrelated infrastructure.
+Milestone 019 is the current source of truth. It corrects tokenizer leakage and validation
+coverage, adds exact BPC, safe/versioned artifacts, strict quality gates, open-source policy, and a
+complete theory handbook. Corrected 5k runs reached best BPC `2.0760` for the character control and
+`2.0976` for BPE128; BPE remains narrowly worse while shortening sequences.
 
 ## Safety And Security
 

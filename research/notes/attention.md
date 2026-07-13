@@ -1,3 +1,4 @@
-# Attention
+# Attention Notes Moved
 
-Notes for the Transformer attention mechanism belong here.
+The maintained derivation now lives in the
+[theory and systems handbook](../../notes/03-transformer.md).
