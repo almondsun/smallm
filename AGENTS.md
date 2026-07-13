@@ -90,10 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 019 is the current source of truth. It corrects tokenizer leakage and validation
-coverage, adds exact BPC, safe/versioned artifacts, strict quality gates, open-source policy, and a
-complete theory handbook. Corrected 5k runs reached best BPC `2.0760` for the character control and
-`2.0976` for BPE128; BPE remains narrowly worse while shortening sequences.
+Milestone 020 is the latest modeling evidence. It preserves milestone 019's corrected metric
+contract and finds that matching BPE character context or halving its learning rate does not beat
+the 64-token `1e-3` BPE128 control. Best BPC remains `2.0760` for character and `2.0976` for BPE128;
+future tokenization work should change tokenizer design rather than narrowly tune this setup.
 
 ## Safety And Security
 

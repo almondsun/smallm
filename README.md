@@ -44,6 +44,7 @@ chronological 90/10 split unless noted otherwise.
 | [016](experiments/016-tokenization-study.md) | BPE128 vs character control | Estimated best bits/character | `2.4453` vs `2.1569` | BPE shortened validation from 14,453 to 9,522 tokens but underperformed the character control. |
 | [017](experiments/017-best-checkpoint-evaluation.md) | Final vs best checkpoint | BPE validation loss and controlled generation | `2.8109` final vs `2.5727` best | Best validation did not improve generation quality under the tested prompt and seed. |
 | [019](experiments/019-professionalization-and-corrected-evaluation.md) | Corrected character vs BPE128 | Full-validation best bits/character | `2.0760` char vs `2.0976` BPE128 | BPE128 shortened sequences but remained narrowly worse after removing leakage and coverage bias. |
+| [020](experiments/020-bpe-context-and-learning-rate.md) | BPE context/LR controls | Best BPE128 bits/character | `2.0976` remains best | Matched character context and `5e-4` LR changed timing/diversity but did not improve held-out BPC. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer

@@ -145,3 +145,7 @@ As of experiment 017:
 Milestone 019 supersedes the old metric contract. Full corrected evaluation reached best BPC
 `2.0760` for character and `2.0976` for BPE128. BPE still shortened sequences and remained
 narrowly worse, while its seeded samples retained competitive surface diversity.
+
+Milestone 020 matched BPE character context and tested `1e-3` versus `5e-4`. Neither the matched
+42-token context nor the lower rate beat the 64-token `1e-3` BPE control; future work should alter
+tokenizer design rather than continue fine tuning around BPE128.

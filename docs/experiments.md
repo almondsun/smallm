@@ -26,6 +26,7 @@ not a replacement for the original reports.
 | [017 Best-Checkpoint Evaluation](../experiments/017-best-checkpoint-evaluation.md) | Checkpoint diagnostics | Added best-validation checkpoints; best checkpoints improved validation but not controlled generation for BPE128 or the character control. |
 | [018 Launch Polish and Public Evidence](../experiments/018-launch-polish-and-public-evidence.md) | Launch polish | Added reviewer navigation, CI, local checks, and a public evidence summary. |
 | [019 Professionalization and Corrected Evaluation](../experiments/019-professionalization-and-corrected-evaluation.md) | Scientific hardening | Corrects tokenizer leakage and validation coverage, hardens artifacts and quality gates, adds the theory handbook, and reruns the controlled comparison. |
+| [020 BPE Context and Learning Rate](../experiments/020-bpe-context-and-learning-rate.md) | Tokenizer diagnostics | Matching character context and lowering BPE learning rate did not beat the corrected BPE128 control or character model. |
 
 ## Topic Shortcuts
 
