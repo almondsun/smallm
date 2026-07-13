@@ -1,0 +1,36 @@
+data:
+  input_path: data/raw/input.txt
+  prepared_path: data/processed/corpus.txt
+  manifest_path: data/processed/corpus_manifest.json
+  tokenizer_path: data/processed/tokenizer_bpe128.json
+  tokenizer_type: bpe
+  bpe_vocab_size: 128
+  bpe_min_frequency: 2
+  block_size: 42
+  train_split: 0.9
+
+model:
+  vocab_size: 256
+  block_size: 42
+  n_layer: 4
+  n_head: 4
+  n_embd: 128
+  dropout: 0.1
+
+train:
+  run_name: gptiny_bpe128_5k_lr5e-4_ctx42
+  runs_dir: runs
+  batch_size: 24
+  max_steps: 5000
+  learning_rate: 0.0005
+  weight_decay: 0.0
+  log_interval: 100
+  eval_interval: 250
+  eval_batches: null
+  sample_prompt: Once
+  sample_max_new_tokens: 100
+  sample_temperature: 1.0
+  sample_top_k: null
+  sample_seed: 1337
+  sample_greedy: false
+  seed: 1337
