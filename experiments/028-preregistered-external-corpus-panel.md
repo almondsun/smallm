@@ -78,5 +78,10 @@ runs, seed selection, or additional use of these test segments.
 
 ## Observations
 
-Pending execution of the preregistered protocol.
+Before training, source verification found that ebook #14721's marker and front matter identify
+*Speeches & Letters of Abraham Lincoln, 1832–1865*, edited by Merwin Roe, rather than the Lincoln
+collection title initially declared above. This provenance correction was committed before
+tokenizer fitting, baselines, training, or test access. The URL, ebook identifier, complete-body
+extraction, factorial design, hypotheses, and analysis rules are unchanged.
 
+Further observations are pending execution of the preregistered protocol.
