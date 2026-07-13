@@ -6,6 +6,8 @@ from torch.nn import functional as F
 
 
 class CausalSelfAttention(nn.Module):
+    causal_mask: torch.Tensor
+
     def __init__(self, n_embd: int, n_head: int, block_size: int, dropout: float) -> None:
         super().__init__()
         if n_embd % n_head != 0:
@@ -32,4 +34,4 @@ class CausalSelfAttention(nn.Module):
         att = self.attn_dropout(att)
         y = att @ v
         y = y.transpose(1, 2).contiguous().view(batch_size, seq_len, n_embd)
-        return self.resid_dropout(self.proj(y))
+        return torch.as_tensor(self.resid_dropout(self.proj(y)))

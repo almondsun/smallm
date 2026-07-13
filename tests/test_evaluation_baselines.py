@@ -1,6 +1,12 @@
 from math import isclose, log
 
-from smallm.evaluation.baselines import bigram_loss, evaluate_baselines, perplexity, uniform_loss, unigram_loss
+from smallm.evaluation.baselines import (
+    bigram_loss,
+    evaluate_baselines,
+    perplexity,
+    uniform_loss,
+    unigram_loss,
+)
 
 
 def test_uniform_loss_is_log_vocab_size():

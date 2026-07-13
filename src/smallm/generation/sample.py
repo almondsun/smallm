@@ -18,6 +18,8 @@ def generate(
 ) -> torch.Tensor:
     if max_new_tokens < 0:
         raise ValueError("max_new_tokens must be non-negative")
+    if idx.ndim != 2 or idx.size(1) == 0:
+        raise ValueError("prompt must encode to at least one token")
     if temperature <= 0:
         raise ValueError("temperature must be greater than zero")
     if top_k is not None and top_k <= 0:

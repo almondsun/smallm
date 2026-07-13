@@ -10,6 +10,7 @@ from smallm.training.runs import (
     list_run_names,
     load_last_metric,
     load_summary,
+    resolve_run_checkpoint,
     resolve_run_path,
 )
 
@@ -32,8 +33,12 @@ def _write_run(root, run_name, run_id, metric):
 
 
 def test_list_and_find_latest_run(tmp_path):
-    first = _write_run(tmp_path, "smoke", "2026-01-01_00-00-00", {"step": 1, "train_loss": 3.0, "val_loss": None})
-    latest = _write_run(tmp_path, "smoke", "2026-01-01_00-00-01", {"step": 2, "train_loss": 2.0, "val_loss": 1.9})
+    first = _write_run(
+        tmp_path, "smoke", "2026-01-01_00-00-00", {"step": 1, "train_loss": 3.0, "val_loss": None}
+    )
+    latest = _write_run(
+        tmp_path, "smoke", "2026-01-01_00-00-01", {"step": 2, "train_loss": 2.0, "val_loss": 1.9}
+    )
 
     assert list_run_names(tmp_path) == ["smoke"]
     assert list_run_dirs("smoke", tmp_path) == [first, latest]
@@ -43,7 +48,9 @@ def test_list_and_find_latest_run(tmp_path):
 
 
 def test_load_summary_last_metric_and_checkpoint_path(tmp_path):
-    run_dir = _write_run(tmp_path, "gptiny", "run-0001", {"step": 5, "train_loss": 1.2, "val_loss": 1.1})
+    run_dir = _write_run(
+        tmp_path, "gptiny", "run-0001", {"step": 5, "train_loss": 1.2, "val_loss": 1.1}
+    )
 
     assert load_summary(run_dir)["final_train_loss"] == 1.2
     assert load_last_metric(run_dir) == {"step": 5, "train_loss": 1.2, "val_loss": 1.1}
@@ -53,3 +60,45 @@ def test_load_summary_last_metric_and_checkpoint_path(tmp_path):
 def test_resolve_latest_requires_run_name(tmp_path):
     with pytest.raises(ValueError):
         resolve_run_path("latest", runs_dir=tmp_path)
+
+
+def test_resolve_run_checkpoint_selects_final_or_best(tmp_path):
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    final = run_dir / "checkpoint.pt"
+    best = run_dir / "best_checkpoint.pt"
+    final.touch()
+    best.touch()
+
+    assert resolve_run_checkpoint(run_dir) == final
+    assert resolve_run_checkpoint(run_dir, "best") == best
+
+
+def test_resolve_run_checkpoint_reports_missing_and_invalid_kinds(tmp_path):
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+
+    with pytest.raises(FileNotFoundError, match="use --checkpoint-kind final"):
+        resolve_run_checkpoint(run_dir, "best")
+    with pytest.raises(FileNotFoundError, match="final checkpoint not found"):
+        resolve_run_checkpoint(run_dir, "final")
+    with pytest.raises(ValueError, match="must be 'final' or 'best'"):
+        resolve_run_checkpoint(run_dir, "other")
+
+
+def test_run_listing_ignores_incomplete_directories(tmp_path):
+    incomplete = tmp_path / "smoke" / "2026-01-01_00-00-00"
+    incomplete.mkdir(parents=True)
+
+    assert list_run_names(tmp_path) == []
+    assert list_run_dirs("smoke", tmp_path) == []
+    assert list_all_run_dirs(tmp_path) == []
+    with pytest.raises(FileNotFoundError):
+        find_latest_run("smoke", tmp_path)
+
+    (incomplete / "summary.json").write_text("not json", encoding="utf-8")
+    assert list_run_dirs("smoke", tmp_path) == []
+    (incomplete / "summary.json").write_text(
+        json.dumps({"schema_version": 2, "status": "incomplete"}), encoding="utf-8"
+    )
+    assert list_run_dirs("smoke", tmp_path) == []

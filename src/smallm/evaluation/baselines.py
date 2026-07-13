@@ -84,7 +84,11 @@ def evaluate_baselines(
     unigram = unigram_loss(train_tokens, val_tokens)
     bigram = bigram_loss(train_tokens, val_tokens, vocab_size, smoothing)
     return [
-        BaselineResult("uniform", uniform, perplexity(uniform), "equal probability for every character"),
-        BaselineResult("unigram", unigram, perplexity(unigram), "train-set character frequencies"),
-        BaselineResult("bigram", bigram, perplexity(bigram), f"add-{smoothing:g} smoothed character transitions"),
+        BaselineResult(
+            "uniform", uniform, perplexity(uniform), "equal probability for every token"
+        ),
+        BaselineResult("unigram", unigram, perplexity(unigram), "train-set token frequencies"),
+        BaselineResult(
+            "bigram", bigram, perplexity(bigram), f"add-{smoothing:g} smoothed token transitions"
+        ),
     ]

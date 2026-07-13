@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
 
 from smallm.training.runs import load_last_metric, load_summary, resolve_run_path
 
@@ -16,14 +15,19 @@ def main() -> None:
     run_dir = resolve_run_path(args.run, run_name=args.run_name, runs_dir=args.runs_dir)
     summary = load_summary(run_dir)
     last_metric = load_last_metric(run_dir)
-    sample_path = Path(summary.get("sample_path", run_dir / "sample.txt"))
+    sample_path = run_dir / "sample.txt"
+    if sample_path.is_symlink():
+        parser.error("run sample must not be a symbolic link")
     sample_text = sample_path.read_text(encoding="utf-8") if sample_path.exists() else ""
 
     print(f"run: {run_dir}")
-    print(f"config: {summary.get('config_path', run_dir / 'config.yaml')}")
-    print(f"metrics: {summary.get('metrics_path', run_dir / 'metrics.jsonl')}")
+    print(f"config: {run_dir / 'config.yaml'}")
+    print(f"metrics: {run_dir / 'metrics.jsonl'}")
     print(f"summary: {run_dir / 'summary.json'}")
-    print(f"checkpoint: {summary.get('checkpoint_path', run_dir / 'checkpoint.pt')}")
+    print(f"checkpoint: {run_dir / 'checkpoint.pt'}")
+    best_checkpoint_path = run_dir / "best_checkpoint.pt"
+    if best_checkpoint_path.exists():
+        print(f"best checkpoint: {best_checkpoint_path}")
     dataset = summary.get("dataset")
     if dataset:
         prepared_sha = dataset.get("prepared_sha256") or ""
@@ -50,6 +54,8 @@ def main() -> None:
             f"step={summary.get('best_val_step')} "
             f"val_loss={summary.get('best_val_loss')}"
         )
+    if summary.get("final_val_loss") is not None:
+        print(f"final validation: val_loss={summary.get('final_val_loss')}")
     print("sample:")
     print(sample_text)
 
