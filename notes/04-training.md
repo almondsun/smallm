@@ -46,6 +46,30 @@ Using sampled validation adds estimator variance. Official configs therefore use
 deterministic validation; `eval_batches` remains available for quick experiments and records its
 coverage explicitly.
 
+### Validation-based early stopping
+
+Let validation be observed at evaluation index (j), with loss (L_j). Given minimum meaningful
+improvement (delta\geq0), maintain a reference (R) and stale count (q):
+
+\[
+(R,q)\leftarrow
+\begin{cases}
+(L_j,0), & L_j < R-\delta,\\
+(R,q+1), & \text{otherwise}.
+\end{cases}
+\]
+
+Training stops when (q\geq P), where (P) is patience measured in validation events—not gradient
+steps or epochs. smaLLM still stores the numerically lowest validation checkpoint independently of
+the early-stopping reference. This matters when improvements smaller than (delta) are real enough
+to preserve but intentionally too small to reset patience.
+
+Early stopping is a sequential model-selection rule, not regularization: it limits exposure to
+overfitting but does not change the objective or gradients before the stop. Its latency is bounded by
+(P\times\texttt{eval_interval}), and sampled validation can make the stopping time noisy. Official
+modeling configs therefore use full deterministic validation. Summaries record the step ceiling,
+actual steps, stop reason, patience, minimum delta, and terminal stale count.
+
 ## Determinism limits
 
 Setting Python and PyTorch seeds controls many random choices, but bitwise identity can still fail

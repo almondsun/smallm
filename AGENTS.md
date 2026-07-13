@@ -90,10 +90,10 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 021 is the latest modeling evidence. Boundary-aware UTF-8 ByteBPE320 and ByteBPE512 reach
-best full-validation BPC `2.0286` and `2.0083`, beating the corrected character (`2.0760`) and
-BPE128 (`2.0976`) controls. ByteBPE512 overfits after step 1,750 and ends at BPC `2.2450`; future
-work should test early stopping or regularization before increasing model scale.
+Milestone 022 is the latest modeling evidence. Patience-3 validation early stopping reproduces
+ByteBPE512's best full-validation BPC `2.0083`, stops at step 2,500, and roughly halves runtime.
+Weight decay `0.01` reaches `2.0080`, too small a difference to claim improvement. Future work should
+test the tokenizer result across seeds or corpus splits rather than add another narrow hyperparameter.
 
 ## Safety And Security
 

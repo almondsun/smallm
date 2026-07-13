@@ -3,7 +3,7 @@ from __future__ import annotations
 import platform
 import sys
 from dataclasses import asdict, dataclass
-from math import log
+from math import isfinite, log
 from pathlib import Path
 from time import perf_counter
 from typing import Protocol, cast
@@ -38,6 +38,12 @@ class TokenizerLike(Protocol):
     def encode_with_character_counts(self, text: str) -> tuple[list[int], list[int]]: ...
 
 
+def _require_finite_loss(value: float, *, label: str) -> float:
+    if not isfinite(value):
+        raise RuntimeError(f"{label} loss became non-finite; aborting training")
+    return value
+
+
 @torch.no_grad()
 def estimate_loss(
     model: GPT,
@@ -55,7 +61,8 @@ def estimate_loss(
         y = y.to(device)
         _, loss = model(x, y)
         if loss is not None:
-            losses.extend([float(loss.item())] * y.numel())
+            value = _require_finite_loss(float(loss.item()), label="estimated")
+            losses.extend([value] * y.numel())
     if was_training:
         model.train()
     if not losses:
@@ -79,6 +86,31 @@ class EvaluationResult:
     @property
     def bits_per_character(self) -> float:
         return self.total_nll / (self.target_characters * log(2))
+
+
+@dataclass(frozen=True)
+class EarlyStoppingState:
+    reference_loss: float | None = None
+    evaluations_without_improvement: int = 0
+
+
+def _update_early_stopping(
+    state: EarlyStoppingState,
+    *,
+    val_loss: float | None,
+    patience: int | None,
+    min_delta: float,
+) -> tuple[EarlyStoppingState, bool]:
+    if val_loss is None or patience is None:
+        return state, False
+    _require_finite_loss(val_loss, label="validation")
+    if state.reference_loss is None or val_loss < state.reference_loss - min_delta:
+        return EarlyStoppingState(reference_loss=val_loss), False
+    updated = EarlyStoppingState(
+        reference_loss=state.reference_loss,
+        evaluations_without_improvement=state.evaluations_without_improvement + 1,
+    )
+    return updated, updated.evaluations_without_improvement >= patience
 
 
 def _validation_starts(token_count: int, block_size: int, max_batches: int | None) -> list[int]:
@@ -118,7 +150,8 @@ def evaluate_tokens(
         _, loss = model(x, y)
         assert loss is not None
         count = y.numel()
-        total_nll += float(loss.item()) * count
+        value = _require_finite_loss(float(loss.item()), label="validation")
+        total_nll += value * count
         target_tokens += count
         if character_counts is None:
             target_characters += tokenizer.source_character_count(y[0].tolist())
@@ -162,6 +195,7 @@ def _update_best_validation(
 ) -> tuple[float | None, int | None]:
     if val_loss is None:
         return best_loss, best_step
+    _require_finite_loss(val_loss, label="validation")
     if best_loss is None or val_loss < best_loss:
         return val_loss, step
     return best_loss, best_step
@@ -276,20 +310,23 @@ def train(config: ExperimentConfig) -> Path:
     start_time = perf_counter()
     tokens_seen = 0
     final_evaluation: EvaluationResult | None = None
+    early_stopping_state = EarlyStoppingState()
+    stopped_early = False
     with MetricsWriter(run_dir / "metrics.jsonl") as metrics:
-        while step < config.train.max_steps:
+        while step < config.train.max_steps and not stopped_early:
             for x, y in train_loader:
                 model.train()
                 x = x.to(device)
                 y = y.to(device)
                 _, loss = model(x, y)
                 assert loss is not None
+                loss_value = _require_finite_loss(float(loss.item()), label="training")
                 optimizer.zero_grad(set_to_none=True)
                 loss.backward()
                 optimizer.step()
                 step += 1
                 tokens_seen += x.numel()
-                final_loss = float(loss.item())
+                final_loss = loss_value
                 should_log = step % config.train.log_interval == 0 or step == config.train.max_steps
                 should_eval = val_tokens.numel() > 1 and step % config.train.eval_interval == 0
                 if should_log or should_eval:
@@ -306,6 +343,8 @@ def train(config: ExperimentConfig) -> Path:
                             character_counts=val_character_counts_tensor,
                         )
                         val_loss = evaluation.loss if evaluation else None
+                        if val_loss is not None:
+                            _require_finite_loss(val_loss, label="validation")
                         final_evaluation = evaluation
                         final_val_loss = val_loss
                         best_val_loss, best_val_step = _update_best_validation(
@@ -317,6 +356,12 @@ def train(config: ExperimentConfig) -> Path:
                         if best_val_step == step:
                             best_evaluation = evaluation
                             save_checkpoint(best_checkpoint_path, checkpoint_payload(step))
+                        early_stopping_state, stopped_early = _update_early_stopping(
+                            early_stopping_state,
+                            val_loss=val_loss,
+                            patience=config.train.early_stopping_patience,
+                            min_delta=config.train.early_stopping_min_delta,
+                        )
                     record = _metrics_record(
                         step=step,
                         config=config,
@@ -337,7 +382,7 @@ def train(config: ExperimentConfig) -> Path:
                         tokens_per_second=cast(float, record["tokens_per_second"]),
                     )
                     metrics.write(record)
-                if step >= config.train.max_steps:
+                if step >= config.train.max_steps or stopped_early:
                     break
         needs_final_eval = (
             val_tokens.numel() > 1 and step > 0 and step % config.train.eval_interval != 0
@@ -445,6 +490,16 @@ def train(config: ExperimentConfig) -> Path:
             else max(0, val_tokens.numel() - 1),
             "validation_coverage": final_evaluation.coverage if final_evaluation else 0.0,
             "max_steps": config.train.max_steps,
+            "actual_steps": step,
+            "stopped_early": stopped_early,
+            "stop_reason": "early_stopping" if stopped_early else "max_steps",
+            "early_stopping": {
+                "patience": config.train.early_stopping_patience,
+                "min_delta": config.train.early_stopping_min_delta,
+                "evaluations_without_improvement": (
+                    early_stopping_state.evaluations_without_improvement
+                ),
+            },
             "device": str(device),
             "environment": {
                 "python": platform.python_version(),

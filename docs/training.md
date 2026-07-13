@@ -111,6 +111,12 @@ python scripts/show_run.py --run latest --run-name gptiny
 `show_run.py` prints run paths, dataset summary fields, the latest metric, and
 the saved sample.
 
+`summary.json` records the configured `max_steps` ceiling and `actual_steps`. Optional
+`early_stopping_patience` counts consecutive validation events without an improvement larger than
+`early_stopping_min_delta`; `stopped_early`, `stop_reason`, and the terminal state make the decision
+inspectable. The final checkpoint is the model at the stop step, while `best_checkpoint.pt` remains
+the lowest observed validation-loss model.
+
 ## Generation Controls
 
 ```bash
@@ -158,6 +164,9 @@ Experiment 020 found that matching BPE character context and halving its learnin
 the experiment-019 BPE control. Experiment 021 changed the tokenizer itself: boundary-aware
 ByteBPE320 and ByteBPE512 reached best BPC `2.0286` and `2.0083`, both beating the character
 control, though ByteBPE512 overfit sharply after step 1,750.
+Experiment 022 adds patience-3 early stopping: it ends at step 2,500, halves runtime, and avoids most
+final-checkpoint degradation. Weight decay `0.01` changes best BPC by only `0.00025`, which is not
+meaningful evidence of improvement.
 
 ## Artifact Policy
 

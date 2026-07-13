@@ -46,6 +46,7 @@ chronological 90/10 split unless noted otherwise.
 | [019](experiments/019-professionalization-and-corrected-evaluation.md) | Corrected character vs BPE128 | Full-validation best bits/character | `2.0760` char vs `2.0976` BPE128 | BPE128 shortened sequences but remained narrowly worse after removing leakage and coverage bias. |
 | [020](experiments/020-bpe-context-and-learning-rate.md) | BPE context/LR controls | Best BPE128 bits/character | `2.0976` remains best | Matched character context and `5e-4` LR changed timing/diversity but did not improve held-out BPC. |
 | [021](experiments/021-boundary-aware-byte-bpe.md) | Boundary-aware ByteBPE320/512 | Full-validation best bits/character | `2.0286` / `2.0083` | Both beat the corrected character and BPE128 controls; ByteBPE512 overfit after step 1750. |
+| [022](experiments/022-early-stopping-and-regularization.md) | ByteBPE512 early stopping / weight decay | Actual steps and best BPC | `2500`, `2.0083` / `2.0080` | Early stopping halves runtime and limits final degradation; weight decay `0.01` is effectively neutral. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer
@@ -81,7 +82,7 @@ shapes link directly to the implementation and its tests.
 | Tokenization | Character, educational character-BPE, and lossless boundary-aware UTF-8 byte-BPE tokenizers. |
 | Model | Decoder-only GPT-style Transformer with causal self-attention. |
 | Evaluation | Uniform, unigram, and add-one smoothed bigram baselines. |
-| Training | Config-driven training with validation loss, progress logging, checkpoints, metrics, summaries, and samples. |
+| Training | Config-driven training with validation loss, optional early stopping, progress logging, checkpoints, metrics, summaries, and samples. |
 | Run records | Preserved run directories with copied dataset manifests and selected provenance fields in `summary.json`. |
 | Generation | `max_new_tokens`, `temperature`, `top_k`, `seed`, and greedy decoding. |
 | Tests | Focused tests for data, baselines, model shape, training artifacts, run utilities, and generation behavior. |
