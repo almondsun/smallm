@@ -17,8 +17,8 @@ For a fast technical review, inspect:
 1. [`docs/architecture.md`](docs/architecture.md) for boundaries and the
    end-to-end pipeline.
 2. [`docs/experiments.md`](docs/experiments.md) for the milestone index.
-3. [`experiments/024-cross-corpus-robustness.md`](experiments/024-cross-corpus-robustness.md)
-   for the latest cross-corpus modeling evidence and its limitations.
+3. [`experiments/025-corpus-by-seed-matrix.md`](experiments/025-corpus-by-seed-matrix.md)
+   for the latest balanced robustness evidence and its limitations.
 4. [`src/smallm/model/`](src/smallm/model/) for the from-scratch GPTiny model.
 5. [`src/smallm/training/`](src/smallm/training/) for training and run artifacts.
 6. [`src/smallm/data/`](src/smallm/data/) for corpus and tokenizer contracts.
@@ -49,6 +49,7 @@ chronological 90/10 split unless noted otherwise.
 | [022](experiments/022-early-stopping-and-regularization.md) | ByteBPE512 early stopping / weight decay | Actual steps and best BPC | `2500`, `2.0083` / `2.0080` | Early stopping halves runtime and limits final degradation; weight decay `0.01` is effectively neutral. |
 | [023](experiments/023-multi-seed-robustness.md) | ByteBPE512 across three seeds | Best BPC mean ± population SD | `2.0225 ± 0.0124` | All tested seeds beat the character control; stopping varies from 2500–3000 steps. |
 | [024](experiments/024-cross-corpus-robustness.md) | Peter Pan character vs ByteBPE512 | Full-validation best bits/character | `2.1721` vs `2.1539` | ByteBPE512 replicates the direction on a second book, but only by 0.83%. |
+| [025](experiments/025-corpus-by-seed-matrix.md) | 2 tokenizers × 2 corpora × 3 seeds | Paired ByteBPE512 minus character BPC | `-0.0619` Alice; `-0.0252` Peter Pan | ByteBPE512 wins all six pairs; effect magnitude is corpus-dependent. |
 
 Token-level loss and perplexity are not directly comparable between character
 and BPE tokenizers because they predict different units. The tokenizer

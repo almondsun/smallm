@@ -165,3 +165,8 @@ character control. The next modeling question should test split/corpus robustnes
 Milestone 024 uses a deterministically extracted, near-size-matched Peter Pan corpus. ByteBPE512
 reaches best BPC `2.1539` versus `2.1721` for character. The direction replicates, but the 0.0181
 BPC margin from one shared seed is weaker evidence than a corpus-by-seed matrix.
+
+Milestone 025 completes the balanced corpus-by-seed matrix. ByteBPE512 beats character in all six
+same-seed pairs. Mean candidate-minus-reference BPC is `-0.0619` on Alice and `-0.0252` on Peter
+Pan; the corpus interaction is `+0.0367`, so report a robust direction but corpus-dependent size.
+The next contract change should introduce a sealed test segment before further model selection.
