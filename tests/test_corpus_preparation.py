@@ -8,9 +8,48 @@ from smallm.data import (
     clean_corpus_text,
     corpus_manifest,
     corpus_stats,
+    extract_gutenberg_body,
     file_sha256,
     load_prepared_corpus,
 )
+
+
+def test_extract_gutenberg_body_removes_markers_and_truncates():
+    text = (
+        "header\r\n"
+        "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***\r\n"
+        "\r\nalpha\r\nbeta\r\n"
+        "*** END OF THE PROJECT GUTENBERG EBOOK TEST ***\r\nfooter"
+    )
+
+    assert extract_gutenberg_body(text) == "alpha\nbeta\n"
+    assert extract_gutenberg_body(text, max_characters=5) == "alpha"
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "no markers",
+        "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***\nbody",
+        (
+            "*** END OF THE PROJECT GUTENBERG EBOOK TEST ***\n"
+            "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***"
+        ),
+    ],
+)
+def test_extract_gutenberg_body_rejects_invalid_markers(text):
+    with pytest.raises(ValueError, match="marker pair"):
+        extract_gutenberg_body(text)
+
+
+def test_extract_gutenberg_body_rejects_invalid_limit_or_empty_body():
+    with pytest.raises(ValueError, match="max_characters"):
+        extract_gutenberg_body("text", max_characters=0)
+    with pytest.raises(ValueError, match="empty"):
+        extract_gutenberg_body(
+            "*** START OF THE PROJECT GUTENBERG EBOOK TEST ***\n\n"
+            "*** END OF THE PROJECT GUTENBERG EBOOK TEST ***\n"
+        )
 
 
 def test_clean_corpus_text_normalizes_whitespace_conservatively():

@@ -81,3 +81,42 @@ Never discard a completed seed because it weakens the conclusion, and never repo
 the expected result. A hyperparameter difference much smaller than seed-to-seed spread is not robust
 evidence. Decoding randomness is held fixed when comparing training seeds so observed generation
 variation comes from model training rather than a second uncontrolled random stream.
+
+### External validity and corpus-by-seed interactions
+
+A random split of one book estimates performance on held-out text from essentially the same source;
+it does not establish robustness to a new author, style, vocabulary, or document structure. A new
+book changes the empirical distribution \(P_C(X)\), so a tokenizer comparison can be modeled as
+
+\[
+y_{tcs}=\mu+\alpha_t+\beta_c+(\alpha\beta)_{tc}+u_s+\varepsilon_{tcs},
+\]
+
+where \(t\) is tokenizer, \(c\) corpus, \(s\) seed, \(\alpha_t\) is the tokenizer effect,
+\(\beta_c\) is corpus difficulty, \((\alpha\beta)_{tc}\) is the tokenizer-by-corpus interaction,
+and \(u_s\) captures training randomness. One seed on a second corpus observes a cell but cannot
+separate interaction from seed noise. A balanced corpus-by-seed matrix can.
+
+Matching corpus length controls the amount of text, not its entropy, lexical diversity, boundary
+statistics, or chronological-tail difficulty. Matching token context also requires converting to
+characters:
+
+\[
+L_{\mathrm{chars}}=L_{\mathrm{tokens}}\frac{N_{\mathrm{train\ chars}}}{N_{\mathrm{train\ tokens}}}.
+\]
+
+This is an average receptive-field proxy; individual ByteBPE sequences still vary in character
+length. BPC makes held-out likelihood comparable across lossless tokenizers,
+
+\[
+\operatorname{BPC}=\frac{-\log_2 p(x_{1:n})}{n},
+\]
+
+but comparable metrics do not remove design confounds such as vocabulary-dependent parameter
+counts or checkpoint selection on the same validation tail.
+
+External-validity claims should therefore form a ladder: same split across seeds; deterministic
+alternative splits; a second source; multiple source families; finally, a sealed test distribution.
+Each rung supports a wider claim, and none licenses the next one automatically. Milestone 024
+reaches the second-source rung: it replicates ByteBPE512's direction on Peter Pan, while its narrow
+margin and single seed leave the interaction term unresolved.

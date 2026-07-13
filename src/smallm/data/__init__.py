@@ -7,6 +7,7 @@ from smallm.data.corpus import (
     clean_corpus_text,
     corpus_manifest,
     corpus_stats,
+    extract_gutenberg_body,
     file_sha256,
     load_prepared_corpus,
 )
@@ -26,6 +27,7 @@ __all__ = [
     "clean_corpus_text",
     "corpus_manifest",
     "corpus_stats",
+    "extract_gutenberg_body",
     "file_sha256",
     "load_prepared_corpus",
     "load_tokenizer",

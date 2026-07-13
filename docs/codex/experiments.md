@@ -161,3 +161,7 @@ neutral at best BPC `2.0080`; future work should test robustness across seeds or
 Milestone 023 runs the unregularized ByteBPE512 early-stopping setup at seeds 1337, 2027, and 4242.
 Best BPC is `2.0225 ± 0.0124` (population SD), range `2.0083–2.0384`; every seed beats the
 character control. The next modeling question should test split/corpus robustness, not select a seed.
+
+Milestone 024 uses a deterministically extracted, near-size-matched Peter Pan corpus. ByteBPE512
+reaches best BPC `2.1539` versus `2.1721` for character. The direction replicates, but the 0.0181
+BPC margin from one shared seed is weaker evidence than a corpus-by-seed matrix.
