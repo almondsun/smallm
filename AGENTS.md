@@ -90,11 +90,11 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 024 is the latest modeling evidence. On a deterministically extracted, near-size-matched
-Peter Pan corpus, ByteBPE512 reaches best BPC `2.1539` versus `2.1721` for character. This
-replicates the direction found on Alice, but the 0.83% margin from one seed is not a stable
-effect-size estimate. Milestone 023 remains the seed-robustness reference (`2.0225 ± 0.0124` on
-Alice); the next strong test is a corpus-by-seed matrix.
+Milestone 025 is the latest modeling evidence. In a balanced 2-tokenizer × 2-corpus × 3-seed
+matrix, ByteBPE512 beats character in all six paired comparisons. Its mean advantage is `0.0619`
+BPC on Alice and `0.0252` on Peter Pan; the `+0.0367` corpus interaction means effect magnitude is
+not distribution-invariant. The next contract change should add a sealed chronological test segment
+before further model selection.
 
 ## Safety And Security
 

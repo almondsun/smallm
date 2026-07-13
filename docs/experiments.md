@@ -31,6 +31,7 @@ not a replacement for the original reports.
 | [022 Early Stopping and Regularization](../experiments/022-early-stopping-and-regularization.md) | Training control | Patience-3 stopping reproduced the step-1750 optimum and halved runtime; weight decay `0.01` was effectively neutral. |
 | [023 Multi-Seed Robustness](../experiments/023-multi-seed-robustness.md) | Robustness | Three preregistered seeds average best BPC `2.0225 ± 0.0124`; every seed beats the corrected character control. |
 | [024 Cross-Corpus Robustness](../experiments/024-cross-corpus-robustness.md) | External validity | On near-size-matched Peter Pan, ByteBPE512 narrowly beats character at `2.1539` versus `2.1721` BPC. |
+| [025 Corpus-by-Seed Matrix](../experiments/025-corpus-by-seed-matrix.md) | Factorial robustness | ByteBPE512 wins all six paired comparisons; mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan. |
 
 ## Topic Shortcuts
 
@@ -56,7 +57,8 @@ not a replacement for the original reports.
 - Tokenization: [016](../experiments/016-tokenization-study.md),
   [020](../experiments/020-bpe-context-and-learning-rate.md),
   [021](../experiments/021-boundary-aware-byte-bpe.md),
-  [024](../experiments/024-cross-corpus-robustness.md).
+  [024](../experiments/024-cross-corpus-robustness.md),
+  [025](../experiments/025-corpus-by-seed-matrix.md).
 
 ## Current Status
 
@@ -92,3 +94,7 @@ Milestone 024 changes the data distribution to a near-size-matched Peter Pan cor
 reaches best BPC `2.1539` versus `2.1721` for character, reproducing the direction with a much
 smaller 0.83% margin. This supports limited cross-corpus robustness, not a universal tokenizer
 advantage; a corpus-by-seed matrix is the next stronger test.
+
+Milestone 025 completes that balanced matrix. ByteBPE512 beats character for seeds 1337, 2027, and
+4242 on both Alice and Peter Pan. Its paired mean advantage is `0.0619` BPC on Alice and `0.0252`
+on Peter Pan; the `+0.0367` BPC interaction shows that effect magnitude remains corpus-dependent.

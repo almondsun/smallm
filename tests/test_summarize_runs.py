@@ -86,3 +86,12 @@ def test_observation_reports_malformed_artifact_path(tmp_path):
 
     with pytest.raises(ValueError, match="summary"):
         _observation(run_dir)
+
+
+def test_observation_rejects_oversized_summary_without_reading_it_all(tmp_path):
+    run_dir = tmp_path / "oversized"
+    run_dir.mkdir()
+    (run_dir / "summary.json").write_bytes(b" " * 1_000_001)
+
+    with pytest.raises(ValueError, match="exceeds 1000000 bytes"):
+        _observation(run_dir)

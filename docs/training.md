@@ -45,6 +45,8 @@ compileall, and Markdown links. `make smoke` writes an ignored smoke run, and
 | `configs/gptiny_bpe128_5k_lr5e-4_ctx64.yaml` | Longer-context lower-learning-rate BPE128 run. |
 | `configs/gptiny_peterpan_char_5k_lr1e-3_earlystop.yaml` | Peter Pan character control. |
 | `configs/gptiny_peterpan_bytebpe512_5k_lr1e-3_ctx37_earlystop.yaml` | Context-matched Peter Pan ByteBPE512 run. |
+| `configs/gptiny_char_5k_lr1e-3_earlystop*.yaml` | Three-seed Alice character early-stopping controls. |
+| `configs/gptiny_peterpan_*_earlystop_seed*.yaml` | Additional Peter Pan matrix seeds. |
 
 ## Corpus Preparation
 
@@ -128,6 +130,21 @@ python scripts/summarize_runs.py runs/<name-a>/<id> runs/<name-b>/<id> runs/<nam
 The command reads each run's config and summary, requires distinct training seeds, and prints every
 observation plus mean, population standard deviation, minimum, and maximum.
 
+For a balanced two-corpus, two-tokenizer design, label every run explicitly:
+
+```bash
+python scripts/summarize_matrix.py \
+  --reference-tokenizer char --candidate-tokenizer byte_bpe \
+  --cell alice char runs/<name>/<id> \
+  --cell alice byte_bpe runs/<name>/<id> \
+  --cell peter_pan char runs/<name>/<id> \
+  --cell peter_pan byte_bpe runs/<name>/<id>
+```
+
+Repeat `--cell` for every seed. The analyzer requires exactly two distinct corpus checksums, both
+tokenizers on both corpora, a shared seed set, within-cell experiment fingerprints, and complete
+schema-v2 summaries. Reported contrasts are candidate minus reference BPC and are paired by seed.
+
 ## Generation Controls
 
 ```bash
@@ -185,6 +202,9 @@ Experiment 024 tests a second book. On the near-size-matched Peter Pan corpus, B
 best BPC `2.1539` versus `2.1721` for character and stops at step 2,750. The 0.83% advantage is a
 cross-corpus replication in direction, but too small and sparsely sampled to establish a stable
 effect size.
+Experiment 025 completes the 2-tokenizer × 2-corpus × 3-seed matrix. ByteBPE512 wins every paired
+comparison. Its mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan, so the direction
+is robust within the matrix while the effect magnitude remains corpus-dependent.
 
 ## Artifact Policy
 

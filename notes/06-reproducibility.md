@@ -118,5 +118,39 @@ counts or checkpoint selection on the same validation tail.
 External-validity claims should therefore form a ladder: same split across seeds; deterministic
 alternative splits; a second source; multiple source families; finally, a sealed test distribution.
 Each rung supports a wider claim, and none licenses the next one automatically. Milestone 024
-reaches the second-source rung: it replicates ByteBPE512's direction on Peter Pan, while its narrow
-margin and single seed leave the interaction term unresolved.
+reached the second-source rung with one seed. Milestone 025 fills a balanced 2 × 2 × 3 matrix and
+observes a negative ByteBPE512-minus-character contrast in every same-seed pair. Its positive
+corpus interaction shows why a replicated direction is not a universal effect size: Peter Pan
+attenuates the advantage even though it does not reverse it.
+
+For paired seeds, define
+
+\[
+d_{cs}=y_{\mathrm{Byte},c,s}-y_{\mathrm{char},c,s},
+\qquad
+I_s=d_{\mathrm{PeterPan},s}-d_{\mathrm{Alice},s}.
+\]
+
+Pairing subtracts seed-specific difficulty shared by both tokenizers within a corpus. The
+difference-in-differences \(I_s\) measures how much the tokenizer contrast changes between corpora.
+It is descriptive here: three seeds and two related books do not justify asymptotic inference, and
+the paired observations are not mutually independent across corpus because a seed is reused.
+
+### Validation selection and a sealed test set
+
+Early stopping chooses
+
+\[
+\hat{k}=\arg\min_{k\in\mathcal{K}}\widehat{L}_{\mathrm{val}}(\theta_k),
+\]
+
+so the reported validation minimum is an order statistic selected from repeated looks. Even when
+each evaluation is unbiased for a fixed checkpoint, the minimum is optimistically biased as an
+estimate of future performance. Reusing the same validation tail to choose tokenizers, context,
+regularization, and follow-up questions compounds researcher degrees of freedom.
+
+A three-way split separates roles: training fits parameters and tokenizer merges; validation drives
+early stopping and configuration choice; a sealed test segment is read once after the decision rule
+is frozen. For chronological text, the ordering must remain explicit because a terminal test block
+measures forward generalization, not exchangeable random-split performance. Test metrics must never
+flow back into checkpoint choice, hyperparameter tuning, or seed selection.
