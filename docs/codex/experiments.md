@@ -180,3 +180,9 @@ Milestone 027 was preregistered in commit `6f130d5` before Hamlet corpus access.
 seed-1337 sealed protocol, ByteBPE512 beats character by `0.0673` test BPC on the dramatic-play
 distribution. Hamlet's terminal segment is easier than validation for both models, so gap direction
 and effect magnitude remain corpus-dependent. The Hamlet test is consumed.
+
+Milestone 028 was preregistered in commit `5ee2274` before Art of War or Lincoln corpus access.
+Across three seeds per tokenizer and corpus, ByteBPE512 wins all six sealed-test pairs: mean paired
+candidate-minus-character BPC is `-0.1134` on Art of War and `-0.1543` on Lincoln. Every new test
+gap is positive, and the mean corpus interaction is `-0.0409`; report a robust direction with
+corpus-dependent magnitude. Both terminal segments are consumed.

@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 from dataclasses import replace
 
 import pytest
@@ -147,7 +148,37 @@ def test_load_sealed_test_observation_validates_run_identity(tmp_path):
     assert observation.test_bpc == 2.2
     assert observation.checkpoint_step == 8
 
-    test_result["prepared_sha256"] = "c" * 64
-    path.write_text(json.dumps(test_result), encoding="utf-8")
-    with pytest.raises(ValueError, match="corpus checksum"):
+    cases = [
+        ({"schema_version": 2}, {}, "complete schema-v1"),
+        ({"checkpoint_kind": "final"}, {}, "best-checkpoint"),
+        ({"evaluation_mode": "sampled"}, {}, "full test coverage"),
+        ({"test_coverage": 0.5}, {}, "full test coverage"),
+        ({"prepared_sha256": "c" * 64}, {}, "corpus checksum"),
+        ({"checkpoint_step": 7}, {}, "best validation step"),
+        ({"test_characters": 101}, {}, "support does not match"),
+        ({"checkpoint_sha256": "B" * 64}, {}, "lowercase SHA-256"),
+        ({"test_tokens": True}, {}, "bounded integer"),
+        ({"test_target_tokens": 98}, {}, "target-token support"),
+        ({"test_target_characters": 101}, {}, "target-character support"),
+        ({"test_loss": float("inf")}, {}, "outside supported bounds"),
+        ({}, {"dataset": {"prepared_sha256": "invalid"}}, "prepared corpus checksum"),
+        ({}, {"tokenizer_type": None}, "tokenizer type"),
+    ]
+    for result_updates, summary_updates, message in cases:
+        changed_result = deepcopy(test_result)
+        changed_result.update(result_updates)
+        changed_summary = deepcopy(summary)
+        changed_summary.update(summary_updates)
+        path.write_text(json.dumps(changed_result), encoding="utf-8")
+        (run_dir / "summary.json").write_text(json.dumps(changed_summary), encoding="utf-8")
+        with pytest.raises(ValueError, match=message):
+            load_sealed_test_observation(run_dir)
+
+    (run_dir / "summary.json").write_text(json.dumps(summary), encoding="utf-8")
+    path.write_text(json.dumps([]), encoding="utf-8")
+    with pytest.raises(ValueError, match="JSON object"):
+        load_sealed_test_observation(run_dir)
+
+    path.write_bytes(b" " * 1_000_001)
+    with pytest.raises(ValueError, match="exceeds"):
         load_sealed_test_observation(run_dir)
