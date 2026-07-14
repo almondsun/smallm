@@ -4,196 +4,143 @@
 [![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-`smaLLM` is a small, reproducible GPT-style language-model lab built from
-scratch in PyTorch. It is meant for inspecting the core language-modeling path:
-corpus preparation, character, educational BPE, and boundary-aware byte BPE tokenization, causal
-self-attention, Transformer blocks, next-token training, baselines, controlled
-generation, and experiment records.
+`smaLLM` is a small, reproducible GPT-style language-model lab built from scratch in PyTorch. It
+connects the full research-engineering path: corpus provenance, character and educational BPE
+tokenizers, causal Transformer modeling, controlled training and generation, sealed evaluation,
+and candid experiment reports.
 
-## Reviewer Path
+This is an inspectable learning and research artifact, not a competitive or production language
+model.
 
-For a fast technical review, inspect:
+![Sealed-test bits per character by tokenizer](docs/assets/sealed-test-bpc.svg)
 
-1. [`docs/architecture.md`](docs/architecture.md) for boundaries and the
-   end-to-end pipeline.
-2. [`docs/experiments.md`](docs/experiments.md) for the milestone index.
-3. [`experiments/028-preregistered-external-corpus-panel.md`](experiments/028-preregistered-external-corpus-panel.md)
-   for the latest preregistered multi-corpus, multi-seed evidence and its limitations.
-4. [`src/smallm/model/`](src/smallm/model/) for the from-scratch GPTiny model.
-5. [`src/smallm/training/`](src/smallm/training/) for training and run artifacts.
-6. [`src/smallm/data/`](src/smallm/data/) for corpus and tokenizer contracts.
-7. [`tests/`](tests/) for focused behavioral checks.
-8. [`notes/`](notes/) for the theory, mathematics, and complete system rationale.
+## What This Demonstrates
 
-This is a reproducible learning and research-engineering artifact, not a
-competitive language model.
+- **Model engineering:** decoder-only Transformer blocks, causal multi-head attention, next-token
+  loss, AdamW training, checkpoint selection, and controlled sampling.
+- **Reproducible systems:** config snapshots, corpus checksums, dataset manifests, bounded artifact
+  readers, run discovery, exact evaluation coverage, and deterministic seeds.
+- **Experimental discipline:** baselines, corrected metric contracts, multi-seed controls,
+  preregistration, one-shot sealed tests, and explicit negative results and limitations.
+- **Software quality:** strict mypy, Ruff, branch coverage above 90%, dependency auditing, CodeQL,
+  dependency review, and pinned GitHub Actions.
 
 ## Results at a Glance
 
-All neural results below use the 144,530-character Alice corpus and its
-chronological 90/10 split unless noted otherwise.
+The main finding is narrow and repeatable: boundary-aware ByteBPE512 achieved lower sealed-test
+bits per character (BPC) than the character tokenizer on five English public-domain corpora.
+Lower BPC is better.
 
-| Milestone | Setup | Main metric | Result | Interpretation |
-| --- | --- | --- | --- | --- |
-| [011](experiments/011-larger-corpus-tiny-gpt.md) | Add-one bigram baseline | Validation loss | `2.4340` | Strong simple reference on the larger corpus. |
-| [011](experiments/011-larger-corpus-tiny-gpt.md) | 500-step GPTiny | Validation loss | `2.5914` | Trailed bigram by `0.1574`; the unchanged budget was too short. |
-| [013](experiments/013-gptiny-training-budget-and-optimization.md) | 2k-step GPTiny | Validation loss | `2.2187` | Beat bigram by `0.2153`, showing that training budget mattered. |
-| [013](experiments/013-gptiny-training-budget-and-optimization.md) | 5k-step GPTiny control | Validation loss | `1.8601` | Improved local sample texture, but greedy decoding still collapsed. |
-| [014](experiments/014-optimizer-and-sampling-diagnostics.md) | 5k-step GPTiny, `lr=0.001` | Best / final validation loss | `1.6501` / `1.6792` | Higher learning rate beat the 5k control; prose remained incoherent. |
-| [015](experiments/015-gptiny-capacity-and-generation-diagnostics.md) | Deep character GPTiny | Best validation loss | `1.4950` at step 2500 | Best character validation point; later train/validation separation signaled overfit. |
-| [016](experiments/016-tokenization-study.md) | BPE128 vs character control | Estimated best bits/character | `2.4453` vs `2.1569` | BPE shortened validation from 14,453 to 9,522 tokens but underperformed the character control. |
-| [017](experiments/017-best-checkpoint-evaluation.md) | Final vs best checkpoint | BPE validation loss and controlled generation | `2.8109` final vs `2.5727` best | Best validation did not improve generation quality under the tested prompt and seed. |
-| [019](experiments/019-professionalization-and-corrected-evaluation.md) | Corrected character vs BPE128 | Full-validation best bits/character | `2.0760` char vs `2.0976` BPE128 | BPE128 shortened sequences but remained narrowly worse after removing leakage and coverage bias. |
-| [020](experiments/020-bpe-context-and-learning-rate.md) | BPE context/LR controls | Best BPE128 bits/character | `2.0976` remains best | Matched character context and `5e-4` LR changed timing/diversity but did not improve held-out BPC. |
-| [021](experiments/021-boundary-aware-byte-bpe.md) | Boundary-aware ByteBPE320/512 | Full-validation best bits/character | `2.0286` / `2.0083` | Both beat the corrected character and BPE128 controls; ByteBPE512 overfit after step 1750. |
-| [022](experiments/022-early-stopping-and-regularization.md) | ByteBPE512 early stopping / weight decay | Actual steps and best BPC | `2500`, `2.0083` / `2.0080` | Early stopping halves runtime and limits final degradation; weight decay `0.01` is effectively neutral. |
-| [023](experiments/023-multi-seed-robustness.md) | ByteBPE512 across three seeds | Best BPC mean ± population SD | `2.0225 ± 0.0124` | All tested seeds beat the character control; stopping varies from 2500–3000 steps. |
-| [024](experiments/024-cross-corpus-robustness.md) | Peter Pan character vs ByteBPE512 | Full-validation best bits/character | `2.1721` vs `2.1539` | ByteBPE512 replicates the direction on a second book, but only by 0.83%. |
-| [025](experiments/025-corpus-by-seed-matrix.md) | 2 tokenizers × 2 corpora × 3 seeds | Paired ByteBPE512 minus character BPC | `-0.0619` Alice; `-0.0252` Peter Pan | ByteBPE512 wins all six pairs; effect magnitude is corpus-dependent. |
-| [026](experiments/026-sealed-test-evaluation.md) | Frozen decision on terminal 10% test segments | ByteBPE512 minus character test BPC | `-0.0614` Alice; `-0.0258` Peter Pan | The tokenizer decision survives one-shot full-coverage tests on both books. |
-| [027](experiments/027-hamlet-external-distribution.md) | Preregistered Hamlet play replication | ByteBPE512 minus character test BPC | `-0.0673` | The direction replicates on drama, while validation/test difficulty and effect size remain corpus-dependent. |
-| [028](experiments/028-preregistered-external-corpus-panel.md) | 2 new corpora × 2 tokenizers × 3 seeds | Mean paired ByteBPE512 minus character test BPC | `-0.1134` Art of War; `-0.1543` Lincoln | ByteBPE512 wins all six preregistered pairs; magnitude and chronological-tail difficulty remain corpus-dependent. |
+| Corpus | Character BPC | ByteBPE512 BPC | Difference |
+| --- | ---: | ---: | ---: |
+| Alice | 2.1792 | **2.1178** | -0.0614 |
+| Peter Pan | 2.2742 | **2.2484** | -0.0258 |
+| Hamlet | 2.3219 | **2.2546** | -0.0673 |
+| Art of War, 3-seed mean | 2.1802 | **2.0668** | -0.1134 |
+| Lincoln, 3-seed mean | 2.2356 | **2.0813** | -0.1543 |
 
-Token-level loss and perplexity are not directly comparable between character
-and BPE tokenizers because they predict different units. The tokenizer
-comparison therefore uses character-normalized bits per character; milestone 019 computes it from
-exact evaluated coverage.
+The latest preregistered panel won all six same-seed comparisons. Effect magnitude and
+validation-to-test difficulty remained corpus-dependent, and ByteBPE512 had roughly 103k–106k
+more parameters because of its larger vocabulary. The final planned study tests that capacity
+confound directly.
 
-Rows 016–017 use the superseded evaluation contract and are retained as historical evidence; row
-019 is the current held-out comparison and computes BPC from exact evaluated coverage.
+The structured chart data is in [`results/sealed_test_bpc.json`](results/sealed_test_bpc.json).
+Detailed claims, hashes, controls, and limitations are in
+[`experiment 028`](experiments/028-preregistered-external-corpus-panel.md). Historical experiments
+016–017 use a superseded evaluation contract and retain explicit errata.
 
-## Start Here
+## Five-Minute CPU Demo
 
-- [`docs/architecture.md`](docs/architecture.md): package boundaries and model
-  data flow.
-- [`docs/training.md`](docs/training.md): corpus preparation, baseline
-  evaluation, training, run inspection, and generation commands.
-- [`docs/experiments.md`](docs/experiments.md): milestone index with results and
-  takeaways.
-- [`experiments/`](experiments/): chronological experiment reports.
-- [`notes/`](notes/): advanced theory and implementation handbook.
+The demo uses a small synthetic corpus committed with the repository. It validates the entire
+artifact flow; five training steps are intentionally too few to demonstrate language quality.
 
-## Theory Handbook
+```bash
+git clone https://github.com/almondsun/smallm.git
+cd smallm
+python -m pip install -e ".[dev]"
+make demo
+```
 
-The [`notes/`](notes/) handbook derives the autoregressive objective, tokenization, shifted
-datasets, causal multi-head attention, Transformer blocks, AdamW, held-out evaluation, BPC,
-decoding, diagnostics, provenance, artifact safety, and experiment design. Equations and tensor
-shapes link directly to the implementation and its tests.
+The command prepares and hashes the corpus, trains a tokenizer, evaluates simple baselines, trains
+a smoke model, prints the resulting run record, and performs deterministic generation. Generated
+data, tokenizers, checkpoints, and runs stay in ignored local directories.
+
+For the real-corpus workflow and every individual command, see
+[`docs/training.md`](docs/training.md).
+
+## Reviewer Paths
+
+- **Research design:** start with
+  [`experiment 028`](experiments/028-preregistered-external-corpus-panel.md), then inspect the
+  chronological [`experiment index`](docs/experiments.md).
+- **Architecture:** read [`docs/architecture.md`](docs/architecture.md), then
+  [`src/smallm/model/`](src/smallm/model/) and
+  [`src/smallm/training/`](src/smallm/training/).
+- **Data and safety contracts:** inspect [`src/smallm/data/`](src/smallm/data/),
+  [`src/smallm/evaluation/`](src/smallm/evaluation/), and the focused [`tests/`](tests/).
+- **Theory:** the [`notes/`](notes/) handbook derives the objective, attention, tokenization,
+  BPC, decoding, provenance, and experiment design alongside implementation links.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    A[Raw text] --> B[Prepared corpus<br/>stats + manifest]
+    B --> C[Train-only tokenizer fit]
+    C --> D[Token blocks]
+    D --> E[GPTiny]
+    E --> F[Metrics + final/best checkpoints]
+    F --> G[Controlled generation]
+    F --> H[One-shot sealed evaluation]
+    H --> I[Validated factorial analysis]
+```
+
+Reusable tensor, data, evaluation, generation, and artifact behavior lives under `src/smallm/`.
+Scripts remain thin orchestration adapters, and filesystem writes stay outside model code.
 
 ## Current Capabilities
 
-| Area | What exists |
+| Area | Implemented contract |
 | --- | --- |
-| Corpus preparation | Normalized corpus output, stats, checksums, source metadata, and manifest files. |
-| Tokenization | Character, educational character-BPE, and lossless boundary-aware UTF-8 byte-BPE tokenizers. |
-| Model | Decoder-only GPT-style Transformer with causal self-attention. |
-| Evaluation | Uniform, unigram, and add-one bigram baselines; sealed chronological tests and complete factorial-matrix aggregation. |
-| Training | Config-driven training with validation loss, optional early stopping, progress logging, checkpoints, metrics, summaries, and samples. |
-| Run records | Preserved run directories with copied dataset manifests and selected provenance fields in `summary.json`. |
-| Generation | `max_new_tokens`, `temperature`, `top_k`, `seed`, and greedy decoding. |
-| Tests | Focused tests for data, baselines, model shape, training artifacts, run utilities, and generation behavior. |
+| Corpus preparation | Normalization, source metadata, statistics, checksums, and compatible manifests |
+| Tokenization | Character, educational character-BPE, and lossless boundary-aware UTF-8 ByteBPE |
+| Model | Decoder-only GPT with learned positions, pre-norm blocks, causal attention, and GELU MLPs |
+| Training | Config-driven AdamW, full or sampled validation, early stopping, final/best checkpoints |
+| Evaluation | Uniform/unigram/bigram baselines, exact BPC, sealed tests, balanced matrix validation |
+| Artifacts | Config, metrics, summary, checkpoints, sample, manifest, environment, and identities |
+| Generation | Greedy or seeded sampling with explicit temperature, top-k, and token budget |
 
-## Quick Start
+## Reproduce and Validate
 
-Install the package:
-
-```bash
-python -m pip install -e ".[dev]"
-```
-
-Put a plain text corpus at `data/raw/input.txt`, then run the pipeline:
+Use the frozen development environment when `uv` is available:
 
 ```bash
-python scripts/prepare_corpus.py \
-  --input data/raw/input.txt \
-  --output data/processed/corpus.txt \
-  --stats data/processed/corpus_stats.json \
-  --manifest data/processed/corpus_manifest.json \
-  --source-name "local text corpus"
-
-python scripts/prepare_data.py --config configs/smoke.yaml
-python scripts/evaluate_baselines.py --config configs/smoke.yaml
-python scripts/train.py --config configs/smoke.yaml
-python scripts/show_run.py --run latest --run-name smoke
-python scripts/generate.py --run latest --run-name smoke --prompt "Once" --greedy --max-new-tokens 100
+uv sync --frozen --extra dev
+uv run make check
+uv run make audit
 ```
 
-For the longer lightweight config:
+`make check` runs formatting verification, lint, strict type checking, tests with branch coverage,
+compile checks, and Markdown link validation. The canonical command matrix is documented in
+[`docs/codex/build-and-test.md`](docs/codex/build-and-test.md).
 
-```bash
-python scripts/prepare_data.py --config configs/gptiny.yaml
-python scripts/evaluate_baselines.py --config configs/gptiny.yaml
-python scripts/train.py --config configs/gptiny.yaml
-python scripts/show_run.py --run latest --run-name gptiny
-python scripts/generate.py --run latest --run-name gptiny --prompt "Once" --temperature 0.8 --top-k 10 --seed 1337 --max-new-tokens 100
-```
+## Scope and Limitations
 
-## Repository Map
+- Models are intentionally tiny and trained on individual public-domain documents.
+- Reported seeds and corpora are fixed experimental panels, not population samples.
+- Chronological validation and test regions can differ materially in difficulty.
+- Tokenizers predict different units, so cross-tokenizer comparisons use exact character-normalized
+  BPC rather than token loss or perplexity.
+- Runtime corpora and checkpoints are not distributed; reports preserve commands, identities, and
+  aggregate evidence without committing generated text or large local artifacts.
+- The tokenizer is educational rather than a production replacement for established libraries.
 
-- [`src/smallm/data/`](src/smallm/data/): corpus preparation, tokenizer, and
-  token block dataset.
-- [`src/smallm/model/`](src/smallm/model/): GPT config, attention, blocks, and
-  language-model head.
-- [`src/smallm/evaluation/`](src/smallm/evaluation/): character-level
-  baselines.
-- [`src/smallm/training/`](src/smallm/training/): trainer, checkpoints,
-  artifacts, progress logging, and run discovery.
-- [`src/smallm/generation/`](src/smallm/generation/): sampling controls.
-- [`scripts/`](scripts/): command-line entry points.
-- [`configs/`](configs/): smoke and GPTiny configs.
-- [`tests/`](tests/): focused contract tests.
+## Project Status
 
-## Current Status
+Version `0.3.0` is the portfolio release. One final preregistered capacity-controlled panel is
+planned before the permanent `1.0.0` completion release; its protocol will be frozen before new
+source access.
 
-The first public evidence package is complete: the pipeline is reproducible,
-the experiment record is inspectable, and automated checks are available
-locally and in CI. The current tiny model remains weak, which the reports state
-directly.
-
-Experiments 016–017 remain historical evidence, but their tokenizer fitting and sampled-prefix BPC
-methodology have been superseded by milestone 019. Their reports carry explicit errata. Corrected
-headline results must come from fresh milestone-019 runs rather than mixing metric contracts.
-
-Experiment 017 previously reported:
-
-- Corpus grew from 4,838 to 144,530 prepared characters.
-- The larger-corpus bigram baseline reached validation loss `2.4340`.
-- The unchanged 500-step GPTiny reached validation loss `2.5914`.
-- The 2k-step GPTiny run reached validation loss `2.2187` and beat bigram.
-- The 5k-step GPTiny control reached validation loss about `1.860`.
-- The 5k-step `lr=0.001` GPTiny run reached final validation loss `1.6792`
-  and best validation loss `1.6501`.
-- Wider/deeper GPTiny variants improved validation and generation diversity
-  diagnostics; the deep variant reached best validation loss `1.4950`.
-- Simple BPE128 reduced validation sequence length from 14,453 character tokens
-  to 9,522 BPE tokens, but underperformed the character control on estimated
-  best bits per character (`2.4453` versus `2.1569`).
-- BPE128 produced somewhat more word-like greedy text, but generation still
-  showed phrase-level repetition and incoherent prose.
-- Training now saves both final and best-validation checkpoints. In the focused
-  final-versus-best comparison, the BPE128 best checkpoint improved validation
-  loss but produced less diverse text with more phrase reuse under the tested
-  greedy and seeded settings. The character best checkpoint also lost diversity
-  and did not improve qualitatively.
-
-The budget and optimizer studies show that the model was materially
-undertrained and benefited from a higher learning rate. Capacity still helped.
-Best-checkpoint evaluation removed an ambiguity from the tokenization study but
-did not change its conclusion: this BPE128 setup did not beat the character
-control. Any future modeling work should tune tokenization and training
-together while evaluating both final and best checkpoints; it is not a
-prerequisite for inspecting this release.
-
-## Material Status
-
-Runtime artifacts under `data/raw/`, `data/processed/`, `checkpoints/`, and
-`runs/` are local and ignored by default. Experiment reports record selected
-results and validation evidence, but generated corpora, checkpoints, and run
-outputs are not tracked.
-
-## Not Implemented Yet
-
-- Production-grade tokenizers or external tokenizer libraries.
-- Broader tokenization sweeps beyond the first BPE128 comparison.
-- Checkpoint resume, mixed precision, distributed training, or dashboards.
-- Remote dataset registry or hosted experiment tracking.
+Contributions should follow [`CONTRIBUTING.md`](CONTRIBUTING.md). Security and artifact-handling
+expectations are in [`SECURITY.md`](SECURITY.md). The project is MIT licensed and provides
+[`CITATION.cff`](CITATION.cff) metadata.

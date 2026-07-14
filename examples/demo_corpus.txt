@@ -1,0 +1,11 @@
+Research begins with a question. A careful experiment records its assumptions, controls, and evidence.
+Small models make each decision visible: text becomes tokens, tokens become training blocks, and blocks become predictions.
+Validation guides checkpoint selection. A sealed test remains untouched until every decision is frozen.
+Reproducibility requires configuration, provenance, metrics, checksums, and candid interpretation.
+An unexpected result is still useful when the method is inspectable and the limitations are explicit.
+
+Research begins with a question. A careful experiment records its assumptions, controls, and evidence.
+Small models make each decision visible: text becomes tokens, tokens become training blocks, and blocks become predictions.
+Validation guides checkpoint selection. A sealed test remains untouched until every decision is frozen.
+Reproducibility requires configuration, provenance, metrics, checksums, and candid interpretation.
+An unexpected result is still useful when the method is inspectable and the limitations are explicit.

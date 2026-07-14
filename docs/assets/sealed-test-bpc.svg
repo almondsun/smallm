@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="490" viewBox="0 0 900 490" role="img" aria-labelledby="title desc">
+<title id="title">Sealed-test bits per character by tokenizer</title>
+<desc id="desc">ByteBPE512 has lower bits per character than the character tokenizer on all five reported corpora.</desc>
+<rect width="100%" height="100%" fill="#0d1117" rx="12"/>
+<text x="32" y="42" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="24" font-weight="700">ByteBPE512 wins every sealed comparison</text>
+<text x="32" y="70" fill="#8b949e" font-family="system-ui,sans-serif" font-size="14">Lower bits per character is better · points are reported values or 3-seed means</text>
+<line x1="268.0" y1="92" x2="268.0" y2="456" stroke="#30363d"/>
+<text x="268.0" y="478" fill="#8b949e" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">2.0</text>
+<line x1="424.1" y1="92" x2="424.1" y2="456" stroke="#30363d"/>
+<text x="424.1" y="478" fill="#8b949e" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">2.1</text>
+<line x1="580.2" y1="92" x2="580.2" y2="456" stroke="#30363d"/>
+<text x="580.2" y="478" fill="#8b949e" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">2.2</text>
+<line x1="736.3" y1="92" x2="736.3" y2="456" stroke="#30363d"/>
+<text x="736.3" y="478" fill="#8b949e" font-family="system-ui,sans-serif" font-size="12" text-anchor="middle">2.3</text>
+<text x="32" y="126" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="15">Alice</text>
+<line x1="451.9" y1="118" x2="547.8" y2="118" stroke="#484f58" stroke-width="3"/>
+<circle cx="547.8" cy="118" r="7" fill="#f0883e"/>
+<circle cx="451.9" cy="118" r="7" fill="#3fb950"/>
+<text x="547.8" y="143" fill="#f0883e" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.179</text>
+<text x="451.9" y="105" fill="#3fb950" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.118</text>
+<text x="32" y="200" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="15">Peter Pan</text>
+<line x1="655.8" y1="192" x2="696.1" y2="192" stroke="#484f58" stroke-width="3"/>
+<circle cx="696.1" cy="192" r="7" fill="#f0883e"/>
+<circle cx="655.8" cy="192" r="7" fill="#3fb950"/>
+<text x="696.1" y="217" fill="#f0883e" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.274</text>
+<text x="655.8" y="179" fill="#3fb950" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.248</text>
+<text x="32" y="274" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="15">Hamlet</text>
+<line x1="665.5" y1="266" x2="770.5" y2="266" stroke="#484f58" stroke-width="3"/>
+<circle cx="770.5" cy="266" r="7" fill="#f0883e"/>
+<circle cx="665.5" cy="266" r="7" fill="#3fb950"/>
+<text x="770.5" y="291" fill="#f0883e" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.322</text>
+<text x="665.5" y="253" fill="#3fb950" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.255</text>
+<text x="32" y="348" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="15">Art of War</text>
+<line x1="372.4" y1="340" x2="549.4" y2="340" stroke="#484f58" stroke-width="3"/>
+<circle cx="549.4" cy="340" r="7" fill="#f0883e"/>
+<circle cx="372.4" cy="340" r="7" fill="#3fb950"/>
+<text x="549.4" y="365" fill="#f0883e" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.180</text>
+<text x="372.4" y="327" fill="#3fb950" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.067</text>
+<text x="32" y="422" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="15">Lincoln</text>
+<line x1="394.9" y1="414" x2="635.8" y2="414" stroke="#484f58" stroke-width="3"/>
+<circle cx="635.8" cy="414" r="7" fill="#f0883e"/>
+<circle cx="394.9" cy="414" r="7" fill="#3fb950"/>
+<text x="635.8" y="439" fill="#f0883e" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.236</text>
+<text x="394.9" y="401" fill="#3fb950" font-family="ui-monospace,monospace" font-size="11" text-anchor="middle">2.081</text>
+<circle cx="650" cy="42" r="6" fill="#f0883e"/><text x="664" y="47" fill="#c9d1d9" font-family="system-ui,sans-serif" font-size="13">Character</text>
+<circle cx="752" cy="42" r="6" fill="#3fb950"/><text x="766" y="47" fill="#c9d1d9" font-family="system-ui,sans-serif" font-size="13">ByteBPE512</text>
+</svg>

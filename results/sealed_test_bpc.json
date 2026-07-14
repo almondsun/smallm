@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "metric": "bits_per_character",
+  "contrast": "byte_bpe512_minus_character",
+  "sources": [
+    "experiments/026-sealed-test-evaluation.md",
+    "experiments/027-hamlet-external-distribution.md",
+    "experiments/028-preregistered-external-corpus-panel.md"
+  ],
+  "corpora": [
+    {"name": "Alice", "character": 2.179194, "byte_bpe512": 2.117790, "seeds": 1},
+    {"name": "Peter Pan", "character": 2.274210, "byte_bpe512": 2.248431, "seeds": 1},
+    {"name": "Hamlet", "character": 2.321881, "byte_bpe512": 2.254615, "seeds": 1},
+    {"name": "Art of War", "character": 2.180249, "byte_bpe512": 2.066823, "seeds": 3},
+    {"name": "Lincoln", "character": 2.235597, "byte_bpe512": 2.081283, "seeds": 3}
+  ]
+}

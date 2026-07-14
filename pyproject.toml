@@ -4,15 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "smallm"
-version = "0.2.0"
+dynamic = ["version"]
 description = "A small GPT-style language model implemented from scratch in PyTorch."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 dependencies = [
   "numpy>=1.26",
   "torch>=2.0",
 ]
+
+[tool.setuptools.dynamic]
+version = { attr = "smallm.__version__" }
 
 [project.optional-dependencies]
 dev = [

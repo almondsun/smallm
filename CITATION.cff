@@ -1,0 +1,11 @@
+cff-version: 1.2.0
+message: "If you use smaLLM, please cite the software release."
+title: "smaLLM: a reproducible GPT-style language-model lab"
+type: software
+authors:
+  - family-names: "Ramírez Espinosa"
+    given-names: "Martín"
+repository-code: "https://github.com/almondsun/smallm"
+license: MIT
+version: 0.3.0
+date-released: 2026-07-14
