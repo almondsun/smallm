@@ -1,0 +1,37 @@
+data:
+  input_path: data/raw/douglass_body.txt
+  prepared_path: data/processed/douglass_final_corpus.txt
+  manifest_path: data/processed/douglass_final_manifest.json
+  tokenizer_path: data/processed/douglass_char136_final_tokenizer.json
+  tokenizer_type: char
+  block_size: 64
+  train_split: 0.8
+  validation_split: 0.1
+
+model:
+  vocab_size: 256
+  block_size: 64
+  n_layer: 4
+  n_head: 4
+  n_embd: 136
+  dropout: 0.1
+
+train:
+  run_name: gptiny_douglass_char136_final_seed2027
+  runs_dir: runs
+  batch_size: 16
+  max_steps: 5000
+  learning_rate: 0.001
+  weight_decay: 0.0
+  log_interval: 100
+  eval_interval: 250
+  eval_batches: null
+  early_stopping_patience: 3
+  early_stopping_min_delta: 0.0
+  sample_prompt: "I was"
+  sample_max_new_tokens: 100
+  sample_temperature: 1.0
+  sample_top_k: null
+  sample_seed: 2027
+  sample_greedy: false
+  seed: 2027

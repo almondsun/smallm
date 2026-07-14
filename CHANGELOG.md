@@ -5,6 +5,10 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 
 ## [Unreleased]
 
+### Added
+
+- Preregistered the final three-corpus, three-arm capacity-controlled panel.
+
 ## [0.3.0] - 2026-07-14
 
 ### Added

@@ -138,8 +138,8 @@ compile checks, and Markdown link validation. The canonical command matrix is do
 ## Project Status
 
 Version `0.3.0` is the portfolio release. One final preregistered capacity-controlled panel is
-planned before the permanent `1.0.0` completion release; its protocol will be frozen before new
-source access.
+planned before the permanent `1.0.0` completion release. Its frozen protocol is
+[`experiment 029`](experiments/029-final-capacity-panel-preregistration.md).
 
 Contributions should follow [`CONTRIBUTING.md`](CONTRIBUTING.md). Security and artifact-handling
 expectations are in [`SECURITY.md`](SECURITY.md). The project is MIT licensed and provides
