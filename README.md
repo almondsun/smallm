@@ -1,13 +1,13 @@
-# smaLLM
+<div align="center">
+  <img src="docs/assets/smallm-logo.png" alt="smaLLM causal attention logo" width="128" height="128">
+  <h1>smaLLM</h1>
+  <p><strong>A small, reproducible GPT-style language-model lab built from scratch in PyTorch.</strong></p>
+  <p>Corpus provenance, educational tokenizers, causal Transformer modeling, controlled training, sealed evaluation, and candid experiment reports.</p>
 
-[![CI](https://github.com/almondsun/smallm/actions/workflows/ci.yml/badge.svg)](https://github.com/almondsun/smallm/actions/workflows/ci.yml)
-[![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
-
-`smaLLM` is a small, reproducible GPT-style language-model lab built from scratch in PyTorch. It
-connects the full research-engineering path: corpus provenance, character and educational BPE
-tokenizers, causal Transformer modeling, controlled training and generation, sealed evaluation,
-and candid experiment reports.
+  [![CI](https://github.com/almondsun/smallm/actions/workflows/ci.yml/badge.svg)](https://github.com/almondsun/smallm/actions/workflows/ci.yml)
+  [![Python >=3.10](https://img.shields.io/badge/python-%3E%3D3.10-blue.svg)](pyproject.toml)
+  [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+</div>
 
 This is an inspectable learning and research artifact, not a competitive or production language
 model.
