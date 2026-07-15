@@ -22,43 +22,43 @@ Plain gradient descent uses the same learning rate everywhere. Adam tracks a mov
 moving squared magnitude for every parameter's gradients. The first behaves like momentum; the
 second adapts coordinates that consistently receive large gradients.
 
-For gradient \(g_t\), Adam maintains
+For gradient $g_t$, Adam maintains
 
-\[
+$$
 m_t=\beta_1m_{t-1}+(1-\beta_1)g_t,
 \quad
 v_t=\beta_2v_{t-1}+(1-\beta_2)g_t^2.
-\]
+$$
 
 All products, squares, divisions, and square roots in these equations are element-wise. With
-\(m_0=v_0=0\), the moments are biased toward zero early in training, so Adam uses
+$m_0=v_0=0$, the moments are biased toward zero early in training, so Adam uses
 
-\[
+$$
 \hat m_t=\frac{m_t}{1-\beta_1^t},
 \qquad
 \hat v_t=\frac{v_t}{1-\beta_2^t}.
-\]
+$$
 
-Bias-corrected moments \(\hat m_t,\hat v_t\) update parameters approximately as
+Bias-corrected moments $\hat m_t,\hat v_t$ update parameters approximately as
 
-\[
+$$
 \theta_{t+1}=\theta_t-\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}
 -\eta\lambda\theta_t.
-\]
+$$
 
 Equivalently,
 
-\[
+$$
 \theta_{t+1}=(1-\eta\lambda)\theta_t
 -\eta\frac{\hat m_t}{\sqrt{\hat v_t}+\epsilon}.
-\]
+$$
 
 The multiplicative shrinkage term is separate from the gradient moments; that separation is the
-defining distinction between AdamW and adding \(\lambda\theta\) to the gradient before Adam's
-adaptive normalization. smaLLM uses PyTorch's default \(\beta_1,\beta_2,\epsilon\) and configures
+defining distinction between AdamW and adding $\lambda\theta$ to the gradient before Adam's
+adaptive normalization. smaLLM uses PyTorch's default $\beta_1,\beta_2,\epsilon$ and configures
 only learning rate and weight decay.
 
-AdamW decouples weight decay from the adaptive gradient. Learning rate \(\eta\), decay \(\lambda\),
+AdamW decouples weight decay from the adaptive gradient. Learning rate $\eta$, decay $\lambda$,
 batch size, and training steps jointly determine the optimization regime; changing one while
 calling the rest “controlled” still changes effective regularization or noise.
 
@@ -68,14 +68,14 @@ Dropout multiplies activations by a Bernoulli mask during training and rescales 
 keep probability. Evaluation disables masks. Any validation helper must restore the model's prior
 mode; otherwise subsequent training silently runs without dropout or generation remains stochastic.
 
-For dropout probability \(p\) and activation \(x_i\), let \(m_i\sim\operatorname{Bernoulli}(1-p)\).
+For dropout probability $p$ and activation $x_i$, let $m_i\sim\operatorname{Bernoulli}(1-p)$.
 Training output is
 
-\[
+$$
 \tilde x_i=\frac{m_i}{1-p}x_i,
 \qquad
 \mathbb E[\tilde x_i]=x_i.
-\]
+$$
 
 The equality is coordinate-wise expectation over the dropout mask. It does not imply a nonlinear
 network's expected final output equals its evaluation-mode output.
@@ -94,26 +94,26 @@ coverage explicitly.
 
 ### Validation-based early stopping
 
-Let validation be observed at evaluation index \(j\), with loss \(L_j\). Given minimum meaningful
-improvement \(\delta\geq0\), maintain a reference \(R\) and stale count \(q\):
+Let validation be observed at evaluation index $j$, with loss $L_j$. Given minimum meaningful
+improvement $\delta\geq0$, maintain a reference $R$ and stale count $q$:
 
-\[
+$$
 (R,q)\leftarrow
 \begin{cases}
 (L_j,0), & L_j < R-\delta,\\
 (R,q+1), & \text{otherwise}.
 \end{cases}
-\]
+$$
 
-Training stops when \(q\geq P_{stop}\), where \(P_{stop}\) is patience measured in validation
+Training stops when $q\geq P_{stop}$, where $P_{stop}$ is patience measured in validation
 events—not gradient steps or epochs. smaLLM still stores the numerically lowest validation
 checkpoint independently of the early-stopping reference. This matters when improvements smaller
-than \(\delta\) are real enough
+than $\delta$ are real enough
 to preserve but intentionally too small to reset patience.
 
 Early stopping is a sequential model-selection rule, not regularization: it limits exposure to
 overfitting but does not change the objective or gradients before the stop. Its latency is bounded by
-\(P_{stop}\times\texttt{eval_interval}\), and sampled validation can make the stopping time noisy. Official
+$P_{stop}\times\texttt{eval_interval}$, and sampled validation can make the stopping time noisy. Official
 modeling configs therefore use full deterministic validation. Summaries record the step ceiling,
 actual steps, stop reason, patience, minimum delta, and terminal stale count.
 

@@ -4,36 +4,36 @@
 
 - `x∈R^C` means `x` is a vector of `C` real numbers.
 - `W∈R^{m×n}` means `W` is a matrix with `m` rows and `n` columns.
-- \(x_0,\ldots,x_{T-1}\) denotes a length-\(T\) sequence under the zero-based convention.
-- \(x_{a:b}\) mirrors a half-open Python slice: positions \(a,\ldots,b-1\).
+- $x_0,\ldots,x_{T-1}$ denotes a sequence of length $T$ under the zero-based convention.
+- $x_{a:b}$ mirrors a half-open Python slice: positions $a,\ldots,b-1$.
 - `x_{<t}` means positions strictly before `t`.
 - `Σ_i` means sum the following expression over index `i`.
 - `∂L/∂w` is the partial derivative of loss with respect to parameter `w`.
 - `θ` conventionally denotes the collection of all learned parameters.
 - `≈` means approximately equal; `=` states equality under the definitions.
-- \([n]=\{0,\ldots,n-1\}\) is the zero-based finite index set used throughout.
-- \(\mathbf1[P]\) is `1` when proposition `P` is true and `0` otherwise.
-- \(\Delta^{V-1}\) is the probability simplex in \(\mathbb R^V\).
-- \(\mathbb E[X]\) denotes expectation of random variable \(X\).
-- \(\arg\min_x f(x)\) is the set of inputs attaining the minimum of `f`; likewise for `argmax`.
+- $[n]=\{0,\ldots,n-1\}$ is the zero-based finite index set used throughout.
+- $\mathbf1[P]$ is `1` when proposition `P` is true and `0` otherwise.
+- $\Delta^{V-1}$ is the probability simplex in $\mathbb R^V$.
+- $\mathbb E[X]$ denotes expectation of random variable $X$.
+- $\arg\min_x f(x)$ is the set of inputs attaining the minimum of `f`; likewise for `argmax`.
 
 ## Shape table
 
 | Symbol | Meaning |
 | --- | --- |
-| \(B\) | batch size |
-| \(T\) | current sequence length |
-| \(V\) | vocabulary size |
-| \(C\) | embedding width |
-| \(H\) | attention heads |
-| \(D=C/H\) | per-head width |
-| \(L\) | number of Transformer blocks |
-| \(P\) | total scalar model parameters |
-| \(N\) | token or example count, defined locally |
-| \(T_{\max}\) | maximum configured context length |
-| \(X\in\mathbb R^{B\times T\times C}\) | hidden states |
-| \(Q,K,V_a\in\mathbb R^{B\times H\times T\times D}\) | attention tensors |
-| \(Z\in\mathbb R^{B\times T\times V}\) | output logits |
+| $B$ | batch size |
+| $T$ | current sequence length |
+| $V$ | vocabulary size |
+| $C$ | embedding width |
+| $H$ | attention heads |
+| $D=C/H$ | per-head width |
+| $L$ | number of Transformer blocks |
+| $P$ | total scalar model parameters |
+| $N$ | token or example count, defined locally |
+| $T_{\max}$ | maximum configured context length |
+| $X\in\mathbb R^{B\times T\times C}$ | hidden states |
+| $Q,K,V_a\in\mathbb R^{B\times H\times T\times D}$ | attention tensors |
+| $Z\in\mathbb R^{B\times T\times V}$ | output logits |
 
 ## Worked weighted-loss example
 

@@ -19,34 +19,34 @@ observed prefix ends in `q`. A language model estimates a new distribution for e
 
 ### Formal probability model
 
-Let \(\mathcal V=\{0,\ldots,V-1\}\) be the finite token vocabulary. A length-\(T\) token sequence
-is an element of the Cartesian product \(\mathcal V^T\). On an underlying probability space
-\((\Omega,\mathcal F,\mathbb P)\), define discrete random variables
-\(X_t:\Omega\to\mathcal V\). For token values \(x_0,\ldots,x_t\), conditional probability is
+Let $\mathcal V=\{0,\ldots,V-1\}$ be the finite token vocabulary. A token sequence of length $T$
+is an element of the Cartesian product $\mathcal V^T$. On an underlying probability space
+$(\Omega,\mathcal F,\mathbb P)$, define discrete random variables
+$X_t:\Omega\to\mathcal V$. For token values $x_0,\ldots,x_t$, conditional probability is
 
-\[
+$$
 \mathbb P(X_t=x_t\mid X_{<t}=x_{<t})
 =\frac{\mathbb P(X_{\le t}=x_{\le t})}
 {\mathbb P(X_{<t}=x_{<t})},
-\]
+$$
 
 provided the denominator is nonzero. The unknown data-generating distribution is not available to
 the program; the model supplies a parameterized approximation
-\(p_\theta(\cdot\mid x_{<t})\in\Delta^{V-1}\), where
+$p_\theta(\cdot\mid x_{<t})\in\Delta^{V-1}$, where
 
-\[
+$$
 \Delta^{V-1}=\left\{p\in\mathbb R^V:p_i\ge0,\ \sum_{i=0}^{V-1}p_i=1\right\}
-\]
+$$
 
 is the probability simplex.
 
 ## One sequence becomes many prediction problems
 
-For tokens \(x_0,x_1,\ldots,x_{T-1}\), the probability chain rule says
+For tokens $x_0,x_1,\ldots,x_{T-1}$, the probability chain rule says
 
-\[
+$$
 p(x_0,\ldots,x_{T-1})=p(x_0)\prod_{t=1}^{T-1}p(x_t\mid x_0,\ldots,x_{t-1}).
-\]
+$$
 
 The notation `x_<t` means every token before position `t`. This identity turns sequence modeling
 into repeated next-token classification. Given `c a t`, training questions can include:
@@ -62,47 +62,47 @@ once.
 
 The chain rule follows by repeatedly rearranging the conditional-probability definition:
 
-\[
+$$
 p(x_0,\ldots,x_{T-1})
 =p(x_0)\prod_{t=1}^{T-1}
 \frac{p(x_0,\ldots,x_t)}{p(x_0,\ldots,x_{t-1})}.
-\]
+$$
 
 All intermediate joint probabilities telescope, leaving the joint probability on the left.
 
-Given training sequences \(x^{(1)},\ldots,x^{(N)}\), maximum-likelihood estimation chooses
+Given training sequences $x^{(1)},\ldots,x^{(N)}$, maximum-likelihood estimation chooses
 
-\[
+$$
 \hat\theta\in\arg\max_\theta
 \sum_{n=1}^N\sum_t
 \log p_\theta\!\left(x_t^{(n)}\mid x_{<t}^{(n)}\right).
-\]
+$$
 
 Equivalently, smaLLM minimizes the empirical negative log-likelihood
 
-\[
+$$
 \widehat{\mathcal L}(\theta)
 =-\frac1M\sum_{n,t}
 \log p_\theta\!\left(x_t^{(n)}\mid x_{<t}^{(n)}\right),
-\]
+$$
 
-where \(M\) is the number of target positions included in the minibatch or evaluation region.
+where $M$ is the number of target positions included in the minibatch or evaluation region.
 
 ## Why multiply probabilities—and why logs appear
 
 The chain rule multiplies conditional probabilities. Long sequences therefore produce extremely
 small numbers. Logarithms turn multiplication into addition:
 
-\[
+$$
 \log(ab)=\log a+\log b.
-\]
+$$
 
 Because probabilities are at most 1, their logs are zero or negative. **Negative log-likelihood**
 (NLL) flips the sign so better predictions approach zero:
 
-\[
+$$
 S=-\sum_t\log p_\theta(x_t\mid x_{<t}).
-\]
+$$
 
 If the model gives the true token probability `0.8`, its NLL is `-log(0.8)≈0.223`. Probability
 `0.1` costs `2.303`. Being confidently wrong is punished strongly.
@@ -118,9 +118,9 @@ probabilities. For a batch of `B` sequences and `T` positions, logits have shape
 
 Softmax converts a vector of logits `z` into probabilities:
 
-\[
+$$
 p(i)=\frac{e^{z_i}}{\sum_j e^{z_j}}.
-\]
+$$
 
 Exponentiation makes every value positive; division normalizes the sum to one. Adding the same
 constant to every logit changes no probability, because the common exponential factor cancels.
@@ -137,32 +137,32 @@ softmax     ≈ [0.665, 0.245, 0.090]
 Softmax preserves ordering but expresses relative gaps. Logits are convenient because the model
 can emit any real values and because cross-entropy has a useful gradient.
 
-Softmax is invariant to a common shift \(c\in\mathbb R\):
+Softmax is invariant to a common shift $c\in\mathbb R$:
 
-\[
+$$
 \operatorname{softmax}(z+c\mathbf1)_i
 =\frac{e^{z_i+c}}{\sum_j e^{z_j+c}}
 =\frac{e^c e^{z_i}}{e^c\sum_j e^{z_j}}
 =\operatorname{softmax}(z)_i.
-\]
+$$
 
-Subtracting \(\max_i z_i\) therefore preserves the distribution while ensuring the largest
-exponent is \(e^0=1\), reducing overflow risk.
+Subtracting $\max_i z_i$ therefore preserves the distribution while ensuring the largest
+exponent is $e^0=1$, reducing overflow risk.
 
 ## Cross-entropy: the training signal
 
 For one true class `y`, categorical cross-entropy is
 
-\[
+$$
 \ell=-\log p(y).
-\]
+$$
 
 PyTorch's `F.cross_entropy` combines stable log-softmax and target lookup; smaLLM should not apply
 softmax before calling it. The gradient with respect to logit `i` is
 
-\[
+$$
 \frac{\partial\ell}{\partial z_i}=p(i)-\mathbf 1[i=y].
-\]
+$$
 
 For every wrong class, the gradient is its predicted probability, pushing that logit down under
 gradient descent. For the correct class it is `p(y)-1`, pushing the logit up. Confident wrong
@@ -170,17 +170,17 @@ classes receive larger corrections.
 
 To derive the gradient, write
 
-\[
+$$
 \ell(z,y)=-z_y+\log\sum_j e^{z_j}.
-\]
+$$
 
 Then
 
-\[
+$$
 \frac{\partial\ell}{\partial z_i}
 =-\mathbf1[i=y]+\frac{e^{z_i}}{\sum_j e^{z_j}}
 =p(i)-\mathbf1[i=y].
-\]
+$$
 
 The gradient components sum to zero, consistent with softmax's invariance to common logit shifts.
 
@@ -193,23 +193,23 @@ one vectorized loss function.
 If the unknown true distribution is `q` and the model distribution is `p`, expected cross-entropy
 decomposes as
 
-\[
+$$
 H(q,p)=H(q)+D_{KL}(q\Vert p).
-\]
+$$
 
 `H(q)` is uncertainty intrinsic to the data distribution. KL divergence is non-negative mismatch
 between model and truth. Fitting can reduce mismatch but cannot remove inherent ambiguity.
 
 For discrete distributions on the same support,
 
-\[
+$$
 H(q)=-\sum_i q_i\log q_i,
 \qquad
 D_{KL}(q\Vert p)=\sum_i q_i\log\frac{q_i}{p_i}.
-\]
+$$
 
-Substitution gives \(H(q,p)=-\sum_i q_i\log p_i=H(q)+D_{KL}(q\Vert p)\). Gibbs' inequality
-implies \(D_{KL}\ge0\), with equality exactly when \(p=q\) on the support of \(q\).
+Substitution gives $H(q,p)=-\sum_i q_i\log p_i=H(q)+D_{KL}(q\Vert p)$. Gibbs' inequality
+implies $D_{KL}\ge0$, with equality exactly when $p=q$ on the support of $q$.
 
 Lower held-out cross-entropy means the model assigned better probability to that sample under the
 declared coverage. It does not establish factuality, reasoning, coherence, fairness, or usefulness.
@@ -218,9 +218,9 @@ declared coverage. It does not establish factuality, reasoning, coherence, fairn
 
 Per-token perplexity is
 
-\[
+$$
 \operatorname{PPL}=e^{\mathcal L}.
-\]
+$$
 
 Loss `2.0` nats gives perplexity `7.39`, interpretable as a geometric-mean effective branching
 factor. But tokenizers define different units: predicting one character and predicting one
@@ -229,9 +229,9 @@ compared directly.
 
 For total NLL `S` over `C_s` represented source characters,
 
-\[
+$$
 \operatorname{BPC}=\frac{S}{C_s\ln 2}.
-\]
+$$
 
 This converts natural-log information into bits and normalizes by the same source unit. `693.147`
 nats over `1,000` represented characters is `1.0` bit per character. Numerator and denominator

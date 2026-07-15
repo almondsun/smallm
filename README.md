@@ -144,10 +144,11 @@ compile checks, and Markdown link validation. The canonical command matrix is do
 
 ## Project Status
 
-Version `1.0.0` permanently completed the feature and research scope; `1.0.1` is the final
-archive-polish release. No additional features, experiments, dependency refreshes, or compatibility
-work are planned. CI remains available on pushes and pull requests, and the repository stays open
-for inspection and discussion without a maintenance or response commitment. See
+Version `1.0.0` permanently completed the feature and research scope, `1.0.1` polished the archive,
+and `1.0.2` is the final GitHub-rendering correction for the theory handbook. No additional
+features, experiments, dependency refreshes, or compatibility work are planned. CI remains
+available on pushes and pull requests, and the repository stays open for inspection and discussion
+without a maintenance or response commitment. See
 [`Project Completion`](docs/project-completion.md) for the frozen-but-open policy.
 
 Security and artifact-handling expectations are in [`SECURITY.md`](SECURITY.md). The project is MIT

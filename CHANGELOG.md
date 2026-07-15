@@ -5,6 +5,14 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 
 ## [Unreleased]
 
+## [1.0.2] - 2026-07-15
+
+### Fixed
+
+- Converted handbook mathematics to GitHub-compatible inline and display delimiters so all
+  equations render on repository pages.
+- Reworked the few formulas that conflicted with GitHub Markdown emphasis or inline-math parsing.
+
 ## [1.0.1] - 2026-07-14
 
 ### Added
@@ -70,7 +78,8 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 - Reproducible corpus preparation, character and educational BPE tokenizers, GPT training,
   baselines, controlled generation, run artifacts, and milestone reports through experiment 018.
 
-[Unreleased]: https://github.com/almondsun/smallm/compare/v1.0.1...HEAD
+[Unreleased]: https://github.com/almondsun/smallm/compare/v1.0.2...HEAD
+[1.0.2]: https://github.com/almondsun/smallm/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/almondsun/smallm/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/almondsun/smallm/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/almondsun/smallm/compare/v0.2.0...v0.3.0

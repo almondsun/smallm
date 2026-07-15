@@ -9,21 +9,21 @@ tensors.
 
 ## Formal objects and conventions
 
-Let \(\mathbb N=\{0,1,2,\ldots\}\) and let \(\mathbb R\) denote the real numbers. Define the finite
-index set \([n]=\{0,1,\ldots,n-1\}\). A real tensor of shape
-\((d_1,\ldots,d_k)\) is formally a function
+Let $\mathbb N=\{0,1,2,\ldots\}$ and let $\mathbb R$ denote the real numbers. Define the finite
+index set $[n]=\{0,1,\ldots,n-1\}$. A real tensor of shape
+$(d_1,\ldots,d_k)$ is formally a function
 
-\[
+$$
 X:[d_1]\times\cdots\times[d_k]\to\mathbb R.
-\]
+$$
 
-Thus a vector \(x\in\mathbb R^n\) assigns one real number \(x_i\) to each \(i\in[n]\); a matrix
-\(A\in\mathbb R^{m\times n}\) assigns \(A_{ij}\) to every row-column pair. The number of scalar
+Thus a vector $x\in\mathbb R^n$ assigns one real number $x_i$ to each $i\in[n]$; a matrix
+$A\in\mathbb R^{m\times n}$ assigns $A_{ij}$ to every row-column pair. The number of scalar
 entries is
 
-\[
+$$
 \operatorname{numel}(X)=\prod_{r=1}^k d_r.
-\]
+$$
 
 A reshape is admissible only when this product is unchanged. It changes the index factorization,
 not the ordered scalar storage. A transpose composes the indexing function with an axis
@@ -32,13 +32,13 @@ permutation. These definitions explain why reshape/transpose do not introduce le
 This handbook uses zero-based indices to match Python, even when conventional mathematical texts
 use indices from one. Vectors are conceptually column vectors unless a transpose is shown.
 
-For \(x,y\in\mathbb R^n\), define the Euclidean inner product and norm:
+For $x,y\in\mathbb R^n$, define the Euclidean inner product and norm:
 
-\[
+$$
 \langle x,y\rangle=x^\top y=\sum_{i=0}^{n-1}x_i y_i,
 \qquad
 \lVert x\rVert_2=\sqrt{\langle x,x\rangle}.
-\]
+$$
 
 The inner product combines alignment and magnitude. Cosine similarity divides by both norms;
 attention uses the unnormalized inner product and learns the surrounding scales.
@@ -92,9 +92,9 @@ each pair of axes must be equal or one must be `1` (with absent leading axes tre
 
 For equal-length vectors,
 
-\[
+$$
 a\cdot b=\sum_i a_i b_i.
-\]
+$$
 
 For `a=[1,2]` and `b=[3,4]`, the dot product is `1×3 + 2×4 = 11`. It multiplies aligned features
 and sums them into one number. If learned query and key vectors align in useful directions, their
@@ -117,28 +117,28 @@ A linear layer applies `y = xWᵀ + b`. If `x` ends in `C_in` features and the l
 `C_out`, PyTorch stores a weight matrix shaped `(C_out, C_in)`. All leading axes are preserved.
 Thus `nn.Linear(C, 3*C)` maps `(B,T,C)` to `(B,T,3C)` independently at every batch/position pair.
 
-Formally, for \(A\in\mathbb R^{m\times n}\) and
-\(B\in\mathbb R^{n\times p}\), their product \(C=AB\in\mathbb R^{m\times p}\) is defined by
+Formally, for $A\in\mathbb R^{m\times n}$ and
+$B\in\mathbb R^{n\times p}$, their product $C=AB\in\mathbb R^{m\times p}$ is defined by
 
-\[
+$$
 C_{ij}=\sum_{r=0}^{n-1}A_{ir}B_{rj}.
-\]
+$$
 
-The repeated inner index \(r\) is contracted; the uncontracted indices \(i,j\) remain as output
+The repeated inner index $r$ is contracted; the uncontracted indices $i,j$ remain as output
 axes. Batched multiplication keeps all leading batch axes and performs this contraction on the
 final two axes. For attention,
 
-\[
+$$
 S_{bhij}=\sum_{r=0}^{D-1}Q_{bhir}K_{bhjr},
-\]
+$$
 
-so \(Q,K\in\mathbb R^{B\times H\times T\times D}\) produce
-\(S\in\mathbb R^{B\times H\times T\times T}\). Writing indices makes the two different `T` axes
+so $Q,K\in\mathbb R^{B\times H\times T\times D}$ produce
+$S\in\mathbb R^{B\times H\times T\times T}$. Writing indices makes the two different `T` axes
 unambiguous.
 
-An affine map \(f(x)=Wx+b\) is not strictly linear when \(b\ne0\), because then \(f(0)=b\).
+An affine map $f(x)=Wx+b$ is not strictly linear when $b\ne0$, because then $f(0)=b$.
 Machine-learning code conventionally calls it a “linear layer.” Its parameters are
-\(W\in\mathbb R^{C_{out}\times C_{in}}\) and \(b\in\mathbb R^{C_{out}}\).
+$W\in\mathbb R^{C_{out}\times C_{in}}$ and $b\in\mathbb R^{C_{out}}$.
 
 ## Reshape, transpose, and contiguous memory
 
@@ -165,44 +165,44 @@ A model loss depends on many parameters. The **gradient** is the collection of p
 one slope for each parameter while conceptually holding the others fixed. If a parameter's gradient
 is positive, a small move in the negative direction tends to lower the loss locally:
 
-\[
+$$
 w_{new}=w-\eta\frac{\partial L}{\partial w}.
-\]
+$$
 
 The learning rate `η` controls step size. This local statement does not promise the loss surface is
 simple or that a large step will help.
 
 The one-variable derivative is the limit
 
-\[
+$$
 f'(x)=\lim_{h\to0}\frac{f(x+h)-f(x)}{h},
-\]
+$$
 
-when the limit exists. For \(f:\mathbb R^n\to\mathbb R\), the partial derivative with respect to
-coordinate \(i\) is
+when the limit exists. For $f:\mathbb R^n\to\mathbb R$, the partial derivative with respect to
+coordinate $i$ is
 
-\[
+$$
 \frac{\partial f}{\partial x_i}(x)
 =\lim_{h\to0}\frac{f(x+h e_i)-f(x)}{h},
-\]
+$$
 
-where \(e_i\) is the `i`th standard basis vector. The gradient collects these coordinates:
+where $e_i$ is the `i`th standard basis vector. The gradient collects these coordinates:
 
-\[
+$$
 \nabla_x f(x)=
 \begin{bmatrix}
 \partial f/\partial x_0 & \cdots & \partial f/\partial x_{n-1}
 \end{bmatrix}^{\!\top}.
-\]
+$$
 
-For a vector-valued map \(g:\mathbb R^n\to\mathbb R^m\), the Jacobian
-\(J_g(x)\in\mathbb R^{m\times n}\) has entries
-\((J_g)_{ij}=\partial g_i/\partial x_j\). If
-\(f:\mathbb R^m\to\mathbb R\), the multivariable chain rule is
+For a vector-valued map $g:\mathbb R^n\to\mathbb R^m$, the Jacobian
+$J_g(x)\in\mathbb R^{m\times n}$ has entries
+$(J_g)_{ij}=\partial g_i/\partial x_j$. If
+$f:\mathbb R^m\to\mathbb R$, the multivariable chain rule is
 
-\[
+$$
 \nabla_x(f\circ g)(x)=J_g(x)^\top\nabla_y f(g(x)).
-\]
+$$
 
 Reverse-mode automatic differentiation computes these transposed-Jacobian/vector products without
 materializing every full Jacobian. This is efficient when a computation has many parameters but one

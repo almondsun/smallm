@@ -1,6 +1,6 @@
 05451eb45bdd8e43129ced26b9e451a292c9d7649bd7c9b14aca74581d77bd39  results/final_capacity_panel.json
 d42cc36178e22e7aa9fdca002a9c85c16d3f8ab5ee79c4e598e7178ca0b8be33  results/sealed_test_bpc.json
 a7963dca987f5a2715015620aeeb11cbce0e8d873899767af848b46f9728e64a  docs/assets/sealed-test-bpc.svg
-50643dfe98a8962f3a0a01d2131f945d9070c9d20555aba18ba83856d9adfafb  CITATION.cff
-e61fcd9c5b59635c1bd580680b24a142ea97cea18d625d466c5bb5b24184ff09  dist/smallm-1.0.1-py3-none-any.whl
-8ac59479905ed93f59d318067f33190a5f02df3f26718f7474d949045c608bee  dist/smallm-1.0.1.tar.gz
+11c8dc492c42fc79a567b1b3e18e9a01e5c1c0c4acc69c545cb8bdbf1775ba57  CITATION.cff
+c4e5420a8b9d2b342a8fdb1b189ec19935b5a0e5a2a4c90441ab525d3460c869  dist/smallm-1.0.2-py3-none-any.whl
+a14967b2ae30529b37c016c49a7e6a95c5be7440ed1c2add7f4e29520d312d77  dist/smallm-1.0.2.tar.gz

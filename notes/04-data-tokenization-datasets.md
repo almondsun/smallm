@@ -7,30 +7,30 @@ statistical contract, not clerical preprocessing.
 
 ## Formal data objects
 
-Let \(\Sigma\) be the set of Unicode scalar values and \(\Sigma^*\) the set of finite Unicode
-strings. A raw corpus is an ordered string \(r\in\Sigma^*\) plus source metadata. Preparation is a
+Let $\Sigma$ be the set of Unicode scalar values and $\Sigma^\ast$ the set of finite Unicode
+strings. A raw corpus is an ordered string $r\in\Sigma^\ast$ plus source metadata. Preparation is a
 deterministic map
 
-\[
-N:\Sigma^*\to\Sigma^*,\qquad c=N(r),
-\]
+$$
+N:\Sigma^\ast\to\Sigma^\ast,\qquad c=N(r),
+$$
 
-where the prepared corpus \(c=(c_0,\ldots,c_{C-1})\) has length \(C=|c|\). A SHA-256 digest is an
+where the prepared corpus $c=(c_0,\ldots,c_{C-1})$ has length $C=|c|$. A SHA-256 digest is an
 external identity check on the serialized bytes, not a mathematical feature supplied to the model.
 
-For \(\alpha,\beta\in(0,1)\) with \(\alpha+\beta<1\), let
+For $\alpha,\beta\in(0,1)$ with $\alpha+\beta<1$, let
 
-\[
+$$
 s=\lfloor\alpha C\rfloor,\qquad v=\lfloor(\alpha+\beta)C\rfloor.
-\]
+$$
 
 The ordered partition is
 
-\[
+$$
 c_{train}=c_{0:s},\qquad c_{val}=c_{s:v},\qquad c_{test}=c_{v:C}.
-\]
+$$
 
-The substrings are disjoint and concatenate back to \(c\). Their permitted statistical roles,
+The substrings are disjoint and concatenate back to $c$. Their permitted statistical roles,
 rather than their character types, distinguish them.
 
 ## Corpus identity and split
@@ -40,10 +40,10 @@ distribution. smaLLM normalizes line endings, strips trailing whitespace, collap
 lines, and ensures one final newline. A manifest records raw and prepared SHA-256 hashes, counts,
 split policy, and normalization rules so a run identifies bytes rather than a mutable filename.
 
-For training fraction \(\alpha\), optional validation fraction \(\beta\), and \(C\) characters,
-the boundaries are \(s=\lfloor\alpha C\rfloor\) and
-\(v=\lfloor(\alpha+\beta)C\rfloor\). Training receives `text[:s]`, validation `text[s:v]`, and
-test `text[v:]`. Without \(\beta\), legacy configs use `text[s:]` entirely for validation. A
+For training fraction $\alpha$, optional validation fraction $\beta$, and $C$ characters,
+the boundaries are $s=\lfloor\alpha C\rfloor$ and
+$v=\lfloor(\alpha+\beta)C\rfloor$. Training receives `text[:s]`, validation `text[s:v]`, and
+test `text[v:]`. Without $\beta$, legacy configs use `text[s:]` entirely for validation. A
 chronological split can expose distribution shift across the source; unlike randomized windows, it
 does not scatter near-duplicate neighboring contexts across partitions.
 
@@ -61,15 +61,15 @@ not mean `c` is greater than `a`; token IDs are categorical names, not measured 
 
 A fitted tokenizer consists of functions
 
-\[
-E:\Sigma^*\to\mathcal V^*,\qquad D:\mathcal V^*\to\Sigma^*,
-\]
+$$
+E:\Sigma^\ast\to\mathcal V^\ast,\qquad D:\mathcal V^\ast\to\Sigma^\ast,
+$$
 
-where \(\mathcal V=[V]\). It is lossless on \(S\subseteq\Sigma^*\) when
+where $\mathcal V=[V]$. It is lossless on $S\subseteq\Sigma^\ast$ when
 
-\[
+$$
 \forall s\in S,\qquad D(E(s))=s.
-\]
+$$
 
 The character tokenizer is lossless on strings composed of fitted characters. An unseen character
 maps to `<unk>`, so exact recovery is intentionally impossible outside that alphabet. ByteBPE is
@@ -77,16 +77,16 @@ lossless for every valid UTF-8 string because all 256 byte values belong to its 
 
 ## Educational BPE
 
-Begin with characters. Count adjacent pairs, choose the most frequent pair \((a,b)\), replace
-non-overlapping occurrences by \(ab\), and append the merge rule. Repeat until the vocabulary cap
+Begin with characters. Count adjacent pairs, choose the most frequent pair $(a,b)$, replace
+non-overlapping occurrences by $ab$, and append the merge rule. Repeat until the vocabulary cap
 or minimum frequency stops training. For `a b a b a b`, merging `(a,b)` yields `ab ab ab`.
 Encoding replays merges in learned order.
 
-For current token sequence \(z=(z_0,\ldots,z_{m-1})\), define pair frequency
+For current token sequence $z=(z_0,\ldots,z_{m-1})$, define pair frequency
 
-\[
+$$
 n_z(a,b)=\sum_{i=0}^{m-2}\mathbf1[z_i=a\land z_{i+1}=b].
-\]
+$$
 
 One iteration chooses a maximizing pair under deterministic tie-breaking, introduces a symbol for
 its concatenation, and replaces non-overlapping occurrences from left to right. Encoding is
@@ -99,9 +99,9 @@ production pre-tokenization, byte fallback, normalization models, and optimized 
 
 The newer tokenizer starts from the complete byte alphabet
 
-\[
+$$
 \mathcal V_0=\{00,01,\ldots,\mathrm{ff}\},\qquad |\mathcal V_0|=256,
-\]
+$$
 
 so every UTF-8 string has a lossless representation without an unknown token. A requested
 vocabulary below 256 is therefore mathematically impossible. Training partitions text into maximal
@@ -113,14 +113,14 @@ corpus-specific phrase memorization while retaining subword compression.
 UTF-8 makes character-normalized evaluation subtle. A Unicode scalar may occupy one to four bytes,
 and a token may contain several scalars or end halfway through none during arbitrary slicing. During
 encoding, smaLLM attaches a completion indicator to every byte—zero except on the final byte of a
-scalar—and sums these indicators when bytes merge. If token \(z_i\) carries count \(c_i\), exact
+scalar—and sums these indicators when bytes merge. If token $z_i$ carries count $c_i$, exact
 evaluated characters are
 
-\[
+$$
 C_{\mathrm{eval}}=\sum_{i\in\mathcal I_{\mathrm{targets}}}c_i,
 \qquad
 \operatorname{BPC}=\frac{\sum_i -\log p(z_i\mid z_{<i})}{C_{\mathrm{eval}}\log 2}.
-\]
+$$
 
 This aligned count avoids both `len(decoded_token)` errors at multibyte boundaries and the false
 assumption that bytes equal characters. As with every autoregressive evaluation here, token zero is
@@ -148,7 +148,7 @@ flowchart LR
     H -.-> I
 ```
 
-If character length is \(C_s\) and token length \(T_s\), compression is \(C_s/T_s\). Shorter
+If character length is $C_s$ and token length $T_s$, compression is $C_s/T_s$. Shorter
 sequences reduce attention work, roughly quadratic in `T`, but fixed token context then covers
 more characters. Tokenization comparisons must disclose this compute/context coupling.
 
@@ -170,18 +170,18 @@ returns the slice without its last token and without its first token. Its length
 `number_of_tokens - block_size`, the number of complete shifted windows. A block needs one more raw
 token than input positions because the last input still needs a next-token target.
 
-For token stream \(z=(z_0,\ldots,z_{N-1})\) and context length \(T<N\), define
+For token stream $z=(z_0,\ldots,z_{N-1})$ and context length $T<N$, define
 
-\[
+$$
 \mathcal D_T(z):[N-T]\to\mathcal V^T\times\mathcal V^T,
 \qquad
 i\mapsto\left(z_{i:i+T},\ z_{i+1:i+T+1}\right).
-\]
+$$
 
-The domain has \(N-T\) indices even when two windows contain identical values; a dataset is an
+The domain has $N-T$ indices even when two windows contain identical values; a dataset is an
 indexed family rather than a mathematical set that discards duplicates. Every input and target lies
-in \(\mathcal V^T\). For aligned
-positions before the block end, \(y_t=x_{t+1}\); the final target is supplied by the one-token
+in $\mathcal V^T$. For aligned
+positions before the block end, $y_t=x_{t+1}$; the final target is supplied by the one-token
 extension beyond `x`.
 
 Validation instead traverses non-overlapping target regions so duplicated overlapping contexts do

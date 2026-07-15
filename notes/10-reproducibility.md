@@ -71,11 +71,11 @@ A random seed fixes initialization, minibatch order, dropout masks, and sampling
 experimental condition, not a hyperparameter to optimize. For preregistered seeds
 (s_1,\ldots,s_n) and metric (x_i), report every observation plus
 
-\[
+$$
 \bar{x}=\frac1n\sum_{i=1}^n x_i,
 \qquad
 \sigma_{\mathrm{pop}}=\sqrt{\frac1n\sum_{i=1}^n(x_i-\bar{x})^2}.
-\]
+$$
 
 smaLLM uses population standard deviation because the report describes the complete, explicitly
 chosen seed set; it does not pretend three seeds estimate a universal sampling distribution. The
@@ -91,31 +91,31 @@ variation comes from model training rather than a second uncontrolled random str
 
 A random split of one book estimates performance on held-out text from essentially the same source;
 it does not establish robustness to a new author, style, vocabulary, or document structure. A new
-book changes the empirical distribution \(P_C(X)\), so a tokenizer comparison can be modeled as
+book changes the empirical distribution $P_C(X)$, so a tokenizer comparison can be modeled as
 
-\[
+$$
 y_{tcs}=\mu+\alpha_t+\beta_c+(\alpha\beta)_{tc}+u_s+\varepsilon_{tcs},
-\]
+$$
 
-where \(t\) is tokenizer, \(c\) corpus, \(s\) seed, \(\alpha_t\) is the tokenizer effect,
-\(\beta_c\) is corpus difficulty, \((\alpha\beta)_{tc}\) is the tokenizer-by-corpus interaction,
-and \(u_s\) captures training randomness. One seed on a second corpus observes a cell but cannot
+where $t$ is tokenizer, $c$ corpus, $s$ seed, $\alpha_t$ is the tokenizer effect,
+$\beta_c$ is corpus difficulty, $(\alpha\beta)_{tc}$ is the tokenizer-by-corpus interaction,
+and $u_s$ captures training randomness. One seed on a second corpus observes a cell but cannot
 separate interaction from seed noise. A balanced corpus-by-seed matrix can.
 
 Matching corpus length controls the amount of text, not its entropy, lexical diversity, boundary
 statistics, or chronological-tail difficulty. Matching token context also requires converting to
 characters:
 
-\[
+$$
 L_{\mathrm{chars}}=L_{\mathrm{tokens}}\frac{N_{\mathrm{train\ chars}}}{N_{\mathrm{train\ tokens}}}.
-\]
+$$
 
 This is an average receptive-field proxy; individual ByteBPE sequences still vary in character
 length. BPC makes held-out likelihood comparable across lossless tokenizers,
 
-\[
+$$
 \operatorname{BPC}=\frac{-\log_2 p(x_{1:n})}{n},
-\]
+$$
 
 but comparable metrics do not remove design confounds such as vocabulary-dependent parameter
 counts or checkpoint selection on the same validation tail.
@@ -130,14 +130,14 @@ attenuates the advantage even though it does not reverse it.
 
 For paired seeds, define
 
-\[
+$$
 d_{cs}=y_{\mathrm{Byte},c,s}-y_{\mathrm{char},c,s},
 \qquad
 I_s=d_{\mathrm{PeterPan},s}-d_{\mathrm{Alice},s}.
-\]
+$$
 
 Pairing subtracts seed-specific difficulty shared by both tokenizers within a corpus. The
-difference-in-differences \(I_s\) measures how much the tokenizer contrast changes between corpora.
+difference-in-differences $I_s$ measures how much the tokenizer contrast changes between corpora.
 It is descriptive here: three seeds and two related books do not justify asymptotic inference, and
 the paired observations are not mutually independent across corpus because a seed is reused.
 
@@ -145,9 +145,9 @@ the paired observations are not mutually independent across corpus because a see
 
 Early stopping chooses
 
-\[
+$$
 \hat{k}=\arg\min_{k\in\mathcal{K}}\widehat{L}_{\mathrm{val}}(\theta_k),
-\]
+$$
 
 so the reported validation minimum is an order statistic selected from repeated looks. Even when
 each evaluation is unbiased for a fixed checkpoint, the minimum is optimistically biased as an
@@ -163,10 +163,10 @@ flow back into checkpoint choice, hyperparameter tuning, or seed selection.
 ## The test set as an information firewall
 
 Let the research process before test access produce a decision
-\(D=f(X_{\mathrm{train}},X_{\mathrm{val}},R)\), where \(R\) includes seeds, code, and declared
-rules. A confirmatory test estimate is interpretable because \(X_{\mathrm{test}}\) is absent from
-\(f\). Once its result \(T(D,X_{\mathrm{test}})\) is observed, any later decision
-\(D'=g(D,T)\) is statistically coupled to the test set. The same examples have become validation
+$D=f(X_{\mathrm{train}},X_{\mathrm{val}},R)$, where $R$ includes seeds, code, and declared
+rules. A confirmatory test estimate is interpretable because $X_{\mathrm{test}}$ is absent from
+$f$. Once its result $T(D,X_{\mathrm{test}})$ is observed, any later decision
+$D'=g(D,T)$ is statistically coupled to the test set. The same examples have become validation
 data in practice, regardless of their filename.
 
 An information firewall therefore requires both a data boundary and a workflow boundary. smaLLM's
@@ -183,16 +183,20 @@ for this research line.
 
 The observed generalization gap is
 
-\[
+$$
 G=\operatorname{BPC}_{\mathrm{test}}-\operatorname{BPC}_{\mathrm{val}}.
-\]
+$$
 
-A positive \(G\) does not by itself prove overfitting: a chronological terminal segment may have
-higher irreducible entropy or a shifted style. Comparing tokenizer contrasts
-\(\Delta_c=\operatorname{BPC}_{\mathrm{Byte},c}-\operatorname{BPC}_{\mathrm{char},c}\) across
-validation and test asks a different question: whether the frozen decision preserves its direction
-under forward distribution shift. Milestone 026 finds \(G>0\) for every model while
-\(\Delta_c<0\) on both sealed tests.
+A positive $G$ does not by itself prove overfitting: a chronological terminal segment may have
+higher irreducible entropy or a shifted style. Define the tokenizer contrast as
+
+$$
+\Delta_c=\operatorname{BPC}_{\mathrm{Byte},c}-\operatorname{BPC}_{\mathrm{char},c}.
+$$
+
+Comparing this contrast across validation and test asks whether the frozen decision preserves its direction
+under forward distribution shift. Milestone 026 finds $G>0$ for every model while
+$\Delta_c<0$ on both sealed tests.
 
 ## Preregistration and distributional replication
 
@@ -203,17 +207,26 @@ makes later changes observable. It does not prevent misconduct, but it sharply r
 about which choices preceded the result.
 
 External-distribution replication asks whether a fixed decision transfers when the data-generating
-process changes. Let \(c\) index corpora and
-\(\Delta_c=\operatorname{BPC}_{\mathrm{candidate},c}-
-\operatorname{BPC}_{\mathrm{control},c}\). Repeatedly observing
-\(\operatorname{sign}(\Delta_c)<0\) supports directional robustness. It does not imply a common
-effect size: heterogeneity in \(|\Delta_c|\) is evidence that the tokenizer interacts with corpus
+process changes. Let $c$ index corpora and define
+
+$$
+\Delta_c=\operatorname{BPC}_{\mathrm{candidate},c}
+-\operatorname{BPC}_{\mathrm{control},c}.
+$$
+
+Repeatedly observing
+$\operatorname{sign}(\Delta_c)<0$ supports directional robustness. It does not imply a common
+effect size: heterogeneity in $|\Delta_c|$ is evidence that the tokenizer interacts with corpus
 structure.
 
-The chronological generalization gap
-\(G_c=\operatorname{BPC}_{\mathrm{test},c}-\operatorname{BPC}_{\mathrm{val},c}\) is likewise not a
-model-only property. Milestone 026 finds \(G_c>0\) for Alice and Peter Pan, while preregistered
-milestone 027 finds \(G_c<0\) for both Hamlet models. Textual position can alter speaker mix,
+The chronological generalization gap is
+
+$$
+G_c=\operatorname{BPC}_{\mathrm{test},c}-\operatorname{BPC}_{\mathrm{val},c}.
+$$
+
+It is likewise not a model-only property. Milestone 026 finds $G_c>0$ for Alice and Peter Pan, while preregistered
+milestone 027 finds $G_c<0$ for both Hamlet models. Textual position can alter speaker mix,
 chapter or scene structure, punctuation, verse density, and intrinsic entropy. A professional
 interpretation therefore reports both the model contrast and the regional difficulty shift rather
 than labeling every positive gap "overfitting" or every negative gap "improved generalization."
@@ -223,14 +236,14 @@ than labeling every positive gap "overfitting" or every negative gap "improved g
 A multi-corpus confirmatory panel adds two forms of blocking. Same-seed pairing within corpus
 removes the seed component shared by candidate and control, while repeating the pair across corpus
 families exposes tokenizer-by-corpus heterogeneity. For corpora
-\(c\in\{1,\ldots,N_c\}\), tokenizers \(t\in\{A,B\}\), and fixed seeds
-\(s\in\{1,\ldots,N_s\}\), completeness is part of the estimand:
+$c\in\{1,\ldots,N_c\}$, tokenizers $t\in\{A,B\}$, and fixed seeds
+$s\in\{1,\ldots,N_s\}$, completeness is part of the estimand:
 
-\[
+$$
 \mathcal{D}=\{y_{tcs}:t\in\{A,B\},c\in\{1,\ldots,N_c\},s\in\{1,\ldots,N_s\}\}.
-\]
+$$
 
-Silently dropping a failed, inconvenient, or missing cell changes \(\mathcal{D}\) after outcomes
+Silently dropping a failed, inconvenient, or missing cell changes $\mathcal{D}$ after outcomes
 are partially known. A professional aggregator therefore validates the exact Cartesian product,
 unique paths, common seed sets, artifact schema, checkpoint kind and hash, corpus hash, and full
 coverage before calculating any effect. Validation failure is an outcome of the analysis contract,

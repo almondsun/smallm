@@ -16,45 +16,45 @@ not define a class named `Decoder`.
 
 ## Formal specification of the model
 
-Fix vocabulary size \(V\), maximum context \(T_{\max}\), width \(C\), heads \(H\), head width
-\(D=C/H\), and layers \(L\). For actual length \(T\le T_{\max}\), input is
-\(X^{id}\in[V]^{B\times T}\). Learned token and position tables are
+Fix vocabulary size $V$, maximum context $T_{\max}$, width $C$, heads $H$, head width
+$D=C/H$, and layers $L$. For actual length $T\le T_{\max}$, input is
+$X^{id}\in[V]^{B\times T}$. Learned token and position tables are
 
-\[
+$$
 E\in\mathbb R^{V\times C},\qquad P\in\mathbb R^{T_{\max}\times C}.
-\]
+$$
 
 The initial residual stream is
 
-\[
+$$
 R^{(0)}_{bti}=E_{X^{id}_{bt},i}+P_{t,i}.
-\]
+$$
 
-Ignoring dropout notation, block \(\ell\in\{0,\ldots,L-1\}\) computes
+Ignoring dropout notation, block $\ell\in\{0,\ldots,L-1\}$ computes
 
-\[
+$$
 A^{(\ell)}=R^{(\ell)}+\operatorname{MHA}^{(\ell)}
 \!\left(\operatorname{LN}^{(\ell)}_1(R^{(\ell)})\right),
-\]
+$$
 
-\[
+$$
 R^{(\ell+1)}=A^{(\ell)}+\operatorname{MLP}^{(\ell)}
 \!\left(\operatorname{LN}^{(\ell)}_2(A^{(\ell)})\right).
-\]
+$$
 
-For output parameters \(W_U\in\mathbb R^{V\times C}\), \(b_U\in\mathbb R^V\),
+For output parameters $W_U\in\mathbb R^{V\times C}$, $b_U\in\mathbb R^V$,
 
-\[
+$$
 Z_{bt}=W_U\operatorname{LN}_f(R^{(L)}_{bt})+b_U,
 \qquad Z\in\mathbb R^{B\times T\times V}.
-\]
+$$
 
 The induced conditional distribution is
 
-\[
+$$
 p_\theta(y_{bt}=v\mid X^{id}_{b,0:t})
 =\operatorname{softmax}(Z_{bt})_v.
-\]
+$$
 
 By chapter 05's causality proposition, this distribution is invariant to changes in input tokens
 at positions strictly after `t`.
@@ -64,9 +64,9 @@ at positions strictly after `t`.
 Input token IDs have shape `(B,T)`. The token embedding table has `(V,C)` learned parameters.
 Indexing it produces `(B,T,C)`:
 
-\[
+$$
 X^{token}_{b,t}=E[x_{b,t}].
-\]
+$$
 
 The model now represents each categorical token using `C` continuous features. The same row is used
 wherever that token ID occurs, before context modifies it.
@@ -77,9 +77,9 @@ Self-attention without position information is permutation-equivariant: reorderi
 reorders the computation but does not inherently encode “first” or “third.” smaLLM learns a
 position table `(block_size,C)` and adds row `t` to every token at position `t`:
 
-\[
+$$
 X_{b,t}=E[x_{b,t}]+P[t].
-\]
+$$
 
 `positions = torch.arange(seq_len)` has shape `(T)`, so its embedding has `(T,C)` and broadcasts
 across batch axis `B`. Positions are relative to the current cropped context, not absolute document
@@ -99,16 +99,16 @@ count and is disabled during evaluation/generation.
 
 For one token vector `x∈R^C`, LayerNorm computes its feature mean and variance:
 
-\[
+$$
 \mu=\frac1C\sum_i x_i,\qquad
 \sigma^2=\frac1C\sum_i(x_i-\mu)^2,
-\]
+$$
 
 then
 
-\[
+$$
 \operatorname{LN}(x)_i=\gamma_i\frac{x_i-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_i.
-\]
+$$
 
 Each token is normalized independently across its `C` features. It does not average across batch or
 time. Learned `γ` and `β` allow the network to restore or adjust scales useful downstream.
@@ -120,9 +120,9 @@ remove the need for good initialization and learning rates.
 
 A residual sublayer returns
 
-\[
+$$
 y=x+F(x).
-\]
+$$
 
 The addition requires `F(x)` to have the same shape as `x`. An identity path lets information and
 gradients bypass the learned transformation. The sublayer can learn a small correction rather than
@@ -130,13 +130,13 @@ reconstructing the whole representation.
 
 smaLLM uses **pre-norm** blocks:
 
-\[
+$$
 X'=X+\operatorname{Attention}(\operatorname{LN}_1(X)),
-\]
+$$
 
-\[
+$$
 Y=X'+\operatorname{MLP}(\operatorname{LN}_2(X')).
-\]
+$$
 
 Normalization occurs before each learned branch; the residual stream itself remains an explicit
 running state. Pre-norm commonly improves optimization of deeper stacks relative to only
@@ -160,14 +160,14 @@ Expanding to `4C` provides a wider nonlinear workspace. Because the same MLP is 
 position, it does not by itself move information through time; attention has already placed
 contextual information into each position's feature vector.
 
-For token state \(x\in\mathbb R^C\), the exact parameterized map is
+For token state $x\in\mathbb R^C$, the exact parameterized map is
 
-\[
+$$
 \operatorname{MLP}(x)=W_2\operatorname{GELU}(W_1x+b_1)+b_2,
-\]
+$$
 
-with \(W_1\in\mathbb R^{4C\times C}\), \(b_1\in\mathbb R^{4C}\),
-\(W_2\in\mathbb R^{C\times4C}\), and \(b_2\in\mathbb R^C\). The same map is applied to every
+with $W_1\in\mathbb R^{4C\times C}$, $b_1\in\mathbb R^{4C}$,
+$W_2\in\mathbb R^{C\times4C}$, and $b_2\in\mathbb R^C$. The same map is applied to every
 `(b,t)` pair.
 
 ## One Transformer block
@@ -200,13 +200,13 @@ There is one distribution per batch element and input position. If targets are p
 flattens the first two axes and computes mean cross-entropy. If not, loss is `None`; generation
 uses the final position's logits.
 
-For targets \(Y\in[V]^{B\times T}\), the implemented scalar objective is
+For targets $Y\in[V]^{B\times T}$, the implemented scalar objective is
 
-\[
+$$
 \mathcal L(\theta;X^{id},Y)
 =-\frac1{BT}\sum_{b=0}^{B-1}\sum_{t=0}^{T-1}
 \log\operatorname{softmax}(Z_{bt})_{Y_{bt}}.
-\]
+$$
 
 Flattening `(B,T,V)` to `(BT,V)` is an index bijection and leaves this double sum unchanged.
 
@@ -251,9 +251,9 @@ as in the implementation.
 
 Total:
 
-\[
+$$
 2VC+T_{\max}C+L(12C^2+13C)+2C+V.
-\]
+$$
 
 For the demo (`V=35`, `T_max=32`, `C=32`, `L=1`), this gives `16,067`, matching the logged model.
 Dropout and GELU add no learned parameters.

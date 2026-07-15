@@ -6,34 +6,34 @@ become later context. These are related views, not interchangeable definitions o
 
 ## Count-based baselines
 
-Uniform assigns \(p(x)=1/V\), giving loss \(\log V\). A unigram estimates
-\(p(x)=c(x)/N\). A bigram estimates transitions using add-\(\alpha\) smoothing:
+Uniform assigns $p(x)=1/V$, giving loss $\log V$. A unigram estimates
+$p(x)=c(x)/N$. A bigram estimates transitions using smoothing parameter $\alpha$:
 
-\[
+$$
 p(x_t=j\mid x_{t-1}=i)=\frac{c(i,j)+\alpha}{c_{prev}(i)+\alpha V}.
-\]
+$$
 
 Baselines answer whether the neural model beats trivial vocabulary knowledge or local transition
 statistics. They must use the same training-fitted tokenizer and held-out text as the neural run.
 
-Formally, for training token sequence \(z_{0:N-1}\), define token counts
-\(c(j)=\sum_{t=0}^{N-1}\mathbf1[z_t=j]\) and transition counts
-\(c(i,j)=\sum_{t=1}^{N-1}\mathbf1[z_{t-1}=i\land z_t=j]\). Then
+Formally, for training token sequence $z_{0:N-1}$, define token counts
+$c(j)=\sum_{t=0}^{N-1}\mathbf1[z_t=j]$ and transition counts
+$c(i,j)=\sum_{t=1}^{N-1}\mathbf1[z_{t-1}=i\land z_t=j]$. Then
 
-\[
+$$
 p_{uniform}(j)=\frac1V,
 \qquad
 p_{unigram}(j)=\frac{c(j)}{N},
-\]
+$$
 
-and, with \(c_{prev}(i)=\sum_j c(i,j)\),
+and, with $c_{prev}(i)=\sum_j c(i,j)$,
 
-\[
+$$
 p_{bigram}(j\mid i)=\frac{c(i,j)+\alpha}{c_{prev}(i)+\alpha V}.
-\]
+$$
 
 The unsmoothed unigram assigns zero probability to a token absent from training, causing infinite
-NLL if it occurs in held-out text. Add-\(\alpha\) bigram smoothing with \(\alpha>0\) gives every
+NLL if it occurs in held-out text. Additive bigram smoothing with $\alpha>0$ gives every
 transition positive support.
 
 When scoring validation, smaLLM conditions its first token on the final training token; later
@@ -43,25 +43,25 @@ fitted from training transitions only.
 ## Non-overlapping weighted validation
 
 Validation partitions target positions into consecutive blocks. If block `k` has mean loss
-\(\ell_k\) over \(n_k\) targets, corpus loss is
+$\ell_k$ over $n_k$ targets, corpus loss is
 
-\[
+$$
 \mathcal L=\frac{\sum_k n_k\ell_k}{\sum_k n_k},
-\]
+$$
 
-not \(K^{-1}\sum_k\ell_k\). When sampling blocks, evenly spaced deterministic indices cover the
+not $K^{-1}\sum_k\ell_k$. When sampling blocks, evenly spaced deterministic indices cover the
 sequence more honestly than the first few overlapping windows. Metrics record evaluated and total
 target counts so `coverage = evaluated/total` is auditable.
 
-Let held-out targets be indexed by finite set \(I\), partitioned into disjoint block sets
-\(I_1,\ldots,I_K\). If token NLL is \(s_i\), then
+Let held-out targets be indexed by finite set $I$, partitioned into disjoint block sets
+$I_1,\ldots,I_K$. If token NLL is $s_i$, then
 
-\[
+$$
 \ell_k=\frac1{|I_k|}\sum_{i\in I_k}s_i
 \quad\Longrightarrow\quad
 \frac{\sum_k|I_k|\ell_k}{\sum_k|I_k|}
 =\frac1{|I|}\sum_{i\in I}s_i.
-\]
+$$
 
 This equality proves the weighted aggregation. The unweighted mean of block means equals the corpus
 mean only when every block has equal target count.
@@ -70,8 +70,8 @@ mean only when every block has equal target count.
 
 Generation repeatedly crops the prefix to the context limit, computes final-position logits, and
 chooses one token. Greedy decoding uses `argmax`; it is deterministic but can enter repetition
-loops. Temperature \(\tau\) changes logits to \(z/\tau\): low values sharpen, high values flatten.
-Top-k sets all but the `k` largest logits to \(-\infty\), renormalizes, then samples.
+loops. Temperature $\tau$ changes logits to $z/\tau$: low values sharpen, high values flatten.
+Top-k sets all but the `k` largest logits to $-\infty$, renormalizes, then samples.
 
 A seeded `torch.Generator` controls categorical draws on the selected device. The full comparison
 contract includes checkpoint kind, exact prompt, maximum new tokens, temperature, top-k, seed, and
@@ -82,33 +82,33 @@ logits, chooses one ID, appends it, and repeats. Temperature below one sharpens 
 one flattens them. Top-k removes all but the largest `k` candidates. Greedy mode uses `argmax`, so
 this implementation bypasses temperature and top-k in greedy comparisons.
 
-Given final-position logits \(z\in\mathbb R^V\), greedy decoding selects
+Given final-position logits $z\in\mathbb R^V$, greedy decoding selects
 
-\[
+$$
 \hat x=\arg\max_{j\in[V]}z_j.
-\]
+$$
 
 Mathematically, `argmax` is set-valued when logits tie. The implementation uses `torch.argmax`,
 which returns the first maximizing index, so greedy decoding remains a deterministic function.
 
-Temperature sampling with \(\tau>0\) uses
+Temperature sampling with $\tau>0$ uses
 
-\[
+$$
 p_\tau(j)=\frac{e^{z_j/\tau}}{\sum_r e^{z_r/\tau}}.
-\]
+$$
 
-For top-k set \(K\subseteq[V]\) containing indices of the `k` largest logits, define
+For top-k set $K\subseteq[V]$ containing indices of the `k` largest logits, define
 
-\[
+$$
 p_{\tau,k}(j)=
 \begin{cases}
 \dfrac{e^{z_j/\tau}}{\sum_{r\in K}e^{z_r/\tau}},&j\in K,\\
 0,&j\notin K.
 \end{cases}
-\]
+$$
 
-As \(\tau\to0^+\), mass concentrates on maximizing logits (with tie behavior depending on the
-limit); as \(\tau\to\infty\), the untruncated distribution approaches uniform over the vocabulary.
+As $\tau\to0^+$, mass concentrates on maximizing logits (with tie behavior depending on the
+limit); as $\tau\to\infty$, the untruncated distribution approaches uniform over the vocabulary.
 
 ## Surface diagnostics
 

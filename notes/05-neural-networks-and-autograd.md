@@ -5,21 +5,21 @@
 A function maps inputs to outputs. A neural network is a function whose behavior depends on many
 adjustable parameters `θ`:
 
-\[
+$$
 \text{logits}=f_\theta(\text{token IDs}).
-\]
+$$
 
-Formally, let the complete parameter vector be \(\theta\in\Theta\subseteq\mathbb R^P\), where
-\(P\) is the number of scalar model parameters. For fixed vocabulary \(\mathcal V=[V]\) and
-context length \(T\), smaLLM implements
+Formally, let the complete parameter vector be $\theta\in\Theta\subseteq\mathbb R^P$, where
+$P$ is the number of scalar model parameters. For fixed vocabulary $\mathcal V=[V]$ and
+context length $T$, smaLLM implements
 
-\[
+$$
 f_\theta:\mathcal V^T\to\mathbb R^{T\times V}.
-\]
+$$
 
 For batches, the same map is applied independently to each row, yielding
-\(f_\theta^{(B)}:\mathcal V^{B\times T}\to\mathbb R^{B\times T\times V}\). Batch rows share
-\(\theta\) but do not exchange hidden states.
+$f_\theta^{(B)}:\mathcal V^{B\times T}\to\mathbb R^{B\times T\times V}$. Batch rows share
+$\theta$ but do not exchange hidden states.
 
 Training searches for parameter values that give low next-token loss. “Neural” describes the
 historical inspiration and layered structure; the implementation is tensor arithmetic.
@@ -28,9 +28,9 @@ historical inspiration and layered structure; the implementation is tensor arith
 
 The fundamental learned operation is an affine map:
 
-\[
+$$
 y=xW^\top+b.
-\]
+$$
 
 `W` contains weights and `b` contains biases. A purely linear stack collapses into one linear map,
 so networks insert nonlinear activation functions between layers. smaLLM uses GELU in its MLP.
@@ -39,20 +39,20 @@ For `nn.Linear(3,2)`, one input has three features and the output has two. There
 weights and two biases. Applied to `(B,T,3)`, the same parameters transform every token position,
 producing `(B,T,2)`. Parameter sharing across positions is a core source of efficiency.
 
-For \(x\in\mathbb R^n\), \(W\in\mathbb R^{m\times n}\), and \(b\in\mathbb R^m\), define
+For $x\in\mathbb R^n$, $W\in\mathbb R^{m\times n}$, and $b\in\mathbb R^m$, define
 
-\[
+$$
 g_{W,b}(x)=Wx+b.
-\]
+$$
 
 Its Jacobians are
 
-\[
+$$
 \frac{\partial g_i}{\partial x_j}=W_{ij},\qquad
 \frac{\partial g_i}{\partial W_{kl}}=\mathbf1[i=k]x_l,
 \qquad
 \frac{\partial g_i}{\partial b_k}=\mathbf1[i=k].
-\]
+$$
 
 These local derivatives are what reverse-mode autograd combines with the upstream loss gradient.
 
@@ -72,9 +72,9 @@ or “plural.”
 Without nonlinearities, composing affine maps remains affine. GELU approximately gates values by
 their magnitude:
 
-\[
+$$
 \operatorname{GELU}(x)=x\Phi(x),
-\]
+$$
 
 where `Φ(x)` is the standard normal cumulative distribution. Unlike a hard threshold, GELU is
 smooth and allows small negative outputs. In smaLLM, the MLP expands each token from `C` to `4C`,
@@ -93,23 +93,23 @@ weights -> logits -> cross-entropy -> loss
 Calling `loss.backward()` walks this graph backward and applies the chain rule. If
 `L=f(g(w))`, then
 
-\[
+$$
 \frac{dL}{dw}=\frac{dL}{dg}\frac{dg}{dw}.
-\]
+$$
 
 In a deep network, autograd repeatedly multiplies local derivatives and accumulates contributions
 when one value affects loss through multiple paths. The resulting gradient is stored in each
 parameter's `.grad` field.
 
-For a composition \(h=f_L\circ f_{L-1}\circ\cdots\circ f_1\), define activations
-\(a_0=x\) and \(a_l=f_l(a_{l-1};\theta_l)\). If scalar loss is \(\ell(a_L)\), reverse mode starts
-with \(\bar a_L=\nabla_{a_L}\ell\) and recursively computes
+For a composition $h=f_L\circ f_{L-1}\circ\cdots\circ f_1$, define activations
+$a_0=x$ and $a_l=f_l(a_{l-1};\theta_l)$. If scalar loss is $\ell(a_L)$, reverse mode starts
+with $\bar a_L=\nabla_{a_L}\ell$ and recursively computes
 
-\[
+$$
 \bar a_{l-1}=J_{f_l,a_{l-1}}^\top\bar a_l,
 \qquad
 \nabla_{\theta_l}\ell=J_{f_l,\theta_l}^\top\bar a_l.
-\]
+$$
 
 The bar denotes an adjoint or upstream gradient. Residual addition creates two graph paths, so their
 gradient contributions add. Parameter reuse across positions likewise sums all contributions into
@@ -156,23 +156,23 @@ every step is expensive. A minibatch samples several blocks and produces a noisy
 Batch positions do not communicate with each other in the model; batching is parallel evaluation
 of independent sequences using shared weights.
 
-If the finite training dataset has \(N\) examples with losses \(\ell_i(\theta)\), full empirical
+If the finite training dataset has $N$ examples with losses $\ell_i(\theta)$, full empirical
 risk is
 
-\[
+$$
 L(\theta)=\frac1N\sum_{i=0}^{N-1}\ell_i(\theta),
 \qquad
 \nabla L(\theta)=\frac1N\sum_i\nabla\ell_i(\theta).
-\]
+$$
 
-For a uniformly sampled minibatch \(S\) of size \(B\), the estimator
+For a uniformly sampled minibatch $S$ of size $B$, the estimator
 
-\[
+$$
 \widehat g_S(\theta)=\frac1B\sum_{i\in S}\nabla\ell_i(\theta)
-\]
+$$
 
 is unbiased under the stated uniform-sampling scheme:
-\(\mathbb E_S[\widehat g_S]=\nabla L\). Successive shuffled DataLoader batches are not independent
+$\mathbb E_S[\widehat g_S]=\nabla L$. Successive shuffled DataLoader batches are not independent
 draws with replacement, but their ordering still supplies a controlled stochastic update sequence.
 
 ## Training mode and evaluation mode
