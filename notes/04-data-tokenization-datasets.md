@@ -85,7 +85,7 @@ Encoding replays merges in learned order.
 For current token sequence $z=(z_0,\ldots,z_{m-1})$, define pair frequency
 
 $$
-n_z(a,b)=\sum_{i=0}^{m-2}\mathbf1[z_i=a\land z_{i+1}=b].
+n_z(a,b)=\sum_{i=0}^{m-2}\mathbf{1}[z_i=a\land z_{i+1}=b].
 $$
 
 One iteration chooses a maximizing pair under deterministic tie-breaking, introduces a symbol for
@@ -119,7 +119,7 @@ evaluated characters are
 $$
 C_{\mathrm{eval}}=\sum_{i\in\mathcal I_{\mathrm{targets}}}c_i,
 \qquad
-\operatorname{BPC}=\frac{\sum_i -\log p(z_i\mid z_{<i})}{C_{\mathrm{eval}}\log 2}.
+\mathrm{BPC}=\frac{\sum_i -\log p(z_i\mid z_{<i})}{C_{\mathrm{eval}}\log 2}.
 $$
 
 This aligned count avoids both `len(decoded_token)` errors at multibyte boundaries and the false
@@ -175,7 +175,7 @@ For token stream $z=(z_0,\ldots,z_{N-1})$ and context length $T<N$, define
 $$
 \mathcal D_T(z):[N-T]\to\mathcal V^T\times\mathcal V^T,
 \qquad
-i\mapsto\left(z_{i:i+T},\ z_{i+1:i+T+1}\right).
+i\mapsto(z_{i:i+T},\ z_{i+1:i+T+1}).
 $$
 
 The domain has $N-T$ indices even when two windows contain identical values; a dataset is an

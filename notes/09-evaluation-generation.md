@@ -17,8 +17,8 @@ Baselines answer whether the neural model beats trivial vocabulary knowledge or 
 statistics. They must use the same training-fitted tokenizer and held-out text as the neural run.
 
 Formally, for training token sequence $z_{0:N-1}$, define token counts
-$c(j)=\sum_{t=0}^{N-1}\mathbf1[z_t=j]$ and transition counts
-$c(i,j)=\sum_{t=1}^{N-1}\mathbf1[z_{t-1}=i\land z_t=j]$. Then
+$c(j)=\sum_{t=0}^{N-1}\mathbf{1}[z_t=j]$ and transition counts
+$c(i,j)=\sum_{t=1}^{N-1}\mathbf{1}[z_{t-1}=i\land z_t=j]$. Then
 
 $$
 p_{uniform}(j)=\frac1V,

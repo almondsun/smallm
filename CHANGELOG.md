@@ -5,6 +5,15 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 
 ## [Unreleased]
 
+## [1.0.3] - 2026-07-15
+
+### Fixed
+
+- Replaced commands rejected by GitHub's client-side mathematics renderer with equivalent safe
+  notation and corrected the affected conditional-probability and simplex expressions.
+- Added a repository-native check for note delimiters, grouping braces, and unsupported GitHub
+  math commands.
+
 ## [1.0.2] - 2026-07-15
 
 ### Fixed
@@ -78,7 +87,8 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 - Reproducible corpus preparation, character and educational BPE tokenizers, GPT training,
   baselines, controlled generation, run artifacts, and milestone reports through experiment 018.
 
-[Unreleased]: https://github.com/almondsun/smallm/compare/v1.0.2...HEAD
+[Unreleased]: https://github.com/almondsun/smallm/compare/v1.0.3...HEAD
+[1.0.3]: https://github.com/almondsun/smallm/compare/v1.0.2...v1.0.3
 [1.0.2]: https://github.com/almondsun/smallm/compare/v1.0.1...v1.0.2
 [1.0.1]: https://github.com/almondsun/smallm/compare/v1.0.0...v1.0.1
 [1.0.0]: https://github.com/almondsun/smallm/compare/v0.3.0...v1.0.0

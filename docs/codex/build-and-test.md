@@ -61,13 +61,21 @@ python -m compileall src scripts
 Run this after Python code changes and before finalizing broad documentation
 changes that include command examples.
 
-### Documentation Link/Path Check
+### Documentation Checks
 
 Use the checked-in Markdown path checker when links are changed:
 
 ```bash
 make links
 # equivalent to: python scripts/check_markdown_links.py
+```
+
+When theory-note mathematics changes, also check GitHub-compatible delimiters, commands, and
+grouping braces:
+
+```bash
+make math
+# equivalent to: python scripts/check_markdown_math.py
 ```
 
 ## Continuous Integration
@@ -164,7 +172,7 @@ identity failures, non-best checkpoints, and partial evaluation coverage.
 
 | Change type | Minimum validation |
 | --- | --- |
-| Documentation only | Link/path check for changed docs. |
+| Documentation only | Link/path check; add `make math` when theory-note mathematics changes. |
 | Config only | `python -m pytest`; run relevant script with the config if behavior changed. |
 | Corpus prep or manifest logic | Corpus prep command, `python -m pytest`, compileall. |
 | Tokenizer or dataset logic | `python -m pytest`, compileall; run `prepare_data.py` if behavior changed. |

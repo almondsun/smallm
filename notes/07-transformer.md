@@ -33,19 +33,19 @@ $$
 Ignoring dropout notation, block $\ell\in\{0,\ldots,L-1\}$ computes
 
 $$
-A^{(\ell)}=R^{(\ell)}+\operatorname{MHA}^{(\ell)}
-\!\left(\operatorname{LN}^{(\ell)}_1(R^{(\ell)})\right),
+A^{(\ell)}=R^{(\ell)}+\mathrm{MHA}^{(\ell)}
+\!(\mathrm{LN}^{(\ell)}_1(R^{(\ell)})),
 $$
 
 $$
-R^{(\ell+1)}=A^{(\ell)}+\operatorname{MLP}^{(\ell)}
-\!\left(\operatorname{LN}^{(\ell)}_2(A^{(\ell)})\right).
+R^{(\ell+1)}=A^{(\ell)}+\mathrm{MLP}^{(\ell)}
+\!(\mathrm{LN}^{(\ell)}_2(A^{(\ell)})).
 $$
 
 For output parameters $W_U\in\mathbb R^{V\times C}$, $b_U\in\mathbb R^V$,
 
 $$
-Z_{bt}=W_U\operatorname{LN}_f(R^{(L)}_{bt})+b_U,
+Z_{bt}=W_U\mathrm{LN}_f(R^{(L)}_{bt})+b_U,
 \qquad Z\in\mathbb R^{B\times T\times V}.
 $$
 
@@ -53,7 +53,7 @@ The induced conditional distribution is
 
 $$
 p_\theta(y_{bt}=v\mid X^{id}_{b,0:t})
-=\operatorname{softmax}(Z_{bt})_v.
+=\mathrm{softmax}(Z_{bt})_v.
 $$
 
 By chapter 05's causality proposition, this distribution is invariant to changes in input tokens
@@ -107,7 +107,7 @@ $$
 then
 
 $$
-\operatorname{LN}(x)_i=\gamma_i\frac{x_i-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_i.
+\mathrm{LN}(x)_i=\gamma_i\frac{x_i-\mu}{\sqrt{\sigma^2+\epsilon}}+\beta_i.
 $$
 
 Each token is normalized independently across its `C` features. It does not average across batch or
@@ -131,11 +131,11 @@ reconstructing the whole representation.
 smaLLM uses **pre-norm** blocks:
 
 $$
-X'=X+\operatorname{Attention}(\operatorname{LN}_1(X)),
+X'=X+\mathrm{Attention}(\mathrm{LN}_1(X)),
 $$
 
 $$
-Y=X'+\operatorname{MLP}(\operatorname{LN}_2(X')).
+Y=X'+\mathrm{MLP}(\mathrm{LN}_2(X')).
 $$
 
 Normalization occurs before each learned branch; the residual stream itself remains an explicit
@@ -163,7 +163,7 @@ contextual information into each position's feature vector.
 For token state $x\in\mathbb R^C$, the exact parameterized map is
 
 $$
-\operatorname{MLP}(x)=W_2\operatorname{GELU}(W_1x+b_1)+b_2,
+\mathrm{MLP}(x)=W_2\mathrm{GELU}(W_1x+b_1)+b_2,
 $$
 
 with $W_1\in\mathbb R^{4C\times C}$, $b_1\in\mathbb R^{4C}$,
@@ -205,7 +205,7 @@ For targets $Y\in[V]^{B\times T}$, the implemented scalar objective is
 $$
 \mathcal L(\theta;X^{id},Y)
 =-\frac1{BT}\sum_{b=0}^{B-1}\sum_{t=0}^{T-1}
-\log\operatorname{softmax}(Z_{bt})_{Y_{bt}}.
+\log\mathrm{softmax}(Z_{bt})_{Y_{bt}}.
 $$
 
 Flattening `(B,T,V)` to `(BT,V)` is an index bijection and leaves this double sum unchanged.

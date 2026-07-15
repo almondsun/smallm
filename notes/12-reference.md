@@ -12,7 +12,7 @@
 - `θ` conventionally denotes the collection of all learned parameters.
 - `≈` means approximately equal; `=` states equality under the definitions.
 - $[n]=\{0,\ldots,n-1\}$ is the zero-based finite index set used throughout.
-- $\mathbf1[P]$ is `1` when proposition `P` is true and `0` otherwise.
+- $\mathbf{1}[P]$ is `1` when proposition `P` is true and `0` otherwise.
 - $\Delta^{V-1}$ is the probability simplex in $\mathbb R^V$.
 - $\mathbb E[X]$ denotes expectation of random variable $X$.
 - $\arg\min_x f(x)$ is the set of inputs attaining the minimum of `f`; likewise for `argmax`.

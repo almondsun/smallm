@@ -121,12 +121,12 @@ Under the simplifying assumptions that $q_r,k_r$ are independent across `r`, hav
 variance one, and are independent of each other,
 
 $$
-\operatorname{Var}(q^\top k)
-=\operatorname{Var}\!\left(\sum_{r=0}^{D-1}q_rk_r\right)
-=\sum_{r=0}^{D-1}\operatorname{Var}(q_rk_r)=D.
+\mathrm{Var}(q^\top k)
+=\mathrm{Var}\!(\sum_{r=0}^{D-1}q_rk_r)
+=\sum_{r=0}^{D-1}\mathrm{Var}(q_rk_r)=D.
 $$
 
-Thus $\operatorname{Var}(q^\top k/\sqrt D)=1$. Dividing by `D` would instead shrink variance as
+Thus $\mathrm{Var}(q^\top k/\sqrt D)=1$. Dividing by `D` would instead shrink variance as
 `1/D`; omitting scaling lets it grow as `D`.
 
 ## Causality is an information boundary
@@ -215,14 +215,14 @@ Formally, for heads $h\in[H]$, let
 $Y^{(h)}\in\mathbb R^{T\times D}$ be each attention output and define feature-axis concatenation
 
 $$
-Y_{cat}=\operatorname{Concat}(Y^{(0)},\ldots,Y^{(H-1)})\in\mathbb R^{T\times HD}.
+Y_{cat}=\mathrm{Concat}(Y^{(0)},\ldots,Y^{(H-1)})\in\mathbb R^{T\times HD}.
 $$
 
 Since smaLLM requires $HD=C$, the output projection
 $W_O\in\mathbb R^{C\times C}$ gives
 
 $$
-\operatorname{MHA}(X)=Y_{cat}W_O^\top+b_O\in\mathbb R^{T\times C}.
+\mathrm{MHA}(X)=Y_{cat}W_O^\top+b_O\in\mathbb R^{T\times C}.
 $$
 
 This codomain equality is what permits residual addition with the original $X$.

@@ -1,6 +1,6 @@
 PYTHON ?= python
 
-.PHONY: install format format-check lint typecheck test compile check audit smoke demo generate-smoke links chart
+.PHONY: install format format-check lint typecheck test compile check audit smoke demo generate-smoke links math chart
 
 install:
 	$(PYTHON) -m pip install -e ".[dev]"
@@ -23,7 +23,7 @@ typecheck:
 compile:
 	$(PYTHON) -m compileall src scripts
 
-check: format-check lint typecheck test compile links
+check: format-check lint typecheck test compile links math
 
 audit:
 	$(PYTHON) -m pip_audit
@@ -44,6 +44,9 @@ generate-smoke:
 
 links:
 	$(PYTHON) scripts/check_markdown_links.py
+
+math:
+	$(PYTHON) scripts/check_markdown_math.py
 
 chart:
 	$(PYTHON) scripts/render_results_chart.py

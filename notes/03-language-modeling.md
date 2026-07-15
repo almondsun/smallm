@@ -25,9 +25,9 @@ $(\Omega,\mathcal F,\mathbb P)$, define discrete random variables
 $X_t:\Omega\to\mathcal V$. For token values $x_0,\ldots,x_t$, conditional probability is
 
 $$
-\mathbb P(X_t=x_t\mid X_{<t}=x_{<t})
-=\frac{\mathbb P(X_{\le t}=x_{\le t})}
-{\mathbb P(X_{<t}=x_{<t})},
+\mathbb P(X_t=x_t\mid X_0=x_0,\ldots,X_{t-1}=x_{t-1})
+=\frac{\mathbb P(X_0=x_0,\ldots,X_t=x_t)}
+{\mathbb P(X_0=x_0,\ldots,X_{t-1}=x_{t-1})},
 $$
 
 provided the denominator is nonzero. The unknown data-generating distribution is not available to
@@ -35,7 +35,7 @@ the program; the model supplies a parameterized approximation
 $p_\theta(\cdot\mid x_{<t})\in\Delta^{V-1}$, where
 
 $$
-\Delta^{V-1}=\left\{p\in\mathbb R^V:p_i\ge0,\ \sum_{i=0}^{V-1}p_i=1\right\}
+\Delta^{V-1}=\{p\in\mathbb R^V:p_i\ge0,\ \sum_{i=0}^{V-1}p_i=1\}
 $$
 
 is the probability simplex.
@@ -75,7 +75,7 @@ Given training sequences $x^{(1)},\ldots,x^{(N)}$, maximum-likelihood estimation
 $$
 \hat\theta\in\arg\max_\theta
 \sum_{n=1}^N\sum_t
-\log p_\theta\!\left(x_t^{(n)}\mid x_{<t}^{(n)}\right).
+\log p_\theta\!(x_t^{(n)}\mid x_{<t}^{(n)}).
 $$
 
 Equivalently, smaLLM minimizes the empirical negative log-likelihood
@@ -83,7 +83,7 @@ Equivalently, smaLLM minimizes the empirical negative log-likelihood
 $$
 \widehat{\mathcal L}(\theta)
 =-\frac1M\sum_{n,t}
-\log p_\theta\!\left(x_t^{(n)}\mid x_{<t}^{(n)}\right),
+\log p_\theta\!(x_t^{(n)}\mid x_{<t}^{(n)}),
 $$
 
 where $M$ is the number of target positions included in the minibatch or evaluation region.
@@ -140,10 +140,10 @@ can emit any real values and because cross-entropy has a useful gradient.
 Softmax is invariant to a common shift $c\in\mathbb R$:
 
 $$
-\operatorname{softmax}(z+c\mathbf1)_i
+\mathrm{softmax}(z+c\mathbf{1})_i
 =\frac{e^{z_i+c}}{\sum_j e^{z_j+c}}
 =\frac{e^c e^{z_i}}{e^c\sum_j e^{z_j}}
-=\operatorname{softmax}(z)_i.
+=\mathrm{softmax}(z)_i.
 $$
 
 Subtracting $\max_i z_i$ therefore preserves the distribution while ensuring the largest
@@ -161,7 +161,7 @@ PyTorch's `F.cross_entropy` combines stable log-softmax and target lookup; smaLL
 softmax before calling it. The gradient with respect to logit `i` is
 
 $$
-\frac{\partial\ell}{\partial z_i}=p(i)-\mathbf 1[i=y].
+\frac{\partial\ell}{\partial z_i}=p(i)-\mathbf{1}[i=y].
 $$
 
 For every wrong class, the gradient is its predicted probability, pushing that logit down under
@@ -178,8 +178,8 @@ Then
 
 $$
 \frac{\partial\ell}{\partial z_i}
-=-\mathbf1[i=y]+\frac{e^{z_i}}{\sum_j e^{z_j}}
-=p(i)-\mathbf1[i=y].
+=-\mathbf{1}[i=y]+\frac{e^{z_i}}{\sum_j e^{z_j}}
+=p(i)-\mathbf{1}[i=y].
 $$
 
 The gradient components sum to zero, consistent with softmax's invariance to common logit shifts.
@@ -219,7 +219,7 @@ declared coverage. It does not establish factuality, reasoning, coherence, fairn
 Per-token perplexity is
 
 $$
-\operatorname{PPL}=e^{\mathcal L}.
+\mathrm{PPL}=e^{\mathcal L}.
 $$
 
 Loss `2.0` nats gives perplexity `7.39`, interpretable as a geometric-mean effective branching
@@ -230,7 +230,7 @@ compared directly.
 For total NLL `S` over `C_s` represented source characters,
 
 $$
-\operatorname{BPC}=\frac{S}{C_s\ln 2}.
+\mathrm{BPC}=\frac{S}{C_s\ln 2}.
 $$
 
 This converts natural-log information into bits and normalizes by the same source unit. `693.147`

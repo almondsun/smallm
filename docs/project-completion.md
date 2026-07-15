@@ -49,7 +49,8 @@ These limits are part of the artifact's contract rather than unfinished roadmap 
 
 Version `1.0.0` is therefore the feature-completion release, not the beginning of an ongoing
 maintenance series. Version `1.0.1` polishes the archived repository and learning material;
-`1.0.2` only corrects GitHub rendering of the handbook mathematics.
+`1.0.2` corrects Markdown math delimiters, and `1.0.3` completes compatibility with GitHub's
+restricted mathematics command set.
 
 ## Final Archive Audit
 

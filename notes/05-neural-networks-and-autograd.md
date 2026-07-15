@@ -6,7 +6,7 @@ A function maps inputs to outputs. A neural network is a function whose behavior
 adjustable parameters `θ`:
 
 $$
-\text{logits}=f_\theta(\text{token IDs}).
+\mathrm{logits}=f_\theta(\mathrm{token\ IDs}).
 $$
 
 Formally, let the complete parameter vector be $\theta\in\Theta\subseteq\mathbb R^P$, where
@@ -49,9 +49,9 @@ Its Jacobians are
 
 $$
 \frac{\partial g_i}{\partial x_j}=W_{ij},\qquad
-\frac{\partial g_i}{\partial W_{kl}}=\mathbf1[i=k]x_l,
+\frac{\partial g_i}{\partial W_{kl}}=\mathbf{1}[i=k]x_l,
 \qquad
-\frac{\partial g_i}{\partial b_k}=\mathbf1[i=k].
+\frac{\partial g_i}{\partial b_k}=\mathbf{1}[i=k].
 $$
 
 These local derivatives are what reverse-mode autograd combines with the upstream loss gradient.
@@ -73,7 +73,7 @@ Without nonlinearities, composing affine maps remains affine. GELU approximately
 their magnitude:
 
 $$
-\operatorname{GELU}(x)=x\Phi(x),
+\mathrm{GELU}(x)=x\Phi(x),
 $$
 
 where `Φ(x)` is the standard normal cumulative distribution. Unlike a hard threshold, GELU is

@@ -68,7 +68,7 @@ Dropout multiplies activations by a Bernoulli mask during training and rescales 
 keep probability. Evaluation disables masks. Any validation helper must restore the model's prior
 mode; otherwise subsequent training silently runs without dropout or generation remains stochastic.
 
-For dropout probability $p$ and activation $x_i$, let $m_i\sim\operatorname{Bernoulli}(1-p)$.
+For dropout probability $p$ and activation $x_i$, let $m_i\sim\mathrm{Bernoulli}(1-p)$.
 Training output is
 
 $$
@@ -98,10 +98,10 @@ Let validation be observed at evaluation index $j$, with loss $L_j$. Given minim
 improvement $\delta\geq0$, maintain a reference $R$ and stale count $q$:
 
 $$
-(R,q)\leftarrow
+(R,q)\gets
 \begin{cases}
 (L_j,0), & L_j < R-\delta,\\
-(R,q+1), & \text{otherwise}.
+(R,q+1), & \mathrm{otherwise}.
 \end{cases}
 $$
 
@@ -113,7 +113,7 @@ to preserve but intentionally too small to reset patience.
 
 Early stopping is a sequential model-selection rule, not regularization: it limits exposure to
 overfitting but does not change the objective or gradients before the stop. Its latency is bounded by
-$P_{stop}\times\texttt{eval_interval}$, and sampled validation can make the stopping time noisy. Official
+$P_{stop}\times E$, where $E$ is `eval_interval`, and sampled validation can make the stopping time noisy. Official
 modeling configs therefore use full deterministic validation. Summaries record the step ceiling,
 actual steps, stop reason, patience, minimum delta, and terminal stale count.
 

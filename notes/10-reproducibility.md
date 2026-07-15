@@ -114,7 +114,7 @@ This is an average receptive-field proxy; individual ByteBPE sequences still var
 length. BPC makes held-out likelihood comparable across lossless tokenizers,
 
 $$
-\operatorname{BPC}=\frac{-\log_2 p(x_{1:n})}{n},
+\mathrm{BPC}=\frac{-\log_2 p(x_{1:n})}{n},
 $$
 
 but comparable metrics do not remove design confounds such as vocabulary-dependent parameter
@@ -184,14 +184,14 @@ for this research line.
 The observed generalization gap is
 
 $$
-G=\operatorname{BPC}_{\mathrm{test}}-\operatorname{BPC}_{\mathrm{val}}.
+G=\mathrm{BPC}_{\mathrm{test}}-\mathrm{BPC}_{\mathrm{val}}.
 $$
 
 A positive $G$ does not by itself prove overfitting: a chronological terminal segment may have
 higher irreducible entropy or a shifted style. Define the tokenizer contrast as
 
 $$
-\Delta_c=\operatorname{BPC}_{\mathrm{Byte},c}-\operatorname{BPC}_{\mathrm{char},c}.
+\Delta_c=\mathrm{BPC}_{\mathrm{Byte},c}-\mathrm{BPC}_{\mathrm{char},c}.
 $$
 
 Comparing this contrast across validation and test asks whether the frozen decision preserves its direction
@@ -210,19 +210,19 @@ External-distribution replication asks whether a fixed decision transfers when t
 process changes. Let $c$ index corpora and define
 
 $$
-\Delta_c=\operatorname{BPC}_{\mathrm{candidate},c}
--\operatorname{BPC}_{\mathrm{control},c}.
+\Delta_c=\mathrm{BPC}_{\mathrm{candidate},c}
+-\mathrm{BPC}_{\mathrm{control},c}.
 $$
 
 Repeatedly observing
-$\operatorname{sign}(\Delta_c)<0$ supports directional robustness. It does not imply a common
+$\mathrm{sign}(\Delta_c)<0$ supports directional robustness. It does not imply a common
 effect size: heterogeneity in $|\Delta_c|$ is evidence that the tokenizer interacts with corpus
 structure.
 
 The chronological generalization gap is
 
 $$
-G_c=\operatorname{BPC}_{\mathrm{test},c}-\operatorname{BPC}_{\mathrm{val},c}.
+G_c=\mathrm{BPC}_{\mathrm{test},c}-\mathrm{BPC}_{\mathrm{val},c}.
 $$
 
 It is likewise not a model-only property. Milestone 026 finds $G_c>0$ for Alice and Peter Pan, while preregistered

@@ -22,7 +22,7 @@ $A\in\mathbb R^{m\times n}$ assigns $A_{ij}$ to every row-column pair. The numbe
 entries is
 
 $$
-\operatorname{numel}(X)=\prod_{r=1}^k d_r.
+\mathrm{numel}(X)=\prod_{r=1}^k d_r.
 $$
 
 A reshape is admissible only when this product is unchanged. It changes the index factorization,
