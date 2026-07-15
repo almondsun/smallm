@@ -50,7 +50,7 @@ The individual commands remain canonical and are listed below.
 python -m pytest
 ```
 
-Current expected result after milestone 028: at least 166 tests passing with at least 90% coverage.
+Current expected result after milestone 030: 182 tests passing with at least 90% coverage.
 
 ### Compile Check
 

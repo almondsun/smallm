@@ -1,4 +1,9 @@
-# Reproducibility, Artifacts, Security, and Experiment Design
+# 10 — Reproducible Experiments and Honest Evidence
+
+A model can run correctly while an experiment answers the wrong question. This chapter separates
+software outputs from justified claims. The core idea is an evidence chain: identify inputs,
+declare which choices may use which data, preserve transformations and outcomes, and interpret only
+what the design supports.
 
 ## Evidence chain
 
@@ -60,7 +65,7 @@ Implementation: [`artifacts.py`](../src/smallm/training/artifacts.py),
 
 Checks: reconstruct a result from its summary; identify which failures occur before any run
 directory exists; explain why old and corrected BPC values cannot be compared as one series.
-### Seed ensembles and descriptive uncertainty
+## Seed ensembles and descriptive uncertainty
 
 A random seed fixes initialization, minibatch order, dropout masks, and sampling streams; it is an
 experimental condition, not a hyperparameter to optimize. For preregistered seeds
@@ -82,7 +87,7 @@ the expected result. A hyperparameter difference much smaller than seed-to-seed 
 evidence. Decoding randomness is held fixed when comparing training seeds so observed generation
 variation comes from model training rather than a second uncontrolled random stream.
 
-### External validity and corpus-by-seed interactions
+## External validity and corpus-by-seed interactions
 
 A random split of one book estimates performance on held-out text from essentially the same source;
 it does not establish robustness to a new author, style, vocabulary, or document structure. A new
@@ -136,7 +141,7 @@ difference-in-differences \(I_s\) measures how much the tokenizer contrast chang
 It is descriptive here: three seeds and two related books do not justify asymptotic inference, and
 the paired observations are not mutually independent across corpus because a seed is reused.
 
-### Validation selection and a sealed test set
+## Validation selection and a sealed test set
 
 Early stopping chooses
 
@@ -155,7 +160,7 @@ is frozen. For chronological text, the ordering must remain explicit because a t
 measures forward generalization, not exchangeable random-split performance. Test metrics must never
 flow back into checkpoint choice, hyperparameter tuning, or seed selection.
 
-### The test set as an information firewall
+## The test set as an information firewall
 
 Let the research process before test access produce a decision
 \(D=f(X_{\mathrm{train}},X_{\mathrm{val}},R)\), where \(R\) includes seeds, code, and declared
@@ -189,7 +194,7 @@ validation and test asks a different question: whether the frozen decision prese
 under forward distribution shift. Milestone 026 finds \(G>0\) for every model while
 \(\Delta_c<0\) on both sealed tests.
 
-### Preregistration and distributional replication
+## Preregistration and distributional replication
 
 Preregistration separates a hypothesis from its outcome in time. A useful repository-native record
 commits the source identity, extraction rule, split, seeds, configurations, stopping policy, primary
@@ -213,15 +218,16 @@ chapter or scene structure, punctuation, verse density, and intrinsic entropy. A
 interpretation therefore reports both the model contrast and the regional difficulty shift rather
 than labeling every positive gap "overfitting" or every negative gap "improved generalization."
 
-### Balanced confirmatory panels and analysis contracts
+## Balanced confirmatory panels and analysis contracts
 
 A multi-corpus confirmatory panel adds two forms of blocking. Same-seed pairing within corpus
 removes the seed component shared by candidate and control, while repeating the pair across corpus
-families exposes tokenizer-by-corpus heterogeneity. For corpora (c=1,\ldots,C), tokenizers
-(t\in\{A,B\}), and fixed seeds (s=1,\ldots,S), completeness is part of the estimand:
+families exposes tokenizer-by-corpus heterogeneity. For corpora
+\(c\in\{1,\ldots,N_c\}\), tokenizers \(t\in\{A,B\}\), and fixed seeds
+\(s\in\{1,\ldots,N_s\}\), completeness is part of the estimand:
 
 \[
-\mathcal{D}=\{y_{tcs}:t\in\{A,B\},c\in\{1,\ldots,C\},s\in\{1,\ldots,S\}\}.
+\mathcal{D}=\{y_{tcs}:t\in\{A,B\},c\in\{1,\ldots,N_c\},s\in\{1,\ldots,N_s\}\}.
 \]
 
 Silently dropping a failed, inconvenient, or missing cell changes \(\mathcal{D}\) after outcomes
@@ -243,3 +249,30 @@ negative. The result strengthens a directional claim, not a universal effect-siz
 interaction differs across Art of War and Lincoln, the corpora are fixed rather than sampled, and
 three population-SD summaries are descriptive. Every accessed terminal region is now historical
 evidence and cannot serve as a clean test set for a parameter-matched follow-up.
+
+## Capacity matching and the final panel
+
+Tokenizer vocabulary changes model capacity because smaLLM has both a `V×C` input embedding and an
+independent `C×V` output head. A ByteBPE512 comparison with an 80-ish-character vocabulary therefore
+changes tokenization and roughly `2C(512-80)` learned weights at once.
+
+Milestones 029–030 preregister and complete a 3-corpus × 3-arm × 3-seed panel with a wider char136
+control matched within 0.40% of ByteBPE512 parameters. ByteBPE512 wins eight of nine matched sealed
+pairs and has a negative mean contrast on each corpus, while Douglass seed 4242 reverses by
+`+0.0018` BPC. The correct conclusion is not “BPE always wins.” It is that the fixed panel's
+advantage generally survives the measured capacity confound, with a small corpus-dependent effect
+that can reverse in one seed.
+
+This is the repository's final modeling evidence. Its value comes partly from stopping as declared:
+consumed test regions do not become fresh selection data merely because another idea is interesting.
+
+## Chapter checkpoint
+
+1. Distinguish training, validation selection, and sealed-test confirmation.
+2. Why is a random seed an experimental condition rather than a result to optimize?
+3. What does pairing the same seed across arms remove from a contrast?
+4. Why can corpus means differ without either analysis being wrong?
+5. How did vocabulary size become a parameter-count confound in this architecture?
+6. Why is preserving a reversal stronger evidence practice than hiding it?
+
+Next: [End-to-end code walkthrough](11-code-walkthrough.md).

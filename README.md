@@ -83,8 +83,10 @@ For the real-corpus workflow and every individual command, see
   [`src/smallm/training/`](src/smallm/training/).
 - **Data and safety contracts:** inspect [`src/smallm/data/`](src/smallm/data/),
   [`src/smallm/evaluation/`](src/smallm/evaluation/), and the focused [`tests/`](tests/).
-- **Theory:** the [`notes/`](notes/) handbook derives the objective, attention, tokenization,
-  BPC, decoding, provenance, and experiment design alongside implementation links.
+- **Theory:** the [`notes/`](notes/) handbook is a zero-prerequisite path from tensors and
+  probability through causal attention, the complete GPT, training, evaluation, and an exact
+  end-to-end source walkthrough; chapter 00 defines corpus, token, context, and other critical
+  terms before the technical material begins.
 
 ## Architecture
 
@@ -142,8 +144,8 @@ compile checks, and Markdown link validation. The canonical command matrix is do
 
 ## Project Status
 
-Version `1.0.0` is the permanent completion release. The declared implementation and research
-scope is finished; no additional features, experiments, dependency refreshes, or compatibility
+Version `1.0.0` permanently completed the feature and research scope; `1.0.1` is the final
+archive-polish release. No additional features, experiments, dependency refreshes, or compatibility
 work are planned. CI remains available on pushes and pull requests, and the repository stays open
 for inspection and discussion without a maintenance or response commitment. See
 [`Project Completion`](docs/project-completion.md) for the frozen-but-open policy.

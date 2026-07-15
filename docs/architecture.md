@@ -143,7 +143,7 @@ The model should consume token IDs and produce next-token logits. Dataset
 metadata, run provenance, filesystem writes, and CLI behavior should stay in
 data, training, artifact, and script layers rather than leaking into model code.
 
-## Deferred Work
+## Deliberate Omissions
 
 The project intentionally does not include production tokenizer libraries,
 larger model families, distributed training, checkpoint resume, dashboards, or

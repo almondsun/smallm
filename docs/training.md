@@ -213,46 +213,11 @@ runs; summaries record evaluated targets and coverage.
 
 ## Current Reading Of Results
 
-The current GPTiny model trains, and longer budgets, higher learning rate, and
-larger capacity all improve validation loss on the larger public-domain corpus.
-Milestone 019 corrected tokenizer leakage and validation coverage. Full evaluation reached best
-BPC `2.0760` for the character control and `2.0976` for BPE128. BPE128 shortened the sequence and
-produced competitive seeded diversity, but remained narrowly worse on character-normalized loss.
-Experiments 016–017 retain errata and must not be mixed into the corrected metric series.
-Experiment 020 found that matching BPE character context and halving its learning rate did not beat
-the experiment-019 BPE control. Experiment 021 changed the tokenizer itself: boundary-aware
-ByteBPE320 and ByteBPE512 reached best BPC `2.0286` and `2.0083`, both beating the character
-control, though ByteBPE512 overfit sharply after step 1,750.
-Experiment 022 adds patience-3 early stopping: it ends at step 2,500, halves runtime, and avoids most
-final-checkpoint degradation. Weight decay `0.01` changes best BPC by only `0.00025`, which is not
-meaningful evidence of improvement.
-Experiment 023 repeats the unregularized early-stopping run across seeds 1337, 2027, and 4242.
-Best BPC is `2.0225 ± 0.0124` (population SD), and all three runs remain better than the corrected
-character control. Stop steps vary from 2,500 to 3,000.
-Experiment 024 tests a second book. On the near-size-matched Peter Pan corpus, ByteBPE512 reaches
-best BPC `2.1539` versus `2.1721` for character and stops at step 2,750. The 0.83% advantage is a
-cross-corpus replication in direction, but too small and sparsely sampled to establish a stable
-effect size.
-Experiment 025 completes the 2-tokenizer × 2-corpus × 3-seed matrix. ByteBPE512 wins every paired
-comparison. Its mean advantage is `0.0619` BPC on Alice and `0.0252` on Peter Pan, so the direction
-is robust within the matrix while the effect magnitude remains corpus-dependent.
-Experiment 026 adds a three-way chronological contract and evaluates the frozen decision once.
-ByteBPE512 beats character on sealed test BPC by `0.0614` on Alice and `0.0258` on Peter Pan. All
-four test results are worse than validation, and these terminal segments are now consumed evidence.
-Experiment 027 preregisters a structurally different Hamlet distribution before corpus access.
-ByteBPE512 beats character by `0.0673` sealed-test BPC. Both terminal results are better than
-validation, demonstrating that chronological gap direction is not stable across corpora.
-
-Experiment 028 preregisters two additional external corpora and three seeds. ByteBPE512 beats the
-character control in all six paired sealed-test comparisons, averaging `0.1134` BPC better on Art
-of War and `0.1543` better on Lincoln. Use `scripts/summarize_test_matrix.py` for complete balanced
-panels; it refuses missing cells, identity mismatches, non-best checkpoints, and partial coverage.
-
-Experiment 030 completes the final capacity-controlled panel. ByteBPE512 beats near-matched
-char136 in eight of nine sealed pairs and has lower mean BPC on Frankenstein (`-0.1447`), Douglass
-(`-0.0187`), and Origin (`-0.1717`). Douglass seed 4242 reverses by `+0.0018`; the directional
-hypothesis succeeds but the all-nine outcome does not. These terminal regions are consumed, and
-version 1.0.0 has no further experiment roadmap.
+The training and evaluation contracts are complete. Milestone 030 reports the final
+capacity-controlled panel: ByteBPE512 beats near-parameter-matched char136 in eight of nine sealed
+pairs, with a narrow Douglass reversal and corpus-dependent effect sizes. All terminal regions are
+consumed and cannot guide later selection. See the [experiment index](experiments.md) for the full
+chronology and [project completion](project-completion.md) for the frozen lifecycle policy.
 
 ## Artifact Policy
 

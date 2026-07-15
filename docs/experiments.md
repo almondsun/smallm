@@ -72,58 +72,8 @@ not a replacement for the original reports.
 
 ## Current Status
 
-The infrastructure milestones are mostly complete for a small local lab:
-prepared corpora, manifests, baselines, run artifacts, run discovery, controlled
-generation, and experiment reports.
-
-Experiment 017 added best-validation checkpoint saving and a controlled
-final-versus-best generation comparison. The best checkpoint improved BPE128
-validation loss but not generated text or phrase repetition; the character
-control showed the same direction. This does not change experiment 016's
-conclusion that BPE128 underperformed the character control on estimated bits
-per character.
-
-Milestone 019 corrects the old evaluation contract. Full held-out evaluation reached best BPC
-`2.0760` for character and `2.0976` for BPE128. The BPE gap is much smaller than previously
-reported, but it did not beat the character control.
-
-Milestone 021 adds a lossless UTF-8 byte fallback and whitespace-boundary-aware merges. ByteBPE320
-reached best BPC `2.0286`; ByteBPE512 reached `2.0083`, the strongest corrected result so far.
-The 512-token run's final BPC rose to `2.2450`, making early best-checkpoint selection essential.
-
-Milestone 022 operationalizes that result. Patience-3 early stopping terminates at step 2,500 and
-retains best BPC `2.0083`, while stopped-final BPC improves from `2.2450` to `2.0554`. Weight decay
-`0.01` reaches best BPC `2.0080`; the `0.00025` difference is too small to interpret as a real gain.
-
-Milestone 023 measures seed sensitivity directly. Across seeds 1337, 2027, and 4242, best BPC is
-`2.0225 ± 0.0124` with range `2.0083–2.0384`; best step ranges 1,750–2,250 and stop step
-2,500–3,000. The tokenizer result survives all tested seeds, while the observed seed spread confirms
-that milestone 022's tiny weight-decay delta was not decision-grade evidence.
-
-Milestone 024 changes the data distribution to a near-size-matched Peter Pan corpus. ByteBPE512
-reaches best BPC `2.1539` versus `2.1721` for character, reproducing the direction with a much
-smaller 0.83% margin. This supports limited cross-corpus robustness, not a universal tokenizer
-advantage; a corpus-by-seed matrix is the next stronger test.
-
-Milestone 025 completes that balanced matrix. ByteBPE512 beats character for seeds 1337, 2027, and
-4242 on both Alice and Peter Pan. Its paired mean advantage is `0.0619` BPC on Alice and `0.0252`
-on Peter Pan; the `+0.0367` BPC interaction shows that effect magnitude remains corpus-dependent.
-
-Milestone 026 freezes that decision and evaluates new 80/10/10 runs once on terminal test segments.
-ByteBPE512 reaches test BPC `2.1178` versus `2.1792` on Alice and `2.2484` versus `2.2742` on Peter
-Pan. The direction and approximate margins survive, while every model's test BPC is worse than its
-validation BPC.
-
-Milestone 027 preregisters Hamlet before corpus access and transfers the same frozen protocol to a
-dramatic play. ByteBPE512 reaches sealed-test BPC `2.2546` versus character's `2.3219`, an advantage
-of `0.0673`. Both terminal results are better than validation, reversing milestone 026's gap
-direction and reinforcing that chronological difficulty is corpus-dependent.
-
-Milestone 028 expands that confirmatory design to two new corpora and three seeds. ByteBPE512 wins
-all six same-seed test comparisons, with mean paired effects `-0.1134 ± 0.0041` BPC on Art of War
-and `-0.1543 ± 0.0130` on Lincoln. Every terminal segment is harder than validation, and the
-`-0.0409` mean corpus interaction again rejects a universal effect-size interpretation.
-
-Milestone 029 freezes the final capacity-control protocol before source access. Milestone 030
-records its complete evidence and closes the project at version 1.0.0; no additional modeling
-roadmap remains. The durable lifecycle statement is [Project Completion](project-completion.md).
+Milestone 030 records the complete preregistered capacity-controlled panel and closes the modeling
+roadmap. ByteBPE512 beats near-parameter-matched char136 in eight of nine sealed pairs; the narrow
+Douglass reversal and corpus-dependent effects bound the claim. The table and topic shortcuts above
+lead to the immutable reports; the durable lifecycle statement is
+[Project Completion](project-completion.md).

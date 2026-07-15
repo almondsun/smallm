@@ -47,5 +47,35 @@ These limits are part of the artifact's contract rather than unfinished roadmap 
 - Runtime artifacts remain local and ignored. The durable record is source, tests, configs,
   structured aggregate results, experiment reports, release metadata, and checksums.
 
-Version `1.0.0` is therefore a completion release, not the beginning of an ongoing maintenance
-series.
+Version `1.0.0` is therefore the feature-completion release, not the beginning of an ongoing
+maintenance series. Version `1.0.1` only polishes the archived repository and learning material.
+
+## Final Archive Audit
+
+The `1.0.1` audit reviewed every tracked top-level subsystem and preserved the material required to
+inspect or reproduce the project: source, tests, thin CLI scripts, all experiment configurations,
+the complete 001–030 report sequence, structured results, CI, and release metadata.
+
+Cleanup was deliberately narrower than deletion by age:
+
+- the theory handbook now forms one glossary-first sequence numbered 00–12;
+- unique study-source revisions were moved into the handbook reference chapter;
+- redundant pointer notes, a duplicated paper PDF, stale operational result narratives, and the
+  feature-proposal issue surface were removed;
+- current guidance now points to milestone 030 and the 182-test contract;
+- ignored corpora, checkpoints, runs, cloned references, and other local artifacts were not
+  inspected as durable source and were not modified.
+
+The audit found no private source symbol that could be removed without weakening a public,
+historical, or compatibility contract. Version metadata is the only runtime source change.
+
+Final validation passed on 2026-07-14:
+
+- `uv run make check`: Ruff format/lint, strict mypy over 47 source files, 182 tests, 90.49%
+  branch coverage, compileall, and Markdown links;
+- `uv run make audit`: no known dependency vulnerabilities; the unpublished local
+  `smallm==1.0.1` package is correctly skipped;
+- `uv run make demo`: corpus preparation, tokenizer fitting, baselines, five-step CPU training,
+  run inspection, and deterministic generation;
+- deterministic chart verification, wheel/source build, isolated wheel installation reporting
+  `1.0.1`, distribution-content inspection, and all release checksums.
