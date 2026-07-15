@@ -9,7 +9,9 @@ ROOT = Path(__file__).resolve().parents[1]
 NOTES_DIR = ROOT / "notes"
 FORBIDDEN_COMMANDS = ("left", "operatorname", "right", "text", "texttt")
 COMMAND_PATTERN = re.compile(
-    r"\\(?:" + "|".join(re.escape(command) for command in FORBIDDEN_COMMANDS) + r")\b"
+    r"\\!(?![A-Za-z])|\\(?:"
+    + "|".join(re.escape(command) for command in FORBIDDEN_COMMANDS)
+    + r")\b"
 )
 
 

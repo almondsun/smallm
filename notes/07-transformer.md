@@ -34,12 +34,12 @@ Ignoring dropout notation, block $\ell\in\{0,\ldots,L-1\}$ computes
 
 $$
 A^{(\ell)}=R^{(\ell)}+\mathrm{MHA}^{(\ell)}
-\!(\mathrm{LN}^{(\ell)}_1(R^{(\ell)})),
+(\mathrm{LN}^{(\ell)}_1(R^{(\ell)})),
 $$
 
 $$
 R^{(\ell+1)}=A^{(\ell)}+\mathrm{MLP}^{(\ell)}
-\!(\mathrm{LN}^{(\ell)}_2(A^{(\ell)})).
+(\mathrm{LN}^{(\ell)}_2(A^{(\ell)})).
 $$
 
 For output parameters $W_U\in\mathbb R^{V\times C}$, $b_U\in\mathbb R^V$,

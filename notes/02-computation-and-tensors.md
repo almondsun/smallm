@@ -192,7 +192,7 @@ $$
 \nabla_x f(x)=
 \begin{bmatrix}
 \partial f/\partial x_0 & \cdots & \partial f/\partial x_{n-1}
-\end{bmatrix}^{\!\top}.
+\end{bmatrix}^{\top}.
 $$
 
 For a vector-valued map $g:\mathbb R^n\to\mathbb R^m$, the Jacobian

@@ -32,7 +32,7 @@ $$
 
 provided the denominator is nonzero. The unknown data-generating distribution is not available to
 the program; the model supplies a parameterized approximation
-$p_\theta(\cdot\mid x_{<t})\in\Delta^{V-1}$, where
+$p_\theta(\cdot\mid x_{0:t-1})\in\Delta^{V-1}$, where
 
 $$
 \Delta^{V-1}=\{p\in\mathbb R^V:p_i\ge0,\ \sum_{i=0}^{V-1}p_i=1\}
@@ -75,7 +75,7 @@ Given training sequences $x^{(1)},\ldots,x^{(N)}$, maximum-likelihood estimation
 $$
 \hat\theta\in\arg\max_\theta
 \sum_{n=1}^N\sum_t
-\log p_\theta\!(x_t^{(n)}\mid x_{<t}^{(n)}).
+\log p_\theta(x_t^{(n)}\mid x_{0:t-1}^{(n)}).
 $$
 
 Equivalently, smaLLM minimizes the empirical negative log-likelihood
@@ -83,7 +83,7 @@ Equivalently, smaLLM minimizes the empirical negative log-likelihood
 $$
 \widehat{\mathcal L}(\theta)
 =-\frac1M\sum_{n,t}
-\log p_\theta\!(x_t^{(n)}\mid x_{<t}^{(n)}),
+\log p_\theta(x_t^{(n)}\mid x_{0:t-1}^{(n)}),
 $$
 
 where $M$ is the number of target positions included in the minibatch or evaluation region.
@@ -101,7 +101,7 @@ Because probabilities are at most 1, their logs are zero or negative. **Negative
 (NLL) flips the sign so better predictions approach zero:
 
 $$
-S=-\sum_t\log p_\theta(x_t\mid x_{<t}).
+S=-\sum_t\log p_\theta(x_t\mid x_{0:t-1}).
 $$
 
 If the model gives the true token probability `0.8`, its NLL is `-log(0.8)≈0.223`. Probability

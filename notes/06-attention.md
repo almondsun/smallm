@@ -122,7 +122,7 @@ variance one, and are independent of each other,
 
 $$
 \mathrm{Var}(q^\top k)
-=\mathrm{Var}\!(\sum_{r=0}^{D-1}q_rk_r)
+=\mathrm{Var}(\sum_{r=0}^{D-1}q_rk_r)
 =\sum_{r=0}^{D-1}\mathrm{Var}(q_rk_r)=D.
 $$
 

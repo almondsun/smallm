@@ -119,7 +119,7 @@ evaluated characters are
 $$
 C_{\mathrm{eval}}=\sum_{i\in\mathcal I_{\mathrm{targets}}}c_i,
 \qquad
-\mathrm{BPC}=\frac{\sum_i -\log p(z_i\mid z_{<i})}{C_{\mathrm{eval}}\log 2}.
+\mathrm{BPC}=\frac{\sum_i -\log p(z_i\mid z_{0:i-1})}{C_{\mathrm{eval}}\log 2}.
 $$
 
 This aligned count avoids both `len(decoded_token)` errors at multibyte boundaries and the false
