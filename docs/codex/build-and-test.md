@@ -190,7 +190,8 @@ current task or explicitly quoted from a prior report.
 
 ## Current Milestone Status
 
-Milestone 028 extends the sealed-test contract to a complete preregistered 2 × 2 × 3 factorial
-panel. The matrix aggregator validates schema, coverage, identities, cell comparability, and exact
-declared membership before computing paired effects and interactions. Art of War and Lincoln test
-segments are consumed alongside the earlier Alice, Peter Pan, and Hamlet segments.
+Milestone 030 completes the sealed-test contract with a preregistered 3 × 3 × 3 capacity panel.
+The capacity analyzer validates schema, coverage, identities, exact membership, arm configuration,
+same-cell fingerprints, and a 1.5% parameter-match tolerance before computing the three declared
+contrasts. All reported terminal segments are consumed; version 1.0.0 has no further experiment
+roadmap.

@@ -27,9 +27,9 @@ model.
 
 ## Results at a Glance
 
-The main finding is narrow and repeatable: boundary-aware ByteBPE512 achieved lower sealed-test
-bits per character (BPC) than the character tokenizer on five English public-domain corpora.
-Lower BPC is better.
+The main finding is narrow and repeatable: boundary-aware ByteBPE512 achieved lower mean
+sealed-test bits per character (BPC) than the declared character control on eight English
+public-domain corpora. Lower BPC is better.
 
 | Corpus | Character BPC | ByteBPE512 BPC | Difference |
 | --- | ---: | ---: | ---: |
@@ -38,15 +38,20 @@ Lower BPC is better.
 | Hamlet | 2.3219 | **2.2546** | -0.0673 |
 | Art of War, 3-seed mean | 2.1802 | **2.0668** | -0.1134 |
 | Lincoln, 3-seed mean | 2.2356 | **2.0813** | -0.1543 |
+| Frankenstein, matched char136, 3-seed mean | 2.0783 | **1.9336** | -0.1447 |
+| Douglass, matched char136, 3-seed mean | 2.4148 | **2.3960** | -0.0187 |
+| Origin, matched char136, 3-seed mean | 2.1489 | **1.9772** | -0.1717 |
 
-The latest preregistered panel won all six same-seed comparisons. Effect magnitude and
-validation-to-test difficulty remained corpus-dependent, and ByteBPE512 had roughly 103k–106k
-more parameters because of its larger vocabulary. The final planned study tests that capacity
-confound directly.
+The final preregistered capacity-controlled panel matched char136 within 0.40% of ByteBPE512's
+parameter count. ByteBPE512 won eight of nine matched same-seed comparisons and all nine
+comparisons with the historical char128 arm. The directional hypothesis succeeded on every corpus,
+but a +0.0018 BPC Douglass reversal and strongly corpus-dependent effects rule out a universal
+claim.
 
 The structured chart data is in [`results/sealed_test_bpc.json`](results/sealed_test_bpc.json).
-Detailed claims, hashes, controls, and limitations are in
-[`experiment 028`](experiments/028-preregistered-external-corpus-panel.md). Historical experiments
+Detailed claims, all 27 observations, checkpoint hashes, controls, and limitations are in
+[`experiment 030`](experiments/030-final-capacity-panel-and-project-completion.md) and
+[`results/final_capacity_panel.json`](results/final_capacity_panel.json). Historical experiments
 016–017 use a superseded evaluation contract and retain explicit errata.
 
 ## Five-Minute CPU Demo
@@ -71,7 +76,7 @@ For the real-corpus workflow and every individual command, see
 ## Reviewer Paths
 
 - **Research design:** start with
-  [`experiment 028`](experiments/028-preregistered-external-corpus-panel.md), then inspect the
+  [`experiment 030`](experiments/030-final-capacity-panel-and-project-completion.md), then inspect the
   chronological [`experiment index`](docs/experiments.md).
 - **Architecture:** read [`docs/architecture.md`](docs/architecture.md), then
   [`src/smallm/model/`](src/smallm/model/) and
@@ -137,10 +142,11 @@ compile checks, and Markdown link validation. The canonical command matrix is do
 
 ## Project Status
 
-Version `0.3.0` is the portfolio release. One final preregistered capacity-controlled panel is
-planned before the permanent `1.0.0` completion release. Its frozen protocol is
-[`experiment 029`](experiments/029-final-capacity-panel-preregistration.md).
+Version `1.0.0` is the permanent completion release. The declared implementation and research
+scope is finished; no additional features, experiments, dependency refreshes, or compatibility
+work are planned. CI remains available on pushes and pull requests, and the repository stays open
+for inspection and discussion without a maintenance or response commitment. See
+[`Project Completion`](docs/project-completion.md) for the frozen-but-open policy.
 
-Contributions should follow [`CONTRIBUTING.md`](CONTRIBUTING.md). Security and artifact-handling
-expectations are in [`SECURITY.md`](SECURITY.md). The project is MIT licensed and provides
-[`CITATION.cff`](CITATION.cff) metadata.
+Security and artifact-handling expectations are in [`SECURITY.md`](SECURITY.md). The project is MIT
+licensed and provides [`CITATION.cff`](CITATION.cff) metadata; forks may continue independently.

@@ -169,6 +169,12 @@ Repeat `--cell` for every seed. The analyzer requires exactly two distinct corpu
 tokenizers on both corpora, a shared seed set, within-cell experiment fingerprints, and complete
 schema-v2 summaries. Reported contrasts are candidate minus reference BPC and are paired by seed.
 
+The final fixed capacity panel uses `scripts/summarize_capacity_panel.py`. Pass every combination
+of corpora `frankenstein`, `douglass`, and `origin`; arms `char128`, `char136`, and `bytebpe512`;
+and seeds 1337, 2027, and 4242 as `--cell CORPUS ARM RUN_DIR`. The command accepts exactly 27 runs
+and validates frozen configurations and the parameter-match tolerance in addition to sealed-test
+identity and coverage.
+
 ## Generation Controls
 
 ```bash
@@ -241,6 +247,12 @@ Experiment 028 preregisters two additional external corpora and three seeds. Byt
 character control in all six paired sealed-test comparisons, averaging `0.1134` BPC better on Art
 of War and `0.1543` better on Lincoln. Use `scripts/summarize_test_matrix.py` for complete balanced
 panels; it refuses missing cells, identity mismatches, non-best checkpoints, and partial coverage.
+
+Experiment 030 completes the final capacity-controlled panel. ByteBPE512 beats near-matched
+char136 in eight of nine sealed pairs and has lower mean BPC on Frankenstein (`-0.1447`), Douglass
+(`-0.0187`), and Origin (`-0.1717`). Douglass seed 4242 reverses by `+0.0018`; the directional
+hypothesis succeeds but the all-nine outcome does not. These terminal regions are consumed, and
+version 1.0.0 has no further experiment roadmap.
 
 ## Artifact Policy
 

@@ -19,10 +19,14 @@ def test_portfolio_results_match_published_contract():
         "Hamlet",
         "Art of War",
         "Lincoln",
+        "Frankenstein",
+        "Douglass",
+        "Origin",
     ]
-    assert [row["seeds"] for row in payload["corpora"]] == [1, 1, 1, 3, 3]
+    assert [row["seeds"] for row in payload["corpora"]] == [1, 1, 1, 3, 3, 3, 3, 3]
+    assert [row["control"] for row in payload["corpora"]][-3:] == ["char136"] * 3
     assert all(row["byte_bpe512"] < row["character"] for row in payload["corpora"])
-    assert "ByteBPE512 wins every sealed comparison" in render_svg(payload)
+    assert "ByteBPE512 lowers sealed-test mean BPC" in render_svg(payload)
 
 
 def test_portfolio_results_reject_invalid_values(tmp_path):
@@ -33,7 +37,13 @@ def test_portfolio_results_reject_invalid_values(tmp_path):
                 "schema_version": 1,
                 "metric": "bits_per_character",
                 "corpora": [
-                    {"name": "bad", "character": float("inf"), "byte_bpe512": 2, "seeds": 1}
+                    {
+                        "name": "bad",
+                        "character": float("inf"),
+                        "byte_bpe512": 2,
+                        "seeds": 1,
+                        "control": "char128",
+                    }
                 ],
             }
         ),

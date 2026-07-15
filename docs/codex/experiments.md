@@ -186,3 +186,10 @@ Across three seeds per tokenizer and corpus, ByteBPE512 wins all six sealed-test
 candidate-minus-character BPC is `-0.1134` on Art of War and `-0.1543` on Lincoln. Every new test
 gap is positive, and the mean corpus interaction is `-0.0409`; report a robust direction with
 corpus-dependent magnitude. Both terminal segments are consumed.
+
+Milestone 029 was preregistered in commit `9de60ae` before Frankenstein, Douglass, or Origin source
+access. Milestone 030 completes its 3-corpus × 3-arm × 3-seed panel. ByteBPE512 beats near-matched
+char136 in 8/9 sealed pairs; mean candidate-minus-control BPC is `-0.1447`, `-0.0187`, and `-0.1717`
+respectively. Douglass seed 4242 reverses by `+0.0018`. The directional hypothesis succeeds, the
+strong all-nine outcome fails, every terminal segment is consumed, and version 1.0.0 closes the
+project permanently.

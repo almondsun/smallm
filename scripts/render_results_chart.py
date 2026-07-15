@@ -33,6 +33,8 @@ def load_results(path: Path = DATA_PATH) -> dict[str, Any]:
                 raise ValueError(f"{key} must be a finite positive BPC value")
         if not isinstance(row.get("seeds"), int) or row["seeds"] <= 0:
             raise ValueError("seeds must be a positive integer")
+        if row.get("control") not in {"char128", "char136"}:
+            raise ValueError("control must identify the declared character arm")
     return payload
 
 
@@ -40,7 +42,7 @@ def render_svg(payload: dict[str, Any]) -> str:
     rows = payload["corpora"]
     width, height = 900, 120 + 74 * len(rows)
     plot_left, plot_right = 190, 830
-    minimum, maximum = 1.95, 2.36
+    minimum, maximum = 1.90, 2.45
 
     def x(value: float) -> float:
         return plot_left + (value - minimum) / (maximum - minimum) * (plot_right - plot_left)
@@ -48,12 +50,12 @@ def render_svg(payload: dict[str, Any]) -> str:
     lines = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{width}" height="{height}" viewBox="0 0 {width} {height}" role="img" aria-labelledby="title desc">',
         '<title id="title">Sealed-test bits per character by tokenizer</title>',
-        '<desc id="desc">ByteBPE512 has lower bits per character than the character tokenizer on all five reported corpora.</desc>',
+        '<desc id="desc">ByteBPE512 has lower mean bits per character than the declared character control on all eight reported corpora.</desc>',
         '<rect width="100%" height="100%" fill="#0d1117" rx="12"/>',
-        '<text x="32" y="42" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="24" font-weight="700">ByteBPE512 wins every sealed comparison</text>',
+        '<text x="32" y="42" fill="#f0f6fc" font-family="system-ui,sans-serif" font-size="24" font-weight="700">ByteBPE512 lowers sealed-test mean BPC</text>',
         '<text x="32" y="70" fill="#8b949e" font-family="system-ui,sans-serif" font-size="14">Lower bits per character is better · points are reported values or 3-seed means</text>',
     ]
-    for tick in (2.0, 2.1, 2.2, 2.3):
+    for tick in (1.9, 2.0, 2.1, 2.2, 2.3, 2.4):
         position = x(tick)
         lines.extend(
             [
@@ -77,7 +79,7 @@ def render_svg(payload: dict[str, Any]) -> str:
         )
     lines.extend(
         [
-            '<circle cx="650" cy="42" r="6" fill="#f0883e"/><text x="664" y="47" fill="#c9d1d9" font-family="system-ui,sans-serif" font-size="13">Character</text>',
+            '<circle cx="630" cy="42" r="6" fill="#f0883e"/><text x="644" y="47" fill="#c9d1d9" font-family="system-ui,sans-serif" font-size="13">Character control</text>',
             '<circle cx="752" cy="42" r="6" fill="#3fb950"/><text x="766" y="47" fill="#c9d1d9" font-family="system-ui,sans-serif" font-size="13">ByteBPE512</text>',
             "</svg>",
         ]

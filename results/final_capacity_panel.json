@@ -1,0 +1,716 @@
+{
+  "audit": {
+    "completed_schema2_sealed_before_access": 27,
+    "expected_cells": 27,
+    "score_fields_before_access": 0,
+    "test_evaluation_artifacts_before_access": 0
+  },
+  "contrast_direction": "candidate_minus_reference_test_bpc",
+  "contrasts": {
+    "bytebpe512_minus_char128": {
+      "douglass": {
+        "maximum": -0.018194835086704053,
+        "mean": -0.026461637769939667,
+        "minimum": -0.033265986654951174,
+        "pairs": [
+          {
+            "bpc": -0.033265986654951174,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.027924091568163778,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.018194835086704053,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.006239069414168778
+      },
+      "frankenstein": {
+        "maximum": -0.14188302731933655,
+        "mean": -0.1550976141705108,
+        "minimum": -0.1629162625417444,
+        "pairs": [
+          {
+            "bpc": -0.1604935526504514,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.14188302731933655,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.1629162625417444,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.009396324105370939
+      },
+      "origin": {
+        "maximum": -0.19964040090913926,
+        "mean": -0.1999089257403166,
+        "minimum": -0.2004371383552943,
+        "pairs": [
+          {
+            "bpc": -0.2004371383552943,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.19964040090913926,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.19964923795651623,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.00037352014521109555
+      }
+    },
+    "bytebpe512_minus_char136": {
+      "douglass": {
+        "maximum": 0.0018346284921677558,
+        "mean": -0.018747912869738165,
+        "minimum": -0.03112658882096664,
+        "pairs": [
+          {
+            "bpc": -0.026951778280415617,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.03112658882096664,
+            "seed": 2027
+          },
+          {
+            "bpc": 0.0018346284921677558,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.014653509646686469
+      },
+      "frankenstein": {
+        "maximum": -0.13943009544254448,
+        "mean": -0.14472759381789504,
+        "minimum": -0.149262790321389,
+        "pairs": [
+          {
+            "bpc": -0.13943009544254448,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.14548989568975168,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.149262790321389,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.004050209891926667
+      },
+      "origin": {
+        "maximum": -0.15667919031419464,
+        "mean": -0.17166475597850525,
+        "minimum": -0.1846242382683223,
+        "pairs": [
+          {
+            "bpc": -0.15667919031419464,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.1846242382683223,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.17369083935299878,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.011498121199277822
+      }
+    },
+    "char136_minus_char128": {
+      "douglass": {
+        "maximum": 0.0032024972528028606,
+        "mean": -0.007713724900201502,
+        "minimum": -0.02002946357887181,
+        "pairs": [
+          {
+            "bpc": -0.006314208374535557,
+            "seed": 1337
+          },
+          {
+            "bpc": 0.0032024972528028606,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.02002946357887181,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.00953589659830424
+      },
+      "frankenstein": {
+        "maximum": 0.0036068683704151283,
+        "mean": -0.01037002035261573,
+        "minimum": -0.02106345720790692,
+        "pairs": [
+          {
+            "bpc": -0.02106345720790692,
+            "seed": 1337
+          },
+          {
+            "bpc": 0.0036068683704151283,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.0136534722203554,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.01033576422463687
+      },
+      "origin": {
+        "maximum": -0.015016162640816955,
+        "mean": -0.02824416976181136,
+        "minimum": -0.04375794804109967,
+        "pairs": [
+          {
+            "bpc": -0.04375794804109967,
+            "seed": 1337
+          },
+          {
+            "bpc": -0.015016162640816955,
+            "seed": 2027
+          },
+          {
+            "bpc": -0.025958398603517452,
+            "seed": 4242
+          }
+        ],
+        "population_stddev": 0.011844580176605174
+      }
+    }
+  },
+  "corpora": {
+    "douglass": {
+      "body_sha256": "a451fa67af4bb67a168fe647b4736b1285655042b8ab2318457389d80132a066",
+      "download_sha256": "e39d8d5e516947d578555d8e549206e44e07f44697143b6d808eec8d503729bf",
+      "prepared_characters": 223901,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8"
+    },
+    "frankenstein": {
+      "body_sha256": "3581eea97498d1523c79cc9834b1933923c9022ee0fddb8aa5b6492997ae1665",
+      "download_sha256": "7810cd483cffcf2cc8a1d8f0d5807931e69d4f48cd14149b8c76f88af82fead3",
+      "prepared_characters": 419189,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2"
+    },
+    "origin": {
+      "body_sha256": "6e91d485042baba0158cee14fa2f14aff2fc45726e085228e50b929636dbe2ce",
+      "download_sha256": "ededa9c0bf8761efed092c303b46c1c92de956838cba6249a33bedfd6d7363b4",
+      "prepared_characters": 932880,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8"
+    }
+  },
+  "lower_bpc_is_better": true,
+  "observations": [
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.044896492235504,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "0706e4ae0673710c43f5aa87f31fd1abc3ec8ccf3ad0d1d61f29df1841909b4a",
+      "corpus": "frankenstein",
+      "parameter_count": 822867,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.09118834515981,
+      "test_coverage": 1.0,
+      "test_loss": 1.44950130546734,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.0379018354947758,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "e6c9029194fb3ffc7208aa89cf77281a155fd9fa3cab2d21fd2dba55ea55ecc7",
+      "corpus": "frankenstein",
+      "parameter_count": 822867,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.079580663165978,
+      "test_coverage": 1.0,
+      "test_loss": 1.4414554734204788,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.052866138498108,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "bd2c804345aab4ebb7a8ae4a9e742f45837f7aa59dd0663929f7d3eba5b51077",
+      "corpus": "frankenstein",
+      "parameter_count": 822867,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.0953095207753814,
+      "test_coverage": 1.0,
+      "test_loss": 1.4523578867258657,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.0219339710377606,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "47c3d278c5ae929e6fe09b6c423e68a3a12d93572e0420bc5f886b7472a809b9",
+      "corpus": "frankenstein",
+      "parameter_count": 926515,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.070124887951903,
+      "test_coverage": 1.0,
+      "test_loss": 1.434901229490834,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.032262911015979,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "52fa0dcb5719d1de5f495b4a8eaac8a5e430f652476bb22e205f2baa42575b8f",
+      "corpus": "frankenstein",
+      "parameter_count": 926515,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.0831875315363932,
+      "test_coverage": 1.0,
+      "test_loss": 1.4439555640620831,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.0289245224650583,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "90950a69dbde87953f775595cba62953e8411a26278533e46829ce303f957397",
+      "corpus": "frankenstein",
+      "parameter_count": 926515,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.081656048555026,
+      "test_coverage": 1.0,
+      "test_loss": 1.4428940209514727,
+      "test_target_tokens": 41918,
+      "test_total_target_tokens": 41918,
+      "vocabulary_size": 83
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.8713039629526336,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "8b0432bb010d39214123a89e5092e1d6d2cf2a276545ad31a8021bd45bba392d",
+      "corpus": "frankenstein",
+      "parameter_count": 929664,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.9306947925093585,
+      "test_coverage": 1.0,
+      "test_loss": 2.2854756740038544,
+      "test_target_tokens": 24545,
+      "test_total_target_tokens": 24545,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.8766120018538195,
+      "best_validation_step": 4750,
+      "checkpoint_sha256": "2e2778a33c34694a9071636406916a678c928ae420d00cd12963dcf4fd751427",
+      "corpus": "frankenstein",
+      "parameter_count": 929664,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.9376976358466416,
+      "test_coverage": 1.0,
+      "test_loss": 2.2937653467984958,
+      "test_target_tokens": 24545,
+      "test_total_target_tokens": 24545,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.863046720747388,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "6cd4439036e195353651d01a45c16b48761e16975b8ad100517b75079d40fcfd",
+      "corpus": "frankenstein",
+      "parameter_count": 929664,
+      "prepared_sha256": "3fef5c99657c90b1ba1ada7453d8800c5a7d2ebe9899b9ff01f0022dab682bd2",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.932393258233637,
+      "test_coverage": 1.0,
+      "test_loss": 2.287486246628294,
+      "test_target_tokens": 24545,
+      "test_total_target_tokens": 24545,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.1191458763916606,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "f9c7bf56bcb8fd4d18f0e9458562bc94c57223db68137f25105a82217d3f1b69",
+      "corpus": "douglass",
+      "parameter_count": 822353,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.4183441589777,
+      "test_coverage": 1.0,
+      "test_loss": 1.6762684354190052,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.130836226338142,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "4bf19efb40b7f1eae2d19bfcc0f8bca16addf6ae92141a33834409b660937876",
+      "corpus": "douglass",
+      "parameter_count": 822353,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.416942774746562,
+      "test_coverage": 1.0,
+      "test_loss": 1.6752970698903107,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 2.1203164023581333,
+      "best_validation_step": 4750,
+      "checkpoint_sha256": "7fcf10b59e099525bb3eec1841d379d5b7457e0f89bf76394112a0446e216357",
+      "corpus": "douglass",
+      "parameter_count": 822353,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.432230628126523,
+      "test_coverage": 1.0,
+      "test_loss": 1.6858938023574441,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.1277419679782654,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "b2bc92a87d2dd24d05d1eeaea89321efcc3e50c4359ce0144ca5098d5116f89e",
+      "corpus": "douglass",
+      "parameter_count": 925969,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.4120299506031646,
+      "test_coverage": 1.0,
+      "test_loss": 1.6718917596867278,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.127478595149389,
+      "best_validation_step": 4750,
+      "checkpoint_sha256": "167ca30514f48878789f3fe344d40388b14c5aea498f0ca13326849ee10fa7a8",
+      "corpus": "douglass",
+      "parameter_count": 925969,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.420145271999365,
+      "test_coverage": 1.0,
+      "test_loss": 1.677516871831842,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 2.1246269554397372,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "37863145905104afa3e4b3f6401b97225853b6227f100c67170329f74d864527",
+      "corpus": "douglass",
+      "parameter_count": 925969,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.412201164547651,
+      "test_coverage": 1.0,
+      "test_loss": 1.672010436149621,
+      "test_target_tokens": 22390,
+      "test_total_target_tokens": 22390,
+      "vocabulary_size": 81
+    },
+    {
+      "actual_steps": 4000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 2.0279104367557554,
+      "best_validation_step": 3250,
+      "checkpoint_sha256": "2b0aead6fbabf8cfb4941cd288d78e56b03f00bb602d19fe6ddcf8f3e22a1c86",
+      "corpus": "douglass",
+      "parameter_count": 929664,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 1337,
+      "stop_reason": "early_stopping",
+      "test_bpc": 2.385078172322749,
+      "test_coverage": 1.0,
+      "test_loss": 2.7313589591537344,
+      "test_target_tokens": 13552,
+      "test_total_target_tokens": 13552,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 3500,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 2.0399464360005424,
+      "best_validation_step": 2750,
+      "checkpoint_sha256": "c127b520e8074db308f3f0d7bf0e9ebbd0574e707fc467ebdf159823d43be705",
+      "corpus": "douglass",
+      "parameter_count": 929664,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 2027,
+      "stop_reason": "early_stopping",
+      "test_bpc": 2.3890186831783984,
+      "test_coverage": 1.0,
+      "test_loss": 2.7358715783853036,
+      "test_target_tokens": 13552,
+      "test_total_target_tokens": 13552,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 3750,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 2.0326426128212423,
+      "best_validation_step": 3000,
+      "checkpoint_sha256": "839cfd9a36b288a392e8856fde4d9367738f401c2f1b8221f9238bed6581a581",
+      "corpus": "douglass",
+      "parameter_count": 929664,
+      "prepared_sha256": "9bcbdbf5e503142493181d37e9834d7120d2641f4b1a9b15803e68244af264b8",
+      "seed": 4242,
+      "stop_reason": "early_stopping",
+      "test_bpc": 2.414035793039819,
+      "test_coverage": 1.0,
+      "test_loss": 2.7645208310366662,
+      "test_target_tokens": 13552,
+      "test_total_target_tokens": 13552,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 1.8517858657732522,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "dc8f073907103f478ae88037266a90d79aa476c177883f0d9a47422d0898a15a",
+      "corpus": "origin",
+      "parameter_count": 823638,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.1760037427843764,
+      "test_coverage": 1.0,
+      "test_loss": 1.5082908591988788,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 1.8642831029273401,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "330decf720750e0282d50e7a0dc29f240102b064822be011b823095139e8271c",
+      "corpus": "origin",
+      "parameter_count": 823638,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.1686521413519726,
+      "test_coverage": 1.0,
+      "test_loss": 1.503195117393408,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char128",
+      "best_validation_bpc": 1.860347556808194,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "c7e8efffa4d7a15a59bba08c36d28b45559c6c2ad82945331e5d102b2cf696d8",
+      "corpus": "origin",
+      "parameter_count": 823638,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.1866612009629867,
+      "test_coverage": 1.0,
+      "test_loss": 1.5156780462873183,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 1.8269228370951656,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "fcb54b1ac6bdbd25f448b04c0f69d9bc5ca9ecd05bd6946c883adb2ea19ceacb",
+      "corpus": "origin",
+      "parameter_count": 927334,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.1322457947432767,
+      "test_coverage": 1.0,
+      "test_loss": 1.477960160887102,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 1.8373257352822447,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "e7fdb90bb156a3ebb7d5c5e304a57463c470cbf271e098889d3da2b7e307e58e",
+      "corpus": "origin",
+      "parameter_count": 927334,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.1536359787111556,
+      "test_coverage": 1.0,
+      "test_loss": 1.4927867065960958,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "char136",
+      "best_validation_bpc": 1.8448998108314199,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "9bea663efd77ffe8fec700beb910d9c0aec61240036583fd8a684852f27b345c",
+      "corpus": "origin",
+      "parameter_count": 927334,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 2.160702802359469,
+      "test_coverage": 1.0,
+      "test_loss": 1.4976850554834389,
+      "test_target_tokens": 93287,
+      "test_total_target_tokens": 93287,
+      "vocabulary_size": 86
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.6283747105629323,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "a8459778b47ce464f514cbd5131ca635af6de0ac09844cda1a1414433c970b60",
+      "corpus": "origin",
+      "parameter_count": 929664,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 1337,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.975566604429082,
+      "test_coverage": 1.0,
+      "test_loss": 2.3558884440336705,
+      "test_target_tokens": 54223,
+      "test_total_target_tokens": 54223,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.6388584716068848,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "df449ad4cb937a616e0b42aae96f46afe227a6b33b3b41b6825921c1fb388d35",
+      "corpus": "origin",
+      "parameter_count": 929664,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 2027,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.9690117404428333,
+      "test_coverage": 1.0,
+      "test_loss": 2.348071684890853,
+      "test_target_tokens": 54223,
+      "test_total_target_tokens": 54223,
+      "vocabulary_size": 512
+    },
+    {
+      "actual_steps": 5000,
+      "arm": "bytebpe512",
+      "best_validation_bpc": 1.6302720347449737,
+      "best_validation_step": 5000,
+      "checkpoint_sha256": "9b2d7ad4080d691ca95d8086f0754141bc99cdf283a1a1eef03b84e27d04b44d",
+      "corpus": "origin",
+      "parameter_count": 929664,
+      "prepared_sha256": "159b097edde209c0f67c91ebe8634e966b0c08e17dc65283c4ea79b3d9ba0ef8",
+      "seed": 4242,
+      "stop_reason": "max_steps",
+      "test_bpc": 1.9870119630064704,
+      "test_coverage": 1.0,
+      "test_loss": 2.369537180527717,
+      "test_target_tokens": 54223,
+      "test_total_target_tokens": 54223,
+      "vocabulary_size": 512
+    }
+  ],
+  "parameter_gaps_char136_minus_bytebpe512_fraction": {
+    "douglass": -0.003974554247556107,
+    "frankenstein": -0.003387245284317775,
+    "origin": -0.002506281839460278
+  },
+  "preregistration_commit": "9de60ae",
+  "release": "1.0.0",
+  "schema_version": 1,
+  "standard_deviation": "population_descriptive",
+  "study": "final_capacity_panel"
+}

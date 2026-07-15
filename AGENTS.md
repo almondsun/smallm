@@ -90,11 +90,11 @@ If a relevant check cannot be run, state why and what remains unverified.
 
 ## Current Technical Status
 
-Milestone 028 is the latest modeling evidence. Its preregistered 2-corpus × 2-tokenizer × 3-seed
-panel finds ByteBPE512 wins all six sealed-test pairs, averaging `0.1134` BPC better on Art of War
-and `0.1543` on Lincoln. Both new terminal regions are harder than validation, and effect magnitude
-remains corpus-dependent. All previously reported sealed-test segments are consumed and must not
-drive later selection.
+Milestone 030 is the final modeling evidence. Its preregistered 3-corpus × 3-arm × 3-seed panel
+finds ByteBPE512 beats the near-parameter-matched char136 control in 8/9 sealed-test pairs, with
+mean candidate-minus-control BPC `-0.1447` on Frankenstein, `-0.0187` on Douglass, and `-0.1717`
+on Origin. The single Douglass reversal is `+0.0018`. All terminal regions are consumed and must
+not drive later selection. Version 1.0.0 permanently completes the project scope.
 
 ## Safety And Security
 

@@ -5,9 +5,20 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-07-14
+
 ### Added
 
-- Preregistered the final three-corpus, three-arm capacity-controlled panel.
+- Completed the preregistered three-corpus, three-arm, three-seed capacity-controlled panel.
+- Added the structured 27-cell result record, final evidence chart, and release-asset checksums.
+- Added a permanent project-completion record and frozen-but-open lifecycle policy.
+
+### Changed
+
+- Declared the research and implementation scope complete and removed scheduled maintenance
+  automation while retaining push and pull-request validation.
+- Recorded the final outcome: ByteBPE512 beat near-parameter-matched char136 in eight of nine
+  sealed pairs, with a negative mean contrast on all three corpora.
 
 ## [0.3.0] - 2026-07-14
 
@@ -45,6 +56,7 @@ Notable user-visible and experiment-contract changes are recorded here. The proj
 - Reproducible corpus preparation, character and educational BPE tokenizers, GPT training,
   baselines, controlled generation, run artifacts, and milestone reports through experiment 018.
 
-[Unreleased]: https://github.com/almondsun/smallm/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/almondsun/smallm/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/almondsun/smallm/compare/v0.3.0...v1.0.0
 [0.3.0]: https://github.com/almondsun/smallm/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/almondsun/smallm/releases/tag/v0.2.0

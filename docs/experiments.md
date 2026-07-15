@@ -35,6 +35,8 @@ not a replacement for the original reports.
 | [026 Sealed Test Evaluation](../experiments/026-sealed-test-evaluation.md) | Confirmatory evaluation | On untouched terminal segments, ByteBPE512 beats character by `0.0614` BPC on Alice and `0.0258` on Peter Pan. |
 | [027 Hamlet External-Distribution Replication](../experiments/027-hamlet-external-distribution.md) | Preregistered external validity | ByteBPE512 beats character by `0.0673` sealed-test BPC on a dramatic play; the terminal region is easier than validation for both models. |
 | [028 Preregistered External Corpus Panel](../experiments/028-preregistered-external-corpus-panel.md) | Multi-corpus confirmatory panel | ByteBPE512 wins all six same-seed sealed-test pairs, averaging `-0.1134` BPC on Art of War and `-0.1543` on Lincoln. |
+| [029 Final Capacity Panel Preregistration](../experiments/029-final-capacity-panel-preregistration.md) | Frozen final protocol | Commits the three-corpus × three-arm × three-seed capacity-control design before source access. |
+| [030 Final Capacity Panel and Completion](../experiments/030-final-capacity-panel-and-project-completion.md) | Final evidence and closure | Reports the final near-parameter-matched sealed-test panel and permanently completes the project scope. |
 
 ## Topic Shortcuts
 
@@ -64,7 +66,9 @@ not a replacement for the original reports.
   [025](../experiments/025-corpus-by-seed-matrix.md),
   [026](../experiments/026-sealed-test-evaluation.md),
   [027](../experiments/027-hamlet-external-distribution.md),
-  [028](../experiments/028-preregistered-external-corpus-panel.md).
+  [028](../experiments/028-preregistered-external-corpus-panel.md),
+  [029](../experiments/029-final-capacity-panel-preregistration.md), and
+  [030](../experiments/030-final-capacity-panel-and-project-completion.md).
 
 ## Current Status
 
@@ -119,3 +123,7 @@ Milestone 028 expands that confirmatory design to two new corpora and three seed
 all six same-seed test comparisons, with mean paired effects `-0.1134 ± 0.0041` BPC on Art of War
 and `-0.1543 ± 0.0130` on Lincoln. Every terminal segment is harder than validation, and the
 `-0.0409` mean corpus interaction again rejects a universal effect-size interpretation.
+
+Milestone 029 freezes the final capacity-control protocol before source access. Milestone 030
+records its complete evidence and closes the project at version 1.0.0; no additional modeling
+roadmap remains. The durable lifecycle statement is [Project Completion](project-completion.md).
